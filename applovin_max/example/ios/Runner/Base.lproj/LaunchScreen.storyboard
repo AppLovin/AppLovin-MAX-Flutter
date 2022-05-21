@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ydg-fD-yQy"/>
+                        <viewControllerLayoutGuide type="bottom" id="xbc-2k-c8Z"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dkE-gX-JzO">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="8bQ-Ko-Rvo">
+                                <rect key="frame" x="123" y="355.5" width="168" height="185"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FxK-lh-yGo">
+                                <rect key="frame" x="117" y="324" width="180" height="248"/>
+                                <subviews>
+                                    <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="wCO-Is-sm1">
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="180"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="180" id="QH4-uT-0g8"/>
+                                            <constraint firstAttribute="height" constant="180" id="V4f-3l-pnG"/>
+                                            <constraint firstAttribute="width" secondItem="wCO-Is-sm1" secondAttribute="height" multiplier="1:1" id="p0c-CU-l6U"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P2k-X8-VHX">
+                                        <rect key="frame" x="0.0" y="180" width="180" height="29"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="App">
+                                                <attributes>
+                                                    <color key="NSColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <font key="NSFont" size="24" name="HelveticaNeue-Bold"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                </attributes>
+                                            </fragment>
+                                            <fragment content="Lovin">
+                                                <attributes>
+                                                    <color key="NSColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <font key="NSFont" size="24" name="HelveticaNeue"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MAX Demo App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bq3-Xl-8hi">
+                                        <rect key="frame" x="0.0" y="219" width="180" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="Bq3-Xl-8hi" secondAttribute="bottom" id="4lc-Rj-FuJ"/>
+                                    <constraint firstItem="P2k-X8-VHX" firstAttribute="leading" secondItem="FxK-lh-yGo" secondAttribute="leading" id="9ae-vY-Mex"/>
+                                    <constraint firstItem="Bq3-Xl-8hi" firstAttribute="leading" secondItem="FxK-lh-yGo" secondAttribute="leading" id="D4g-L5-eeQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="P2k-X8-VHX" secondAttribute="trailing" id="HeG-iv-RYU"/>
+                                    <constraint firstAttribute="trailing" secondItem="Bq3-Xl-8hi" secondAttribute="trailing" id="VT4-DZ-0jQ"/>
+                                    <constraint firstItem="P2k-X8-VHX" firstAttribute="top" secondItem="wCO-Is-sm1" secondAttribute="bottom" id="aT8-Ka-a1T"/>
+                                    <constraint firstItem="Bq3-Xl-8hi" firstAttribute="top" secondItem="P2k-X8-VHX" secondAttribute="bottom" constant="10" id="qLJ-Jf-Kvy"/>
+                                    <constraint firstItem="wCO-Is-sm1" firstAttribute="top" secondItem="FxK-lh-yGo" secondAttribute="top" id="u2a-B4-3LH"/>
+                                    <constraint firstItem="wCO-Is-sm1" firstAttribute="leading" secondItem="FxK-lh-yGo" secondAttribute="leading" id="u7S-za-wYC"/>
+                                    <constraint firstAttribute="trailing" secondItem="wCO-Is-sm1" secondAttribute="trailing" id="uMC-pV-XcO"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.22260358929999999" green="0.5107067823" blue="0.66669118400000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="8bQ-Ko-Rvo" firstAttribute="centerX" secondItem="dkE-gX-JzO" secondAttribute="centerX" id="3pX-x5-7up"/>
+                            <constraint firstItem="FxK-lh-yGo" firstAttribute="centerX" secondItem="dkE-gX-JzO" secondAttribute="centerX" id="P4P-u5-Lpj"/>
+                            <constraint firstItem="8bQ-Ko-Rvo" firstAttribute="centerY" secondItem="dkE-gX-JzO" secondAttribute="centerY" id="wBb-mC-bTv"/>
+                            <constraint firstItem="FxK-lh-yGo" firstAttribute="centerY" secondItem="dkE-gX-JzO" secondAttribute="centerY" id="zzs-SZ-9vp"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="76.811594202898561" y="251.11607142857142"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="LaunchImage" width="168" height="185"/>
+        <image name="logo" width="180" height="180"/>
+    </resources>
+</document>
