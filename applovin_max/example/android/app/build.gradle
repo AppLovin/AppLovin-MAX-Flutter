@@ -49,6 +49,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    dependencies {
+        implementation 'com.applovin:applovin-sdk:11.4.2'
+    }
 }
 
 flutter {

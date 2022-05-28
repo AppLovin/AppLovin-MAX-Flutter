@@ -32,4 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 16
     }
+
+    dependencies {
+        implementation 'com.applovin:applovin-sdk:11.4.2'
+    }
 }
