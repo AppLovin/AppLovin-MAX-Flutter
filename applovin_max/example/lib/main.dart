@@ -19,12 +19,12 @@ class MyApp extends StatefulWidget {
 }
 
 // Create constants
-final String _sdk_key = "hBDh6tzZrp-fWye63N4nhbgw8umnTzD99QsGIpq8bpo7lRDppHZVuEQ17Bpa80lIRaTlONt-Af6v5JiubGOUVp";
+final String _sdk_key = "YOUR_SDK_KEY";
 
-final String _interstitial_ad_unit_id = Platform.isAndroid ? "6bf752cf76bc7f3b" : "65d8d0195e50bda6";
-final String _rewarded_ad_unit_id = Platform.isAndroid ? "a880dbdb58c811d5" : "82076aefed4737ed";
-final String _banner_ad_unit_id = Platform.isAndroid ? "cb5529a55a443f83" : "35858295296a8c80";
-final String _mrec_ad_unit_id = Platform.isAndroid ? "e12ca346bdbddaef" : "f865a23962fa00e5";
+final String _interstitial_ad_unit_id = Platform.isAndroid ? "ANDROID_INTER_AD_UNIT_ID" : "IOS_INTER_AD_UNIT_ID";
+final String _rewarded_ad_unit_id = Platform.isAndroid ? "ANDROID_REWARDED_AD_UNIT_ID" : "IOS_REWARDED_AD_UNIT_ID";
+final String _banner_ad_unit_id = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "IOS_BANNER_AD_UNIT_ID";
+final String _mrec_ad_unit_id = Platform.isAndroid ? "ANDROID_MREC_AD_UNIT_ID" : "IOS_MREC_AD_UNIT_ID";
 
 // Create states
 var _isInitialized = false;
