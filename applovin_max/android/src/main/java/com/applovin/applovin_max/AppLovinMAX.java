@@ -48,7 +48,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class ApplovinMaxPlugin
+public class AppLovinMAX
         implements FlutterPlugin, MethodCallHandler, ActivityAware, MaxAdListener, MaxAdViewAdListener, MaxRewardedAdListener
 {
     private static final String SDK_TAG = "AppLovinSdk";
@@ -104,9 +104,9 @@ public class ApplovinMaxPlugin
     {
         // Guard against running init logic multiple times
         if ( isPluginInitialized )
-            {
-                return;
-            }
+        {
+            return;
+        }
 
         isPluginInitialized = true;
 

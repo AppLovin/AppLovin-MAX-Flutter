@@ -22,6 +22,6 @@ flutter:
     platforms:
       android:
         package: com.applovin.applovin_max
-        pluginClass: ApplovinMaxPlugin
+        pluginClass: AppLovinMAX
       ios:
-        pluginClass: ApplovinMaxPlugin
+        pluginClass: AppLovinMAX

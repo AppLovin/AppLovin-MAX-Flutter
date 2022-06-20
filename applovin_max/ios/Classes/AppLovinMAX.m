@@ -1,4 +1,4 @@
-#import "ApplovinMaxPlugin.h"
+#import "AppLovinMAX.h"
 #import <AppLovinSDK/AppLovinSDK.h>
 
 #define ROOT_VIEW_CONTROLLER ([ALUtils topViewControllerFromKeyWindow])
@@ -13,7 +13,7 @@
 + (NSNumber *)al_numberWithString:(NSString *)string;
 @end
 
-@interface ApplovinMaxPlugin()<MAAdDelegate, MAAdViewAdDelegate, MARewardedAdDelegate>
+@interface AppLovinMAX()<MAAdDelegate, MAAdViewAdDelegate, MARewardedAdDelegate>
 
 // Parent Fields
 @property (nonatomic,  weak) ALSdk *sdk;
@@ -41,7 +41,7 @@
 
 @end
 
-@implementation ApplovinMaxPlugin
+@implementation AppLovinMAX
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
 
@@ -50,7 +50,7 @@ static FlutterMethodChannel *channel;
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
     channel = [FlutterMethodChannel methodChannelWithName: @"applovin_max" binaryMessenger: [registrar messenger]];
-    ApplovinMaxPlugin *instance = [[ApplovinMaxPlugin alloc] init];
+    AppLovinMAX *instance = [[AppLovinMAX alloc] init];
     [registrar addMethodCallDelegate: instance channel: channel];
 }
 
