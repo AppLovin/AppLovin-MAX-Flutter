@@ -35,8 +35,9 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.applovin.enterprise.apps.demoapp"
         minSdkVersion flutter.minSdkVersion
+        //applicationId "com.applovin.enterprise.apps.demoapp"
+        applicationId = "com.revolverolver.fliptrickster"
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
