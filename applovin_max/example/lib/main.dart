@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
     if (sdkConfiguration != null) {
       _isInitialized = true;
 
-      logStatus("SDK Initialized");
+      logStatus("SDK Initialized: $sdkConfiguration");
 
       attachAdListeners();
     }
