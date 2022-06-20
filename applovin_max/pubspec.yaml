@@ -1,7 +1,7 @@
 name: applovin_max
 description: AppLovin MAX Flutter Plugin for Android and iOS
 version: 1.0.0
-homepage:
+homepage: https://github.com/AppLovin/AppLovin-MAX-Flutter
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
@@ -22,6 +22,6 @@ flutter:
     platforms:
       android:
         package: com.applovin.applovin_max
-        pluginClass: ApplovinMaxPlugin
+        pluginClass: AppLovinMAX
       ios:
-        pluginClass: ApplovinMaxPlugin
+        pluginClass: AppLovinMAX
