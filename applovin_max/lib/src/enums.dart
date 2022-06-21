@@ -21,19 +21,15 @@ enum ConsentDialogState {
   ///
   /// The consent dialog state could not be determined. This is likely due to the SDK failing to initialize.
   ///
-  unknown(0),
+  unknown,
 
   ///
   /// This user should be shown a consent dialog.
   ///
-  applies(1),
+  applies,
 
   ///
   /// This user should not be shown a consent dialog.
   ///
-  doesNotApply(2);
-
-  final int value;
-
-  const ConsentDialogState(this.value);
+  doesNotApply
 }
