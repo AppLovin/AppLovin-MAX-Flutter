@@ -50,11 +50,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> initializePlugin() async {
     logStatus("Initializing SDK...");
 
-    Map? sdkConfiguration = await AppLovinMAX.initialize(_sdk_key);
-    if (sdkConfiguration != null) {
+    Map? configuration = await AppLovinMAX.initialize(_sdk_key);
+    if (configuration != null) {
       _isInitialized = true;
 
-      logStatus("SDK Initialized: $sdkConfiguration");
+      logStatus("SDK Initialized: $configuration");
 
       attachAdListeners();
     }
