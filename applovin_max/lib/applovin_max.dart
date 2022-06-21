@@ -17,7 +17,6 @@ class AppLovinMAX {
   static RewardedAdListener? _rewardedAdListener;
 
   static Future<Map?> initialize(String sdkKey) {
-    print("Initializing SDK...");
 
     _channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
