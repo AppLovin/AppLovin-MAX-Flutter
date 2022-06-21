@@ -7,14 +7,14 @@ export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
 
 class AppLovinMAX {
-  static const version = "1.0.0";
+  static const version = "1.0.1";
 
   static MethodChannel _channel = const MethodChannel('applovin_max');
 
   static AdViewAdListener? _bannerAdListener;
   static AdViewAdListener? _mrecAdListener;
   static InterstitialListener? _interstitialListener;
-  static RewardededAdListener? _rewardedAdListener;
+  static RewardedAdListener? _rewardedAdListener;
 
   static Future<Map?> initialize(String sdkKey) {
     print("Initializing SDK...");
@@ -330,7 +330,7 @@ class AppLovinMAX {
   /// Rewarded Ads
   ///
 
-  static void setRewardedAdListener(RewardededAdListener listener) {
+  static void setRewardedAdListener(RewardedAdListener listener) {
     _rewardedAdListener = listener;
   }
 

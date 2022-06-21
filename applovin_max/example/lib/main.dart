@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
     ));
 
     /// Rewarded Ad Listeners
-    AppLovinMAX.setRewardedAdListener(RewardededAdListener(onAdLoadedCallback: (ad) {
+    AppLovinMAX.setRewardedAdListener(RewardedAdListener(onAdLoadedCallback: (ad) {
       _rewardedAdLoadState = AdLoadState.loaded;
 
       // Rewarded ad is ready to be shown. AppLovinMAX.isRewardedAdReady(_rewarded_ad_unit_id) will now return 'true'
@@ -267,8 +267,7 @@ class _MyAppState extends State<MyApp> {
                             //
                             AppLovinMAX.createBanner(_banner_ad_unit_id, AdViewPosition.bottomCenter);
 
-                            // Set background color for banners to be fully functional
-                            // In this case we are setting it to black - PLEASE USE HEX STRINGS ONLY
+                            // Set banner background color to black - PLEASE USE HEX STRINGS ONLY
                             AppLovinMAX.setBannerBackgroundColor(_banner_ad_unit_id, '#000000');
 
                             _isProgrammaticBannerCreated = true;
@@ -286,7 +285,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: (_isInitialized)
                     ? () async {
                         if (_isProgrammaticMRecShowing) {
-                          AppLovinMAX.hideBanner(_mrec_ad_unit_id);
+                          AppLovinMAX.hideMRec(_mrec_ad_unit_id);
                         } else {
                           if (!_isProgrammaticMRecCreated) {
                             AppLovinMAX.createMRec(_mrec_ad_unit_id, AdViewPosition.bottomCenter);
