@@ -63,10 +63,10 @@ class InterstitialListener extends FullscreenAdListener {
 }
 
 // Rewarded Ad Listener
-class RewardededAdListener extends FullscreenAdListener {
+class RewardedAdListener extends FullscreenAdListener {
   final Function(MaxAd ad, MaxReward reward) onAdReceivedRewardCallback;
 
-  const RewardededAdListener({
+  const RewardedAdListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
     required Function(MaxAd ad) onAdDisplayedCallback,

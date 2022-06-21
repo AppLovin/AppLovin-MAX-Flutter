@@ -14,7 +14,7 @@ class AppLovinMAX {
   static AdViewAdListener? _bannerAdListener;
   static AdViewAdListener? _mrecAdListener;
   static InterstitialListener? _interstitialListener;
-  static RewardededAdListener? _rewardedAdListener;
+  static RewardedAdListener? _rewardedAdListener;
 
   static Future<Map?> initialize(String sdkKey) {
     print("Initializing SDK...");
@@ -330,7 +330,7 @@ class AppLovinMAX {
   /// Rewarded Ads
   ///
 
-  static void setRewardedAdListener(RewardededAdListener listener) {
+  static void setRewardedAdListener(RewardedAdListener listener) {
     _rewardedAdListener = listener;
   }
 

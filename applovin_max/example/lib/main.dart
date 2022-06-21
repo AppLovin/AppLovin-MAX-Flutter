@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
     ));
 
     /// Rewarded Ad Listeners
-    AppLovinMAX.setRewardedAdListener(RewardededAdListener(onAdLoadedCallback: (ad) {
+    AppLovinMAX.setRewardedAdListener(RewardedAdListener(onAdLoadedCallback: (ad) {
       _rewardedAdLoadState = AdLoadState.loaded;
 
       // Rewarded ad is ready to be shown. AppLovinMAX.isRewardedAdReady(_rewarded_ad_unit_id) will now return 'true'
