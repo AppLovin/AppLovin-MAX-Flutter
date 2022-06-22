@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 1.0.3
     * Use `api` for Android AppLovin MAX SDK dependency.
     * Depends on Android SDK v11.4.3. 
 ## 1.0.2
