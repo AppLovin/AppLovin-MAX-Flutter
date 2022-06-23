@@ -34,6 +34,6 @@ android {
     }
 
     dependencies {
-        implementation 'com.applovin:applovin-sdk:11.4.2'
+        api 'com.applovin:applovin-sdk:11.4.3'
     }
 }
