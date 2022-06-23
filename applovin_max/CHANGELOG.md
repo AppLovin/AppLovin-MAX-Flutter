@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+    * Add support for `AppLovinMAX.isInitialized()` API.
 ## 1.0.3
     * Use `api` for Android AppLovin MAX SDK dependency.
     * Depends on Android SDK v11.4.3. 
