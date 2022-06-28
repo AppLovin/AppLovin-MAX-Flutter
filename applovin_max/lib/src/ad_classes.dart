@@ -3,10 +3,11 @@ class MaxAd {
   final String networkName;
   final String revenue;
   final String creativeId;
+  final String dspName;
 
   String? placement;
 
-  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.placement);
+  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.dspName, this.placement);
 
   @override
   String toString() {
@@ -16,10 +17,12 @@ class MaxAd {
         networkName +
         ", revenue: " +
         revenue +
-        ", placement: " +
-        placement! +
+        ", dspName: " +
+        dspName +
         ", creativeId: " +
         creativeId +
+        ", placement: " +
+        placement! +
         "]";
   }
 }

@@ -17,13 +17,12 @@ class AppLovinMAX {
   static RewardedAdListener? _rewardedAdListener;
 
   static Future<Map?> initialize(String sdkKey) {
-
     _channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
 
       var adUnitId = arguments["adUnitId"];
-      
+
       /// Banner Ad Events
       if ("OnBannerAdLoadedEvent" == method) {
         _bannerAdListener?.onAdLoadedCallback(_createAd(adUnitId, arguments));
@@ -102,6 +101,7 @@ class AppLovinMAX {
       arguments["networkName"],
       arguments["revenue"],
       arguments["creativeId"],
+      arguments["dspName"],
       arguments["placement"],
     );
   }
