@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -97,7 +98,19 @@ public class AppLovinMAX
 
     private boolean isInitialized()
     {
-        return isPluginInitialized && isSdkInitialized;
+        return isInitialized( null );
+    }
+
+    private boolean isInitialized(@Nullable final Result result)
+    {
+        boolean isInitialized = isPluginInitialized && isSdkInitialized;
+
+        if ( result != null )
+        {
+            result.success( isInitialized );
+        }
+
+        return isInitialized;
     }
 
     private void initialize(final String pluginVersion, final String sdkKey, final Result result)
@@ -1097,6 +1110,10 @@ public class AppLovinMAX
             String pluginVersion = call.argument( "plugin_version" );
             String sdkKey = call.argument( "sdk_key" );
             initialize( pluginVersion, sdkKey, result );
+        }
+        else if ( "isInitialized".equals( call.method ) )
+        {
+            isInitialized( result );
         }
         else if ( "isTablet".equals( call.method ) )
         {

@@ -79,7 +79,19 @@ static FlutterMethodChannel *channel;
 
 - (BOOL)isInitialized
 {
-    return [self isPluginInitialized] && [self isSDKInitialized];
+    return [self isInitialized: nil];
+}
+
+- (BOOL)isInitialized:(nullable FlutterResult)result
+{
+    BOOL isInitialized = [self isPluginInitialized] && [self isSDKInitialized];
+    
+    if ( result )
+    {
+        result(@(isInitialized));
+    }
+    
+    return isInitialized;
 }
 
 - (void)initializeWithPluginVersion:(NSString *)pluginVersion sdkKey:(NSString *)sdkKey andNotify:(FlutterResult)result
@@ -1005,6 +1017,10 @@ static FlutterMethodChannel *channel;
         NSString *pluginVersion = call.arguments[@"plugin_version"];
         NSString *sdkKey = call.arguments[@"sdk_key"];
         [self initializeWithPluginVersion: pluginVersion sdkKey: sdkKey andNotify: result];
+    }
+    else if ( [@"isInitialized" isEqualToString: call.method] )
+    {
+        [self isInitialized: result];
     }
     else if ( [@"isTablet" isEqualToString: call.method] )
     {
