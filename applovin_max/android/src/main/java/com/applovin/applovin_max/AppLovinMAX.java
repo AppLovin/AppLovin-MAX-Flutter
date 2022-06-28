@@ -1091,6 +1091,7 @@ public class AppLovinMAX
         adInfo.put( "networkName", ad.getNetworkName() );
         adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
         adInfo.put( "revenue", Double.toString( ad.getRevenue() ) );
+        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
 
         return adInfo;
     }

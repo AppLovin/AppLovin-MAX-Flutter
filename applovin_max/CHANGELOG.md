@@ -2,6 +2,7 @@
 
 ## x.x.x
     * Add support for `AppLovinMAX.isInitialized()` API.
+    * Add support for getting DSP name if the ad is served by AppLovin Exchange via `ad.dspName`.
 ## 1.0.3
     * Use `api` for Android AppLovin MAX SDK dependency.
     * Depends on Android SDK v11.4.3. 

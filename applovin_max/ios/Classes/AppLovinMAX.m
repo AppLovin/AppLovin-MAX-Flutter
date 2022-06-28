@@ -1000,7 +1000,8 @@ static FlutterMethodChannel *channel;
              @"creativeId" : ad.creativeIdentifier ?: @"",
              @"networkName" : ad.networkName,
              @"placement" : ad.placement ?: @"",
-             @"revenue" : @(ad.revenue).stringValue};
+             @"revenue" : @(ad.revenue).stringValue,
+             @"dspName" : ad.DSPName ?: @""};
 }
 
 #pragma mark - Flutter Event Channel
