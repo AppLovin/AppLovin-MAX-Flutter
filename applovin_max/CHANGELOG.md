@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+    * Fix linter warnings.
 ## 1.0.4
     * Add support for `AppLovinMAX.isInitialized()` API.
     * Add support for getting DSP name if the ad is served by AppLovin Exchange via `ad.dspName`.
