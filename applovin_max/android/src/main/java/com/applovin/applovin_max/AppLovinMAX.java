@@ -530,7 +530,7 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = new HashMap<>( 3 );
+            Map<String, String> params = new HashMap<>( 3 );
             params.put( "adUnitId", adUnitId );
             params.put( "errorCode", Integer.toString( error.getCode() ) );
             params.put( "errorMessage", error.getMessage() );
@@ -608,7 +608,7 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = getAdInfo( ad );
+            Map<String, String> params = getAdInfo( ad );
             params.put( "errorCode", Integer.toString( error.getCode() ) );
             params.put( "errorMessage", error.getMessage() );
             fireCallback( name, params );
@@ -685,11 +685,11 @@ public class AppLovinMAX
         }
 
         final String rewardLabel = reward != null ? reward.getLabel() : "";
-        final int rewardAmount = reward != null ? reward.getAmount() : 0;
+        final String rewardAmount = Integer.toString( reward != null ? reward.getAmount() : 0 );
 
         try
         {
-            Map<String, Object> params = getAdInfo( ad );
+            Map<String, String> params = getAdInfo( ad );
             params.put( "rewardLabel", rewardLabel );
             params.put( "rewardAmount", rewardAmount );
             fireCallback( "OnRewardedAdReceivedRewardEvent", params );
@@ -1083,9 +1083,9 @@ public class AppLovinMAX
         }
     }
 
-    private Map<String, Object> getAdInfo(final MaxAd ad)
+    private Map<String, String> getAdInfo(final MaxAd ad)
     {
-        Map<String, Object> adInfo = new HashMap<>( 5 );
+        Map<String, String> adInfo = new HashMap<>( 6 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
         adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
         adInfo.put( "networkName", ad.getNetworkName() );
@@ -1362,7 +1362,7 @@ public class AppLovinMAX
         }
     }
 
-    private void fireCallback(final String name, final Map<String, Object> params)
+    private void fireCallback(final String name, final Map<String, String> params)
     {
         channel.invokeMethod( name, params );
     }
