@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 1.0.5
     * Fix linter warnings.
     * Fix `OnRewardedAdReceivedRewardEvent()` callback not being called on Android. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/14.
 ## 1.0.4
