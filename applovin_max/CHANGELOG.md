@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+    * Add `s.static_framework = true` in `applovin_max.podspec`. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/10.
 ## 1.0.5
     * Fix linter warnings.
     * Fix `OnRewardedAdReceivedRewardEvent()` callback not being called on Android. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/14.
