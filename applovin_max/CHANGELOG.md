@@ -2,6 +2,7 @@
 
 ## x.x.x
     * Fix linter warnings.
+    * Fix `OnRewardedAdReceivedRewardEvent()` callback not being called on Android. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/14.
 ## 1.0.4
     * Add support for `AppLovinMAX.isInitialized()` API.
     * Add support for getting DSP name if the ad is served by AppLovin Exchange via `ad.dspName`.

@@ -622,12 +622,11 @@ static FlutterMethodChannel *channel;
         return;
     }
     
-    NSString *rewardLabel = reward ? reward.label : @"";
-    NSInteger rewardAmountInt = reward ? reward.amount : 0;
-    NSString *rewardAmount = [@(rewardAmountInt) stringValue];
+    NSString *rewardLabel = reward.label ?: @"";
+    NSString *rewardAmount = [@(reward.amount) stringValue];
     
-    NSMutableDictionary *body = [@{@"rewardLabel": rewardLabel,
-                                   @"rewardAmount": rewardAmount} mutableCopy];
+    NSMutableDictionary<NSString *, NSString *> *body = [@{@"rewardLabel": rewardLabel,
+                                                           @"rewardAmount": rewardAmount} mutableCopy];
     [body addEntriesFromDictionary: [self adInfoForAd: ad]];
     
     [self sendEventWithName: @"OnRewardedAdReceivedRewardEvent" body: body];
@@ -993,7 +992,7 @@ static FlutterMethodChannel *channel;
     }
 }
 
-- (NSDictionary<NSString *, id> *)adInfoForAd:(MAAd *)ad
+- (NSDictionary<NSString *, NSString *> *)adInfoForAd:(MAAd *)ad
 {
     // NOTE: Empty strings might get co-erced into [NSNull null] through Flutter channel and cause issues
     return @{@"adUnitId" : ad.adUnitIdentifier,
@@ -1006,7 +1005,7 @@ static FlutterMethodChannel *channel;
 
 #pragma mark - Flutter Event Channel
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body
 {
     [channel invokeMethod: name arguments: body];
 }
