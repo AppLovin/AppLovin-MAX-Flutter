@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -97,7 +98,19 @@ public class AppLovinMAX
 
     private boolean isInitialized()
     {
-        return isPluginInitialized && isSdkInitialized;
+        return isInitialized( null );
+    }
+
+    private boolean isInitialized(@Nullable final Result result)
+    {
+        boolean isInitialized = isPluginInitialized && isSdkInitialized;
+
+        if ( result != null )
+        {
+            result.success( isInitialized );
+        }
+
+        return isInitialized;
     }
 
     private void initialize(final String pluginVersion, final String sdkKey, final Result result)
@@ -517,7 +530,7 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = new HashMap<>( 3 );
+            Map<String, String> params = new HashMap<>( 3 );
             params.put( "adUnitId", adUnitId );
             params.put( "errorCode", Integer.toString( error.getCode() ) );
             params.put( "errorMessage", error.getMessage() );
@@ -595,7 +608,7 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = getAdInfo( ad );
+            Map<String, String> params = getAdInfo( ad );
             params.put( "errorCode", Integer.toString( error.getCode() ) );
             params.put( "errorMessage", error.getMessage() );
             fireCallback( name, params );
@@ -672,11 +685,11 @@ public class AppLovinMAX
         }
 
         final String rewardLabel = reward != null ? reward.getLabel() : "";
-        final int rewardAmount = reward != null ? reward.getAmount() : 0;
+        final String rewardAmount = Integer.toString( reward != null ? reward.getAmount() : 0 );
 
         try
         {
-            Map<String, Object> params = getAdInfo( ad );
+            Map<String, String> params = getAdInfo( ad );
             params.put( "rewardLabel", rewardLabel );
             params.put( "rewardAmount", rewardAmount );
             fireCallback( "OnRewardedAdReceivedRewardEvent", params );
@@ -1070,14 +1083,15 @@ public class AppLovinMAX
         }
     }
 
-    private Map<String, Object> getAdInfo(final MaxAd ad)
+    private Map<String, String> getAdInfo(final MaxAd ad)
     {
-        Map<String, Object> adInfo = new HashMap<>( 5 );
+        Map<String, String> adInfo = new HashMap<>( 6 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
         adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
         adInfo.put( "networkName", ad.getNetworkName() );
         adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
         adInfo.put( "revenue", Double.toString( ad.getRevenue() ) );
+        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
 
         return adInfo;
     }
@@ -1097,6 +1111,10 @@ public class AppLovinMAX
             String pluginVersion = call.argument( "plugin_version" );
             String sdkKey = call.argument( "sdk_key" );
             initialize( pluginVersion, sdkKey, result );
+        }
+        else if ( "isInitialized".equals( call.method ) )
+        {
+            isInitialized( result );
         }
         else if ( "isTablet".equals( call.method ) )
         {
@@ -1344,7 +1362,7 @@ public class AppLovinMAX
         }
     }
 
-    private void fireCallback(final String name, final Map<String, Object> params)
+    private void fireCallback(final String name, final Map<String, String> params)
     {
         channel.invokeMethod( name, params );
     }

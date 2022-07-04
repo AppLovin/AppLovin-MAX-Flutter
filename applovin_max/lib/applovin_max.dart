@@ -7,9 +7,9 @@ export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
 
 class AppLovinMAX {
-  static const version = "1.0.3";
+  static const version = "1.0.6";
 
-  static MethodChannel _channel = const MethodChannel('applovin_max');
+  static MethodChannel channel = const MethodChannel('applovin_max');
 
   static AdViewAdListener? _bannerAdListener;
   static AdViewAdListener? _mrecAdListener;
@@ -17,13 +17,12 @@ class AppLovinMAX {
   static RewardedAdListener? _rewardedAdListener;
 
   static Future<Map?> initialize(String sdkKey) {
-
-    _channel.setMethodCallHandler((MethodCall call) async {
+    channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
 
       var adUnitId = arguments["adUnitId"];
-      
+
       /// Banner Ad Events
       if ("OnBannerAdLoadedEvent" == method) {
         _bannerAdListener?.onAdLoadedCallback(_createAd(adUnitId, arguments));
@@ -90,7 +89,7 @@ class AppLovinMAX {
       }
     });
 
-    return _channel.invokeMethod('initialize', {
+    return channel.invokeMethod('initialize', {
       'plugin_version': version,
       'sdk_key': sdkKey,
     });
@@ -102,16 +101,17 @@ class AppLovinMAX {
       arguments["networkName"],
       arguments["revenue"],
       arguments["creativeId"],
+      arguments["dspName"],
       arguments["placement"],
     );
   }
 
   static Future<bool?> isInitialized() {
-    return _channel.invokeMethod('isInitialized');
+    return channel.invokeMethod('isInitialized');
   }
 
   static void showMediationDebugger() {
-    _channel.invokeMethod('showMediationDebugger');
+    channel.invokeMethod('showMediationDebugger');
   }
 
   ///
@@ -119,37 +119,37 @@ class AppLovinMAX {
   ///
 
   static Future<int?> getConsentDialogState() {
-    return _channel.invokeMethod('getConsentDialogState');
+    return channel.invokeMethod('getConsentDialogState');
   }
 
   static void setHasUserConsent(bool hasUserConsent) {
-    _channel.invokeMethod('setHasUserConsent', {
+    channel.invokeMethod('setHasUserConsent', {
       'value': hasUserConsent,
     });
   }
 
   static Future<bool?> hasUserConsent() {
-    return _channel.invokeMethod('hasUserConsent');
+    return channel.invokeMethod('hasUserConsent');
   }
 
   static void setIsAgeRestrictedUser(bool isAgeRestrictedUser) {
-    _channel.invokeMethod('setIsAgeRestrictedUser', {
+    channel.invokeMethod('setIsAgeRestrictedUser', {
       'value': isAgeRestrictedUser,
     });
   }
 
   static Future<bool?> isAgeRestrictedUser() {
-    return _channel.invokeMethod('isAgeRestrictedUser');
+    return channel.invokeMethod('isAgeRestrictedUser');
   }
 
   static void setDoNotSell(bool isDoNotSell) {
-    _channel.invokeMethod('setDoNotSell', {
+    channel.invokeMethod('setDoNotSell', {
       'value': isDoNotSell,
     });
   }
 
   static Future<bool?> isDoNotSell() {
-    return _channel.invokeMethod('isDoNotSell');
+    return channel.invokeMethod('isDoNotSell');
   }
 
   ///
@@ -157,25 +157,25 @@ class AppLovinMAX {
   ///
 
   static void setUserId(String userId) {
-    _channel.invokeMethod('setUserId', {
+    channel.invokeMethod('setUserId', {
       'value': userId,
     });
   }
 
   static void setMuted(bool muted) {
-    _channel.invokeMethod('setMuted', {
+    channel.invokeMethod('setMuted', {
       'value': muted,
     });
   }
 
   static void setVerboseLogging(enabled) {
-    _channel.invokeMethod('setVerboseLogging', {
+    channel.invokeMethod('setVerboseLogging', {
       'value': enabled,
     });
   }
 
   static void setTestDeviceAdvertisingIds(List advertisingIdentifiers) {
-    _channel.invokeMethod('setTestDeviceAdvertisingIds', {
+    channel.invokeMethod('setTestDeviceAdvertisingIds', {
       'value': advertisingIdentifiers,
     });
   }
@@ -189,35 +189,35 @@ class AppLovinMAX {
   }
 
   static void createBanner(String adUnitId, AdViewPosition position) {
-    _channel.invokeMethod('createBanner', {
+    channel.invokeMethod('createBanner', {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
   }
 
   static void setBannerBackgroundColor(String adUnitId, String hexColorCodeString) {
-    _channel.invokeMethod('setBannerBackgroundColor', {
+    channel.invokeMethod('setBannerBackgroundColor', {
       'ad_unit_id': adUnitId,
       'hex_color_code': hexColorCodeString,
     });
   }
 
   static void setBannerPlacement(String adUnitId, String placement) {
-    _channel.invokeMethod('setBannerPlacement', {
+    channel.invokeMethod('setBannerPlacement', {
       'ad_unit_id': adUnitId,
       'placement': placement,
     });
   }
 
   static void updateBannerPosition(String adUnitId, AdViewPosition position) {
-    _channel.invokeMethod('updateBannerPosition', {
+    channel.invokeMethod('updateBannerPosition', {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
   }
 
   static void setBannerExtraParameter(String adUnitId, String key, String value) {
-    _channel.invokeMethod('setBannerExtraParameter', {
+    channel.invokeMethod('setBannerExtraParameter', {
       'ad_unit_id': adUnitId,
       'key': key,
       'value': value,
@@ -225,19 +225,19 @@ class AppLovinMAX {
   }
 
   static void showBanner(String adUnitId) {
-    _channel.invokeMethod('showBanner', {
+    channel.invokeMethod('showBanner', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static void hideBanner(String adUnitId) {
-    _channel.invokeMethod('hideBanner', {
+    channel.invokeMethod('hideBanner', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static void destroyBanner(String adUnitId) {
-    _channel.invokeMethod('destroyBanner', {
+    channel.invokeMethod('destroyBanner', {
       'ad_unit_id': adUnitId,
     });
   }
@@ -251,40 +251,40 @@ class AppLovinMAX {
   }
 
   static void createMRec(String adUnitId, AdViewPosition position) {
-    _channel.invokeMethod('createMRec', {
+    channel.invokeMethod('createMRec', {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
   }
 
   static void setMRecPlacement(String adUnitId, String placement) {
-    _channel.invokeMethod('setMRecPlacement', {
+    channel.invokeMethod('setMRecPlacement', {
       'ad_unit_id': adUnitId,
       'placement': placement,
     });
   }
 
   static void updateMRecPosition(String adUnitId, AdViewPosition position) {
-    _channel.invokeMethod('updateMRecPosition', {
+    channel.invokeMethod('updateMRecPosition', {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
   }
 
   static void showMRec(String adUnitId) {
-    _channel.invokeMethod('showMRec', {
+    channel.invokeMethod('showMRec', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static void hideMRec(String adUnitId) {
-    _channel.invokeMethod('hideMRec', {
+    channel.invokeMethod('hideMRec', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static void destroyMRec(String adUnitId) {
-    _channel.invokeMethod('destroyMRec', {
+    channel.invokeMethod('destroyMRec', {
       'ad_unit_id': adUnitId,
     });
   }
@@ -298,19 +298,19 @@ class AppLovinMAX {
   }
 
   static void loadInterstitial(String adUnitId) {
-    _channel.invokeMethod('loadInterstitial', {
+    channel.invokeMethod('loadInterstitial', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static Future<bool?> isInterstitialReady(String adUnitId) {
-    return _channel.invokeMethod('isInterstitialReady', {
+    return channel.invokeMethod('isInterstitialReady', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  static void showInterstitial(String adUnitId, {placement = null, customData = null}) {
-    _channel.invokeMethod('showInterstitial', {
+  static void showInterstitial(String adUnitId, {placement, customData}) {
+    channel.invokeMethod('showInterstitial', {
       'ad_unit_id': adUnitId,
       'placement': placement,
       'custom_data': customData,
@@ -318,7 +318,7 @@ class AppLovinMAX {
   }
 
   static void setInterstitialExtraParameter(String adUnitId, String key, String value) {
-    _channel.invokeMethod('setInterstitialExtraParameter', {
+    channel.invokeMethod('setInterstitialExtraParameter', {
       'ad_unit_id': adUnitId,
       'key': key,
       'value': value,
@@ -334,19 +334,19 @@ class AppLovinMAX {
   }
 
   static void loadRewardedAd(String adUnitId) {
-    _channel.invokeMethod('loadRewardedAd', {
+    channel.invokeMethod('loadRewardedAd', {
       'ad_unit_id': adUnitId,
     });
   }
 
   static Future<bool?> isRewardedAdReady(String adUnitId) {
-    return _channel.invokeMethod('isRewardedAdReady', {
+    return channel.invokeMethod('isRewardedAdReady', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  static void showRewardedAd(String adUnitId, {placement = null, customData = null}) {
-    _channel.invokeMethod('showRewardedAd', {
+  static void showRewardedAd(String adUnitId, {placement, customData}) {
+    channel.invokeMethod('showRewardedAd', {
       'ad_unit_id': adUnitId,
       'placement': placement,
       'custom_data': customData,
@@ -354,7 +354,7 @@ class AppLovinMAX {
   }
 
   static void setRewardedAdExtraParameter(String adUnitId, String key, String value) {
-    _channel.invokeMethod('setRewardedAdExtraParameter', {
+    channel.invokeMethod('setRewardedAdExtraParameter', {
       'ad_unit_id': adUnitId,
       'key': key,
       'value': value,

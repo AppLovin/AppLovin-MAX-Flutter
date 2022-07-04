@@ -79,7 +79,19 @@ static FlutterMethodChannel *channel;
 
 - (BOOL)isInitialized
 {
-    return [self isPluginInitialized] && [self isSDKInitialized];
+    return [self isInitialized: nil];
+}
+
+- (BOOL)isInitialized:(nullable FlutterResult)result
+{
+    BOOL isInitialized = [self isPluginInitialized] && [self isSDKInitialized];
+    
+    if ( result )
+    {
+        result(@(isInitialized));
+    }
+    
+    return isInitialized;
 }
 
 - (void)initializeWithPluginVersion:(NSString *)pluginVersion sdkKey:(NSString *)sdkKey andNotify:(FlutterResult)result
@@ -610,12 +622,11 @@ static FlutterMethodChannel *channel;
         return;
     }
     
-    NSString *rewardLabel = reward ? reward.label : @"";
-    NSInteger rewardAmountInt = reward ? reward.amount : 0;
-    NSString *rewardAmount = [@(rewardAmountInt) stringValue];
+    NSString *rewardLabel = reward.label ?: @"";
+    NSString *rewardAmount = [@(reward.amount) stringValue];
     
-    NSMutableDictionary *body = [@{@"rewardLabel": rewardLabel,
-                                   @"rewardAmount": rewardAmount} mutableCopy];
+    NSMutableDictionary<NSString *, NSString *> *body = [@{@"rewardLabel": rewardLabel,
+                                                           @"rewardAmount": rewardAmount} mutableCopy];
     [body addEntriesFromDictionary: [self adInfoForAd: ad]];
     
     [self sendEventWithName: @"OnRewardedAdReceivedRewardEvent" body: body];
@@ -981,19 +992,20 @@ static FlutterMethodChannel *channel;
     }
 }
 
-- (NSDictionary<NSString *, id> *)adInfoForAd:(MAAd *)ad
+- (NSDictionary<NSString *, NSString *> *)adInfoForAd:(MAAd *)ad
 {
     // NOTE: Empty strings might get co-erced into [NSNull null] through Flutter channel and cause issues
     return @{@"adUnitId" : ad.adUnitIdentifier,
              @"creativeId" : ad.creativeIdentifier ?: @"",
              @"networkName" : ad.networkName,
              @"placement" : ad.placement ?: @"",
-             @"revenue" : @(ad.revenue).stringValue};
+             @"revenue" : @(ad.revenue).stringValue,
+             @"dspName" : ad.DSPName ?: @""};
 }
 
 #pragma mark - Flutter Event Channel
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body
 {
     [channel invokeMethod: name arguments: body];
 }
@@ -1005,6 +1017,10 @@ static FlutterMethodChannel *channel;
         NSString *pluginVersion = call.arguments[@"plugin_version"];
         NSString *sdkKey = call.arguments[@"sdk_key"];
         [self initializeWithPluginVersion: pluginVersion sdkKey: sdkKey andNotify: result];
+    }
+    else if ( [@"isInitialized" isEqualToString: call.method] )
+    {
+        [self isInitialized: result];
     }
     else if ( [@"isTablet" isEqualToString: call.method] )
     {
