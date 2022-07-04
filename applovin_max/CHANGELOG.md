@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 1.0.7
     * Depends on Android SDK v11.4.4 and iOS SDK v11.4.3.
 ## 1.0.6
     * Add `s.static_framework = true` in `applovin_max.podspec`. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/10.
