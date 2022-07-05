@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
     'AppLovin Corporation' => 'devsupport@applovin.com'
   }
   s.name             = 'applovin_max'
-  s.version          = '1.0.6'
+  s.version          = '1.0.7'
   s.summary          = 'AppLovin MAX Flutter Plugin'
   s.description      = <<-DESC
 AppLovin MAX Flutter Plugin
@@ -21,7 +21,7 @@ DESC
   s.platform = :ios, '9.0'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'AppLovinSDK', '11.4.2'
+  s.dependency 'AppLovinSDK', '11.4.3'
   
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
