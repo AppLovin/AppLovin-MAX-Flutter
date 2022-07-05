@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+    * Fix impression counting for fullscreen ads on iOS.
 ## 1.0.7
     * Depends on Android SDK v11.4.4 and iOS SDK v11.4.3.
 ## 1.0.6
