@@ -26,5 +26,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+           <meta-data
+            android:name="applovin.sdk.verbose_logging"
+            android:value="true" />
     </application>
 </manifest>
