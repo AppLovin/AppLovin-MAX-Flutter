@@ -1,5 +1,6 @@
 #import "AppLovinMAX.h"
-#import <AppLovinSDK/AppLovinSDK.h>
+#import "ALSdk.h"
+#import "AppLovinSDK.h"
 
 #define ROOT_VIEW_CONTROLLER ([ALUtils topViewControllerFromKeyWindow])
 #define DEVICE_SPECIFIC_ADVIEW_AD_FORMAT ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) ? MAAdFormat.leader : MAAdFormat.banner
