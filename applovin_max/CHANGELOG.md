@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-    * Fix impression counting for fullscreen ads on iOS.
+    * Fix impression counting for fullscreen ads on iOS. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/19.
 ## 1.0.7
     * Depends on Android SDK v11.4.4 and iOS SDK v11.4.3.
 ## 1.0.6
