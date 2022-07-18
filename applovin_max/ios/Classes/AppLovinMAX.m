@@ -1117,7 +1117,10 @@ static FlutterMethodChannel *channel;
     else if ( [@"setBannerPlacement" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        NSString *placement = call.arguments[@"placement"];
+        
+        id rawPlacement = call.arguments[@"placement"];
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        
         [self setBannerPlacementForAdUnitIdentifier: adUnitId placement: placement];
         
         result(nil);
@@ -1171,7 +1174,10 @@ static FlutterMethodChannel *channel;
     else if ( [@"setMRecPlacement" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        NSString *placement = call.arguments[@"placement"];
+        
+        id rawPlacement = call.arguments[@"placement"];
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        
         [self setMRecPlacementForAdUnitIdentifier: adUnitId placement: placement];
         
         result(nil);
@@ -1220,7 +1226,10 @@ static FlutterMethodChannel *channel;
     else if ( [@"showInterstitial" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        NSString *placement = call.arguments[@"placement"];
+        
+        id rawPlacement = call.arguments[@"placement"];
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        
         [self showInterstitialForAdUnitIdentifier: adUnitId placement: placement];
         
         result(nil);
@@ -1249,7 +1258,10 @@ static FlutterMethodChannel *channel;
     else if ( [@"showRewardedAd" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        NSString *placement = call.arguments[@"placement"];
+        
+        id rawPlacement = call.arguments[@"placement"];
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        
         [self showRewardedAdForAdUnitIdentifier: adUnitId placement: placement];
         
         result(nil);
