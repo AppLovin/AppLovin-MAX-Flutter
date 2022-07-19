@@ -34,8 +34,10 @@ var _rewardedAdLoadState = AdLoadState.notLoaded;
 var _rewardedAdRetryAttempt = 0;
 var _isProgrammaticBannerCreated = false;
 var _isProgrammaticBannerShowing = false;
+var _isWidgetBannerShowing = false;
 var _isProgrammaticMRecCreated = false;
 var _isProgrammaticMRecShowing = false;
+var _isWidgetMRecShowing = false;
 
 var _statusText = "";
 
@@ -185,12 +187,20 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  String getBannerButtonTitle() {
+  String getProgrammaticBannerButtonTitle() {
     return _isProgrammaticBannerShowing ? 'Hide Programmatic Banner' : 'Show Programmatic Banner';
   }
 
-  String getMRecButtonTitle() {
+  String getWidgetBannerButtonTitle() {
+    return _isWidgetBannerShowing ? 'Hide Widget Banner' : 'Show Widget Banner';
+  }
+
+  String getProgrammaticMRecButtonTitle() {
     return _isProgrammaticMRecShowing ? 'Hide Programmatic MREC' : 'Show Programmatic MREC';
+  }
+
+  String getWidgetMRecButtonTitle() {
+    return _isWidgetMRecShowing ? 'Hide Widget MREC' : 'Show Widget MREC';
   }
 
   void logStatus(String status) {
@@ -256,7 +266,7 @@ class _MyAppState extends State<MyApp> {
                 child: Text(getRewardedButtonTitle()),
               ),
               ElevatedButton(
-                onPressed: (_isInitialized)
+                onPressed: (_isInitialized && !_isWidgetBannerShowing)
                     ? () async {
                         if (_isProgrammaticBannerShowing) {
                           AppLovinMAX.hideBanner(_banner_ad_unit_id);
@@ -276,13 +286,25 @@ class _MyAppState extends State<MyApp> {
                           AppLovinMAX.showBanner(_banner_ad_unit_id);
                         }
 
-                        _isProgrammaticBannerShowing = !_isProgrammaticBannerShowing;
+                        setState(() {
+                          _isProgrammaticBannerShowing = !_isProgrammaticBannerShowing;
+                        });
                       }
                     : null,
-                child: Text(getBannerButtonTitle()),
+                child: Text(getProgrammaticBannerButtonTitle()),
               ),
               ElevatedButton(
-                onPressed: (_isInitialized)
+                onPressed: (_isInitialized && !_isProgrammaticBannerShowing)
+                    ? () async {
+                        setState(() {
+                          _isWidgetBannerShowing = !_isWidgetBannerShowing;
+                        });
+                      }
+                    : null,
+                child: Text(getWidgetBannerButtonTitle()),
+              ),
+              ElevatedButton(
+                onPressed: (_isInitialized && !_isWidgetMRecShowing)
                     ? () async {
                         if (_isProgrammaticMRecShowing) {
                           AppLovinMAX.hideMRec(_mrec_ad_unit_id);
@@ -296,11 +318,53 @@ class _MyAppState extends State<MyApp> {
                           AppLovinMAX.showMRec(_mrec_ad_unit_id);
                         }
 
-                        _isProgrammaticMRecShowing = !_isProgrammaticMRecShowing;
+                        setState(() {
+                          _isProgrammaticMRecShowing = !_isProgrammaticMRecShowing;
+                        });
                       }
                     : null,
-                child: Text(getMRecButtonTitle()),
-              )
+                child: Text(getProgrammaticMRecButtonTitle()),
+              ),
+              ElevatedButton(
+                onPressed: (_isInitialized && !_isProgrammaticMRecShowing)
+                    ? () async {
+                        setState(() {
+                          _isWidgetMRecShowing = !_isWidgetMRecShowing;
+                        });
+                      }
+                    : null,
+                child: Text(getWidgetMRecButtonTitle()),
+              ),
+              if (_isWidgetBannerShowing)
+                MaxAdView(
+                    adUnitId: _banner_ad_unit_id,
+                    adFormat: AdFormat.banner,
+                    listener: AdViewAdListener(onAdLoadedCallback: (ad) {
+                      logStatus('Banner widget ad loaded from ' + ad.networkName);
+                    }, onAdLoadFailedCallback: (adUnitId, error) {
+                      logStatus('Banner widget ad failed to load with error code ' + error.code.toString() + ' and message: ' + error.message);
+                    }, onAdClickedCallback: (ad) {
+                      logStatus('Banner widget ad clicked');
+                    }, onAdExpandedCallback: (ad) {
+                      logStatus('Banner widget ad expanded');
+                    }, onAdCollapsedCallback: (ad) {
+                      logStatus('Banner widget ad collapsed');
+                    })),
+              if (_isWidgetMRecShowing)
+                MaxAdView(
+                    adUnitId: _mrec_ad_unit_id,
+                    adFormat: AdFormat.mrec,
+                    listener: AdViewAdListener(onAdLoadedCallback: (ad) {
+                      logStatus('MREC widget ad loaded from ' + ad.networkName);
+                    }, onAdLoadFailedCallback: (adUnitId, error) {
+                      logStatus('MREC widget ad failed to load with error code ' + error.code.toString() + ' and message: ' + error.message);
+                    }, onAdClickedCallback: (ad) {
+                      logStatus('MREC widget ad clicked');
+                    }, onAdExpandedCallback: (ad) {
+                      logStatus('MREC widget ad expanded');
+                    }, onAdCollapsedCallback: (ad) {
+                      logStatus('MREC widget ad collapsed');
+                    })),
             ],
           )),
     );

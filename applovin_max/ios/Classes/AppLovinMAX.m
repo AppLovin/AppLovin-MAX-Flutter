@@ -1,8 +1,7 @@
 #import "AppLovinMAX.h"
-#import <AppLovinSDK/AppLovinSDK.h>
+#import "AppLovinMAXAdViewFactory.h"
 
 #define ROOT_VIEW_CONTROLLER ([ALUtils topViewControllerFromKeyWindow])
-#define DEVICE_SPECIFIC_ADVIEW_AD_FORMAT ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) ? MAAdFormat.leader : MAAdFormat.banner
 
 // Internal
 @interface UIColor (ALUtils)
@@ -45,13 +44,23 @@
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
 
-static FlutterMethodChannel *channel;
+static AppLovinMAX *AppLovinMAXShared;
+
+static FlutterMethodChannel *ALSharedChannel;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
-    channel = [FlutterMethodChannel methodChannelWithName: @"applovin_max" binaryMessenger: [registrar messenger]];
+    ALSharedChannel = [FlutterMethodChannel methodChannelWithName: @"applovin_max" binaryMessenger: [registrar messenger]];
     AppLovinMAX *instance = [[AppLovinMAX alloc] init];
-    [registrar addMethodCallDelegate: instance channel: channel];
+    [registrar addMethodCallDelegate: instance channel: ALSharedChannel];
+    
+    AppLovinMAXAdViewFactory *adViewFactory = [[AppLovinMAXAdViewFactory alloc] initWithMessenger: [registrar messenger]];
+    [registrar registerViewFactory: adViewFactory withId: @"applovin_max/adview"];
+}
+
++ (AppLovinMAX *)shared
+{
+    return AppLovinMAXShared;
 }
 
 - (instancetype)init
@@ -59,6 +68,8 @@ static FlutterMethodChannel *channel;
     self = [super init];
     if ( self )
     {
+        AppLovinMAXShared = self;
+        
         self.interstitials = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.rewardedAds = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViews = [NSMutableDictionary dictionaryWithCapacity: 2];
@@ -782,6 +793,16 @@ static FlutterMethodChannel *channel;
     NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
 }
 
++ (void)log:(NSString *)format, ...
+{
+    va_list valist;
+    va_start(valist, format);
+    NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
+    va_end(valist);
+    
+    NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
+}
+
 - (MAInterstitialAd *)retrieveInterstitialForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     MAInterstitialAd *result = self.interstitials[adUnitIdentifier];
@@ -1005,7 +1026,17 @@ static FlutterMethodChannel *channel;
 
 #pragma mark - Flutter Event Channel
 
+- (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad channel:(FlutterMethodChannel *)channel
+{
+    [self sendEventWithName: name body: [self adInfoForAd: ad] channel: channel];
+}
+
 - (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body
+{
+    [self sendEventWithName: name body: body channel: ALSharedChannel];
+}
+
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body channel:(FlutterMethodChannel *)channel
 {
     [channel invokeMethod: name arguments: body];
 }
