@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
+                    placement:(nullable NSString *)placement
+                   customData:(nullable NSString *)customData
                     messenger:(id<FlutterBinaryMessenger>)messenger
                           sdk:(ALSdk *)sdk;
 

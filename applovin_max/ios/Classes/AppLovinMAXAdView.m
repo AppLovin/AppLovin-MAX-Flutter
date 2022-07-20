@@ -16,7 +16,13 @@
 
 @implementation AppLovinMAXAdView
 
-- (instancetype)initWithFrame:(CGRect)frame viewId:(int64_t)viewId adUnitId:(NSString *)adUnitId adFormat:(MAAdFormat *)adFormat messenger:(id<FlutterBinaryMessenger>)messenger sdk:(ALSdk *)sdk
+- (instancetype)initWithFrame:(CGRect)frame
+                       viewId:(int64_t)viewId
+                     adUnitId:(NSString *)adUnitId
+                     adFormat:(MAAdFormat *)adFormat
+                    placement:(nullable NSString *)placement
+                   customData:(nullable NSString *)customData
+                    messenger:(id<FlutterBinaryMessenger>)messenger sdk:(ALSdk *)sdk
 {
     self = [super init];
     if ( self )
@@ -27,6 +33,9 @@
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat sdk: sdk];
         self.adView.frame = frame;
         self.adView.delegate = self;
+        
+        self.adView.placement = placement;
+        self.adView.customData = customData;
         
         [self.adView loadAd];
     }

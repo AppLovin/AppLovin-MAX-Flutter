@@ -31,7 +31,7 @@ public class AppLovinMAXAdViewFactory
 
     @NonNull
     @Override
-    public PlatformView create(@Nullable final Context context, final int viewId, @Nullable final Object rawArgs)
+    public PlatformView create(@Nullable final Context context, final int viewId, final Object rawArgs)
     {
         // Ensure plugin has been initialized
         AppLovinSdk sdk = AppLovinMAX.getInstance().getSdk();
@@ -41,14 +41,19 @@ public class AppLovinMAXAdViewFactory
             return null;
         }
 
-        Map<String, Object> args = (Map<String, Object>) rawArgs;
+        Map<String, String> args = (Map<String, String>) rawArgs;
 
         String adUnitId = (String) args.get( "ad_unit_id" );
         String adFormatStr = (String) args.get( "ad_format" );
-        MaxAdFormat adFormat = adFormatStr.equals( "mrec" ) ? MaxAdFormat.MREC : AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
+        MaxAdFormat adFormat = "mrec".equals( adFormatStr ) ? MaxAdFormat.MREC : AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
 
         AppLovinMAX.d( "Creating MaxAdView widget with Ad Unit ID: " + adUnitId );
 
-        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, messenger, sdk, context );
+        // Optional params
+
+        String placement = args.containsKey( "placement" ) ? (String) args.get( "placement" ) : null;
+        String customData = args.containsKey( "customData" ) ? (String) args.get( "customData" ) : null;
+
+        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, placement, customData, messenger, sdk, context );
     }
 }

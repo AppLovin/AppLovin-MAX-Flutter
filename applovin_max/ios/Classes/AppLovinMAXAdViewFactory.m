@@ -47,10 +47,16 @@
     
     [AppLovinMAX log: @"Creating MaxAdView widget with Ad Unit ID: %@", adUnitId];
     
+    // Optional params
+    NSString *placement = args[@"placement"];
+    NSString *customData = args[@"customData"];
+    
     return [[AppLovinMAXAdView alloc] initWithFrame: (CGRect) { .size = adFormat.size }
                                              viewId: viewId
                                            adUnitId: adUnitId
                                            adFormat: adFormat
+                                          placement: placement
+                                         customData: customData
                                           messenger: self.messenger
                                                 sdk: sdk];
 }

@@ -95,7 +95,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       var arguments = call.arguments;
 
       var adUnitId = arguments["adUnitId"];
-      
+
       if ("OnAdViewAdLoadedEvent" == method) {
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {

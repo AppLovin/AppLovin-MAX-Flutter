@@ -28,13 +28,16 @@ public class AppLovinMAXAdView
     private final MethodChannel channel;
     private final MaxAdView     adView;
 
-    public AppLovinMAXAdView(final int viewId, final String adUnitId, final MaxAdFormat adFormat, final BinaryMessenger messenger, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdView(final int viewId, final String adUnitId, final MaxAdFormat adFormat, @Nullable final String placement, @Nullable final String customData, final BinaryMessenger messenger, final AppLovinSdk sdk, final Context context)
     {
         String uniqueChannelName = "applovin_max/adview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
 
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
         adView.setListener( this );
+
+        adView.setPlacement( placement );
+        adView.setCustomData( customData );
 
         adView.loadAd();
     }
