@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
+export 'package:applovin_max/src/max_ad_view.dart';
 
 class AppLovinMAX {
   static const version = "1.0.8";
@@ -25,67 +26,67 @@ class AppLovinMAX {
 
       /// Banner Ad Events
       if ("OnBannerAdLoadedEvent" == method) {
-        _bannerAdListener?.onAdLoadedCallback(_createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdLoadFailedEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
         _bannerAdListener?.onAdLoadFailedCallback(adUnitId, error);
       } else if ("OnBannerAdClickedEvent" == method) {
-        _bannerAdListener?.onAdClickedCallback(_createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdExpandedEvent" == method) {
-        _bannerAdListener?.onAdExpandedCallback(_createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdCollapsedEvent" == method) {
-        _bannerAdListener?.onAdCollapsedCallback(_createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
       }
 
       /// MREC Ad Events
       else if ("OnMRecAdLoadedEvent" == method) {
-        _mrecAdListener?.onAdLoadedCallback(_createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
       } else if ("OnMRecAdLoadFailedEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
         _mrecAdListener?.onAdLoadFailedCallback(adUnitId, error);
       } else if ("OnMRecAdClickedEvent" == method) {
-        _mrecAdListener?.onAdClickedCallback(_createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
       } else if ("OnMrecAdExpandedEvent" == method) {
-        _mrecAdListener?.onAdExpandedCallback(_createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
       } else if ("OnMrecAdCollapsedEvent" == method) {
-        _mrecAdListener?.onAdCollapsedCallback(_createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
       }
 
       /// Interstitial Ad Events
       else if ("OnInterstitialLoadedEvent" == method) {
-        _interstitialListener?.onAdLoadedCallback.call(_createAd(adUnitId, arguments));
+        _interstitialListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialLoadFailedEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
         _interstitialListener?.onAdLoadFailedCallback(adUnitId, error);
       } else if ("OnInterstitialClickedEvent" == method) {
-        _interstitialListener?.onAdClickedCallback.call(_createAd(adUnitId, arguments));
+        _interstitialListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialDisplayedEvent" == method) {
-        _interstitialListener?.onAdDisplayedCallback.call(_createAd(adUnitId, arguments));
+        _interstitialListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialAdFailedToDisplayEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _interstitialListener?.onAdDisplayFailedCallback(_createAd(adUnitId, arguments), error);
+        _interstitialListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
       } else if ("OnInterstitialHiddenEvent" == method) {
-        _interstitialListener?.onAdHiddenCallback.call(_createAd(adUnitId, arguments));
+        _interstitialListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
       }
 
       /// Rewarded Ad Events
       else if ("OnRewardedAdLoadedEvent" == method) {
-        _rewardedAdListener?.onAdLoadedCallback.call(_createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdLoadFailedEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
         _rewardedAdListener?.onAdLoadFailedCallback(adUnitId, error);
       } else if ("OnRewardedAdClickedEvent" == method) {
-        _rewardedAdListener?.onAdClickedCallback.call(_createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdDisplayedEvent" == method) {
-        _rewardedAdListener?.onAdDisplayedCallback.call(_createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdFailedToDisplayEvent" == method) {
         var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _rewardedAdListener?.onAdDisplayFailedCallback(_createAd(adUnitId, arguments), error);
+        _rewardedAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
       } else if ("OnRewardedAdHiddenEvent" == method) {
-        _rewardedAdListener?.onAdHiddenCallback.call(_createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdReceivedRewardEvent" == method) {
         var reward = MaxReward(int.parse(arguments["rewardAmount"]), arguments["rewardLabel"]);
-        _rewardedAdListener?.onAdReceivedRewardCallback(_createAd(adUnitId, arguments), reward);
+        _rewardedAdListener?.onAdReceivedRewardCallback(createAd(adUnitId, arguments), reward);
       }
     });
 
@@ -95,7 +96,7 @@ class AppLovinMAX {
     });
   }
 
-  static MaxAd _createAd(String adUnitId, dynamic arguments) {
+  static MaxAd createAd(String adUnitId, dynamic arguments) {
     return MaxAd(
       adUnitId,
       arguments["networkName"],

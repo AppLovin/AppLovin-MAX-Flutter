@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+    * Add support for rendering banners [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method) and MRECs [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method) as widgets.
 ## 1.0.8
     * Fix impression counting for fullscreen ads on iOS. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/19.
 ## 1.0.7
