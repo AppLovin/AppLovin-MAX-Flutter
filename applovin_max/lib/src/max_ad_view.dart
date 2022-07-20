@@ -16,6 +16,13 @@ enum AdFormat {
   const AdFormat(this.value);
 }
 
+final double _banner_width = 320;
+final double _banner_height = 50;
+final double _leader_width = 728;
+final double _leader_height = 90;
+final double _mrec_width = 300;
+final double _mrec_height = 250;
+
 class MaxAdView extends StatefulWidget {
   /// A string value representing the ad unit id to load ads for.
   final String adUnitId;
@@ -113,9 +120,9 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   double _getWidth() {
     if (widget.adFormat == AdFormat.mrec) {
-      return 250;
+      return _mrec_width;
     } else if (widget.adFormat == AdFormat.banner) {
-      return _isTablet() ? 728 : 320;
+      return _isTablet() ? _leader_width : _banner_width;
     }
 
     return -1;
@@ -123,9 +130,9 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   double _getHeight() {
     if (widget.adFormat == AdFormat.mrec) {
-      return 300;
+      return _mrec_height;
     } else if (widget.adFormat == AdFormat.banner) {
-      return _isTablet() ? 90 : 50;
+      return _isTablet() ? _leader_height : _banner_height;
     }
 
     return -1;
