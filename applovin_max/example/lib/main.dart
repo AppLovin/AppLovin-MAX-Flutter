@@ -265,75 +265,85 @@ class _MyAppState extends State<MyApp> {
                     : null,
                 child: Text(getRewardedButtonTitle()),
               ),
-              ElevatedButton(
-                onPressed: (_isInitialized && !_isWidgetBannerShowing)
-                    ? () async {
-                        if (_isProgrammaticBannerShowing) {
-                          AppLovinMAX.hideBanner(_banner_ad_unit_id);
-                        } else {
-                          if (!_isProgrammaticBannerCreated) {
-                            //
-                            // Programmatic banner creation - banners are automatically sized to 320x50 on phones and 728x90 on tablets
-                            //
-                            AppLovinMAX.createBanner(_banner_ad_unit_id, AdViewPosition.bottomCenter);
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isWidgetBannerShowing)
+                        ? () async {
+                            if (_isProgrammaticBannerShowing) {
+                              AppLovinMAX.hideBanner(_banner_ad_unit_id);
+                            } else {
+                              if (!_isProgrammaticBannerCreated) {
+                                //
+                                // Programmatic banner creation - banners are automatically sized to 320x50 on phones and 728x90 on tablets
+                                //
+                                AppLovinMAX.createBanner(_banner_ad_unit_id, AdViewPosition.bottomCenter);
 
-                            // Set banner background color to black - PLEASE USE HEX STRINGS ONLY
-                            AppLovinMAX.setBannerBackgroundColor(_banner_ad_unit_id, '#000000');
+                                // Set banner background color to black - PLEASE USE HEX STRINGS ONLY
+                                AppLovinMAX.setBannerBackgroundColor(_banner_ad_unit_id, '#000000');
 
-                            _isProgrammaticBannerCreated = true;
+                                _isProgrammaticBannerCreated = true;
+                              }
+
+                              AppLovinMAX.showBanner(_banner_ad_unit_id);
+                            }
+
+                            setState(() {
+                              _isProgrammaticBannerShowing = !_isProgrammaticBannerShowing;
+                            });
                           }
-
-                          AppLovinMAX.showBanner(_banner_ad_unit_id);
-                        }
-
-                        setState(() {
-                          _isProgrammaticBannerShowing = !_isProgrammaticBannerShowing;
-                        });
-                      }
-                    : null,
-                child: Text(getProgrammaticBannerButtonTitle()),
-              ),
-              ElevatedButton(
-                onPressed: (_isInitialized && !_isProgrammaticBannerShowing)
-                    ? () async {
-                        setState(() {
-                          _isWidgetBannerShowing = !_isWidgetBannerShowing;
-                        });
-                      }
-                    : null,
-                child: Text(getWidgetBannerButtonTitle()),
-              ),
-              ElevatedButton(
-                onPressed: (_isInitialized && !_isWidgetMRecShowing)
-                    ? () async {
-                        if (_isProgrammaticMRecShowing) {
-                          AppLovinMAX.hideMRec(_mrec_ad_unit_id);
-                        } else {
-                          if (!_isProgrammaticMRecCreated) {
-                            AppLovinMAX.createMRec(_mrec_ad_unit_id, AdViewPosition.bottomCenter);
-
-                            _isProgrammaticMRecCreated = true;
+                        : null,
+                    child: Text(getProgrammaticBannerButtonTitle()),
+                  ),
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isProgrammaticBannerShowing)
+                        ? () async {
+                            setState(() {
+                              _isWidgetBannerShowing = !_isWidgetBannerShowing;
+                            });
                           }
-
-                          AppLovinMAX.showMRec(_mrec_ad_unit_id);
-                        }
-
-                        setState(() {
-                          _isProgrammaticMRecShowing = !_isProgrammaticMRecShowing;
-                        });
-                      }
-                    : null,
-                child: Text(getProgrammaticMRecButtonTitle()),
+                        : null,
+                    child: Text(getWidgetBannerButtonTitle()),
+                  )
+                ],
               ),
-              ElevatedButton(
-                onPressed: (_isInitialized && !_isProgrammaticMRecShowing)
-                    ? () async {
-                        setState(() {
-                          _isWidgetMRecShowing = !_isWidgetMRecShowing;
-                        });
-                      }
-                    : null,
-                child: Text(getWidgetMRecButtonTitle()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isWidgetMRecShowing)
+                        ? () async {
+                            if (_isProgrammaticMRecShowing) {
+                              AppLovinMAX.hideMRec(_mrec_ad_unit_id);
+                            } else {
+                              if (!_isProgrammaticMRecCreated) {
+                                AppLovinMAX.createMRec(_mrec_ad_unit_id, AdViewPosition.bottomCenter);
+
+                                _isProgrammaticMRecCreated = true;
+                              }
+
+                              AppLovinMAX.showMRec(_mrec_ad_unit_id);
+                            }
+
+                            setState(() {
+                              _isProgrammaticMRecShowing = !_isProgrammaticMRecShowing;
+                            });
+                          }
+                        : null,
+                    child: Text(getProgrammaticMRecButtonTitle()),
+                  ),
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isProgrammaticMRecShowing)
+                        ? () async {
+                            setState(() {
+                              _isWidgetMRecShowing = !_isWidgetMRecShowing;
+                            });
+                          }
+                        : null,
+                    child: Text(getWidgetMRecButtonTitle()),
+                  )
+                ],
               ),
               if (_isWidgetBannerShowing)
                 MaxAdView(
