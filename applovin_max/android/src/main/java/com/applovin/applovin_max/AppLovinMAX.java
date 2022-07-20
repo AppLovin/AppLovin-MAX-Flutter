@@ -55,7 +55,9 @@ public class AppLovinMAX
     private static final String SDK_TAG = "AppLovinSdk";
     private static final String TAG     = "AppLovinMAX";
 
-    private MethodChannel         channel;
+    public static AppLovinMAX instance;
+
+    private MethodChannel         sharedChannel;
     private Context               applicationContext;
     private ActivityPluginBinding lastActivityPluginBinding;
 
@@ -81,19 +83,34 @@ public class AppLovinMAX
     private final Map<String, String>      mAdViewPositions            = new HashMap<>( 2 );
     private final List<String>             mAdUnitIdsToShowAfterCreate = new ArrayList<>( 2 );
 
+    public static AppLovinMAX getInstance()
+    {
+        return instance;
+    }
+
+    public AppLovinSdk getSdk()
+    {
+        return sdk;
+    }
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding)
     {
-        channel = new MethodChannel( binding.getBinaryMessenger(), "applovin_max" );
-        channel.setMethodCallHandler( this );
+        instance = this;
 
         applicationContext = binding.getApplicationContext();
+
+        sharedChannel = new MethodChannel( binding.getBinaryMessenger(), "applovin_max" );
+        sharedChannel.setMethodCallHandler( this );
+
+        AppLovinMAXAdViewFactory adViewFactory = new AppLovinMAXAdViewFactory( binding.getBinaryMessenger() );
+        binding.getPlatformViewRegistry().registerViewFactory( "applovin_max/adview", adViewFactory );
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding)
     {
-        channel.setMethodCallHandler( null );
+        sharedChannel.setMethodCallHandler( null );
     }
 
     private boolean isInitialized()
@@ -1041,7 +1058,7 @@ public class AppLovinMAX
 
     // Utility Methods
 
-    private MaxAdFormat getDeviceSpecificBannerAdViewAdFormat()
+    public MaxAdFormat getDeviceSpecificBannerAdViewAdFormat()
     {
         return getDeviceSpecificBannerAdViewAdFormat( applicationContext );
     }
@@ -1362,7 +1379,17 @@ public class AppLovinMAX
         }
     }
 
-    private void fireCallback(final String name, final Map<String, String> params)
+    public void fireCallback(final String name, final MaxAd ad, final MethodChannel channel)
+    {
+        fireCallback( name, getAdInfo( ad ), channel );
+    }
+
+    public void fireCallback(final String name, final Map<String, String> params)
+    {
+        fireCallback( name, params, sharedChannel );
+    }
+
+    public void fireCallback(final String name, final Map<String, String> params, final MethodChannel channel)
     {
         channel.invokeMethod( name, params );
     }

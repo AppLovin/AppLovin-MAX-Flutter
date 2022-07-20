@@ -9,7 +9,7 @@
 #import "AppLovinMAX.h"
 #import <AppLovinSDK/AppLovinSDK.h>
 
-@interface AppLovinMAXAdView()<MAAdDelegate, MAAdViewAdDelegate>
+@interface AppLovinMAXAdView()<MAAdViewAdDelegate>
 @property (nonatomic, strong) FlutterMethodChannel *channel;
 @property (nonatomic, strong) MAAdView *adView;
 @end
