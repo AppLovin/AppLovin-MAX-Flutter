@@ -34,7 +34,6 @@ public class AppLovinMAXAdView
         channel = new MethodChannel( messenger, uniqueChannelName );
 
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
-        //adView.frame = frame;
         adView.setListener( this );
 
         adView.loadAd();
