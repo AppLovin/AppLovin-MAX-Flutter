@@ -96,8 +96,8 @@ class AppLovinMAX {
     });
   }
 
-    return MaxAd(
   static MaxAd createAd(String adUnitId, dynamic arguments) {
+    return MaxAd(
       adUnitId,
       arguments["networkName"],
       arguments["revenue"],
