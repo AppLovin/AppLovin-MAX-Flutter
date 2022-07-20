@@ -8,7 +8,7 @@ export 'package:applovin_max/src/enums.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
 
 class AppLovinMAX {
-  static const version = "1.0.8";
+  static const version = "2.0.0";
 
   static MethodChannel channel = const MethodChannel('applovin_max');
 
