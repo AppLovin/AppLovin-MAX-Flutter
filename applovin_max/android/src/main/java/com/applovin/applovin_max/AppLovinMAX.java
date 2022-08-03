@@ -96,7 +96,13 @@ public class AppLovinMAX
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding)
     {
-        instance = this;
+        // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
+        // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
+        //
+        // Workaround is move the code to onAttachedToActivity
+        // and onReattachedToActivityForConfigChanges, which will be only called once.
+        //
+        // instance = this;
 
         applicationContext = binding.getApplicationContext();
 
@@ -1399,6 +1405,10 @@ public class AppLovinMAX
     @Override
     public void onAttachedToActivity(@NonNull final ActivityPluginBinding binding)
     {
+        // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
+        // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
+        // Once the issue is resolved, we can check if we can move following one lines to onAttachedToEngine.
+        instance = this;
         lastActivityPluginBinding = binding;
     }
 
@@ -1406,7 +1416,13 @@ public class AppLovinMAX
     public void onDetachedFromActivityForConfigChanges() { }
 
     @Override
-    public void onReattachedToActivityForConfigChanges(@NonNull final ActivityPluginBinding binding) { }
+    public void onReattachedToActivityForConfigChanges(@NonNull final ActivityPluginBinding binding)
+    {
+        // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
+        // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
+        // Once the issue is resolved, we can check if we can move following one lines to onAttachedToEngine.
+        instance = this;
+    }
 
     @Override
     public void onDetachedFromActivity() { }
