@@ -7,12 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+/// Represents an ad format.
 enum AdFormat {
+  /// The banner ad.
   banner("banner"),
+  /// The MREC ad.
   mrec("mrec");
 
+  /// @nodoc
   final String value;
 
+  /// @nodoc
   const AdFormat(this.value);
 }
 
@@ -23,11 +28,12 @@ final double _leader_height = 90;
 final double _mrec_width = 300;
 final double _mrec_height = 250;
 
+/// Represents AdView.
 class MaxAdView extends StatefulWidget {
   /// A string value representing the ad unit id to load ads for.
   final String adUnitId;
 
-  /// A string value representing the ad format to load ads for. Should be either `AdFormat.banner` or `AdFormat.mrec`.
+  /// A string value representing the ad format to load ads for. Should be either [AdFormat.banner] or [AdFormat.mrec].
   final AdFormat adFormat;
 
   /// A string value representing the placement name that you assign when you integrate each ad format, for granular reporting in ad events.
@@ -39,6 +45,10 @@ class MaxAdView extends StatefulWidget {
   /// The listener for various ad callbacks.
   final AdViewAdListener? listener;
 
+  /// Creates a new ad view directly in the user's widget tree.
+  ///
+  /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
+  /// * [MREC Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method)
   const MaxAdView({
     Key? key,
     required this.adUnitId,
@@ -48,6 +58,7 @@ class MaxAdView extends StatefulWidget {
     this.listener,
   }) : super(key: key);
 
+  /// @nodoc
   @override
   _MaxAdViewState createState() => _MaxAdViewState();
 }

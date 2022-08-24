@@ -1,3 +1,4 @@
+/// Represents an AdView (Banner or MREC) position.
 enum AdViewPosition {
   topCenter("top_center"),
   topRight("top_right"),
@@ -8,14 +9,17 @@ enum AdViewPosition {
   bottomCenter("bottom_center"),
   bottomRight("bottom_right");
 
+  /// @nodoc
   final String value;
 
+  /// @nodoc
   const AdViewPosition(this.value);
 }
 
 ///
-/// This enum represents whether or not the consent dialog should be shown for this user.
-/// The state where no such determination could be made is represented by {@code ConsentDialogState.ConsentDialogState.ConsentDialogStateUnknown}.
+/// Represents whether or not the consent dialog should be shown for this user.
+///
+/// The state where no such determination could be made is represented by [ConsentDialogState.unknown].
 ///
 enum ConsentDialogState {
   ///
