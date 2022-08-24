@@ -1,4 +1,4 @@
-name: AppLovin_MAX_Example
+name: applovin_max_example
 description: Demonstrates how to use the AppLovin MAX plugin.
 
 # The following line prevents the package from being accidentally published to

@@ -11,19 +11,7 @@ class MaxAd {
 
   @override
   String toString() {
-    return "[MaxAd adUnitId: " +
-        adUnitId +
-        ", networkName: " +
-        networkName +
-        ", revenue: " +
-        revenue +
-        ", dspName: " +
-        dspName +
-        ", creativeId: " +
-        creativeId +
-        ", placement: " +
-        placement! +
-        "]";
+    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, dspName: $dspName, creativeId: $creativeId, placement: $placement!]';
   }
 }
 
@@ -35,7 +23,7 @@ class MaxReward {
 
   @override
   String toString() {
-    return "[MaxReward amount: " + amount.toString() + ", label: " + label + "]";
+    return '[MaxReward amount: $amount, label: $label]';
   }
 }
 
@@ -47,6 +35,6 @@ class MaxError {
 
   @override
   String toString() {
-    return "[MaxError code: " + code.toString() + ", message: " + message + "]";
+    return '[MaxError code: $code, message: $message]';
   }
 }
