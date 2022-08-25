@@ -28,9 +28,9 @@ final double _leader_height = 90;
 final double _mrec_width = 300;
 final double _mrec_height = 250;
 
-/// Represents AdView.
+/// Represents an AdView ad (Banner / MREC).
 class MaxAdView extends StatefulWidget {
-  /// A string value representing the ad unit id to load ads for.
+  /// A string value representing the ad unit ID to load ads for.
   final String adUnitId;
 
   /// A string value representing the ad format to load ads for. Should be either [AdFormat.banner] or [AdFormat.mrec].

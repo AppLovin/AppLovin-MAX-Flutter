@@ -141,16 +141,16 @@ class AppLovinMAX {
   // PRIVACY APIs
   //
 
-  /// Returns a consent dialog state for the current user.
+  /// Returns an integer that encodes the state of the consent dialog.
   ///
-  /// See [ConsentDialogState] for the state of a consent dialog.
+  /// To learn more about how this information is encoded in the integer, see [ConsentDialogState].
   ///
   /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
   static Future<int?> getConsentDialogState() {
     return channel.invokeMethod('getConsentDialogState');
   }
 
-  /// Sets whether or no the user has provided consent for interest-based advertising.
+  /// Sets whether or not the user has provided consent for interest-based advertising.
   ///
   /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
   static void setHasUserConsent(bool hasUserConsent) {
@@ -159,7 +159,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Checks if the user has set the consent flag.
+  /// Checks if the user has set a consent flag.
   ///
   /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
   static Future<bool?> hasUserConsent() {
@@ -182,7 +182,9 @@ class AppLovinMAX {
     return channel.invokeMethod('isAgeRestrictedUser');
   }
 
-  /// Sets whether or not the user has opted out of interest-based advertising.
+  /// Sets true to indicate that the user has opted out of interest-based advertising.
+  ///
+  /// Or, sets false to indicate that the user has not opted out of interest-based advertising.
   ///
   /// [California Consumer Privacy Act (“CCPA”)](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#california-consumer-privacy-act-(%E2%80%9Cccpa%E2%80%9D))
   static void setDoNotSell(bool isDoNotSell) {
@@ -191,7 +193,9 @@ class AppLovinMAX {
     });
   }
 
-  /// Check if the user has opted out of interest-based advertising.
+  /// Returns true if the user has opted out of interest-based advertising.
+  ///
+  /// Or, returns false if the user has not opted out of interest-based advertising.
   ///
   /// [California Consumer Privacy Act (“CCPA”)](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#california-consumer-privacy-act-(%E2%80%9Cccpa%E2%80%9D))
   static Future<bool?> isDoNotSell() {
@@ -202,7 +206,9 @@ class AppLovinMAX {
   // GENERAL PUBLIC API
   //
 
-  /// Sets your own internal user ID to the current user for the MAX S2S Rewarded Callback requests.
+  /// Sets the internal user ID for the current user to a string value of your choice.
+  ///
+  /// MAX passes this internal user ID back to you via the {USER_ID} macro in its MAX S2S Rewarded Callback requests.
   ///
   /// [Setting an Internal User ID](https://dash.applovin.com/documentation/mediation/s2s-rewarded-callback-api#setting-an-internal-user-id)
   static void setUserId(String userId) {
@@ -242,7 +248,7 @@ class AppLovinMAX {
   // BANNERS
   //
 
-  /// Sets an [AdViewAdListener] listener that notifies ad events.
+  /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
   static void setBannerListener(AdViewAdListener listener) {
     _bannerAdListener = listener;
   }
@@ -257,7 +263,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets a background color for the banner.
+  /// Sets a background color for the banner with the specified [adUnitId].
   ///
   /// Only hex strings ('#xxxxxx') are accepted.
   static void setBannerBackgroundColor(String adUnitId, String hexColorCodeString) {
@@ -267,7 +273,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an ad placement name for the banner.
+  /// Sets an ad placement name for the banner with the specified [adUnitId].
   ///
   /// [Setting an Ad Placement Name](https://dash.applovin.com/documentation/mediation/features/s2s-impression-revenue-api#setting-an-ad-placement-name)
   static void setBannerPlacement(String adUnitId, String placement) {
@@ -277,7 +283,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Updates the banner position for a given ad unit id.
+  /// Updates the banner position for a given ad unit identification.
   static void updateBannerPosition(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('updateBannerPosition', {
       'ad_unit_id': adUnitId,
@@ -285,7 +291,12 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extran parameter to the banner for a given ad unit id.
+  /// Sets an extra parameter to the banner for a given ad unit identification.
+  ///
+  /// For example, pass "adaptive_banner" and "false" to this method as the key/value pair
+  /// to disable Adaptive Banners for the specified [adUnitId.
+  ///
+  /// [Adaptive Banners](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#adaptive-banners)
   static void setBannerExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setBannerExtraParameter', {
       'ad_unit_id': adUnitId,
@@ -294,25 +305,25 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the banner for a given ad unit id.
+  /// Shows the banner for a given ad unit identification.
   ///
-  /// [](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
+  /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
   static void showBanner(String adUnitId) {
     channel.invokeMethod('showBanner', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Hides the banner for a given ad unit id.
+  /// Hides the banner for a given ad unit identification.
   ///
-  /// [](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
+  /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
   static void hideBanner(String adUnitId) {
     channel.invokeMethod('hideBanner', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Destroys the banner for a given ad unit id.
+  /// Cleans up system resources allocated for the banner.
   static void destroyBanner(String adUnitId) {
     channel.invokeMethod('destroyBanner', {
       'ad_unit_id': adUnitId,
@@ -323,7 +334,7 @@ class AppLovinMAX {
   // MRECs
   //
 
-  /// Sets an [AdViewAdListener] listener that notifies ad events.
+  /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
   static void setMRecListener(AdViewAdListener listener) {
     _mrecAdListener = listener;
   }
@@ -338,7 +349,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an ad placement name for the MREC.
+  /// Sets an ad placement name for the MREC with the specified [adUnitId].
   ///
   /// [Setting an Ad Placement Name](https://dash.applovin.com/documentation/mediation/features/s2s-impression-revenue-api#setting-an-ad-placement-name)
   static void setMRecPlacement(String adUnitId, String placement) {
@@ -348,7 +359,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Updates the MREC position for a given ad unit id.
+  /// Updates the MREC position for a given ad unit identification.
   static void updateMRecPosition(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('updateMRecPosition', {
       'ad_unit_id': adUnitId,
@@ -356,21 +367,21 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the MREC for a given ad unit id.
+  /// Shows the MREC for a given ad unit identification.
   static void showMRec(String adUnitId) {
     channel.invokeMethod('showMRec', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Hides the MREC for a given ad unit id.
+  /// Hides the MREC for a given ad unit identification.
   static void hideMRec(String adUnitId) {
     channel.invokeMethod('hideMRec', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Destroys the MREC for a given ad unit id.
+  /// Cleans up system resources allocated for the MREC.
   static void destroyMRec(String adUnitId) {
     channel.invokeMethod('destroyMRec', {
       'ad_unit_id': adUnitId,
@@ -381,7 +392,7 @@ class AppLovinMAX {
   // Interstitials
   //
 
-  /// Sets an [InterstitialListener] listener that notifies ad events.
+  /// Sets an [InterstitialListener] listener with which you can receive notifications about ad events.
   static void setInterstitialListener(InterstitialListener listener) {
     _interstitialListener = listener;
   }
@@ -395,14 +406,14 @@ class AppLovinMAX {
     });
   }
 
-  /// Check if the ad is ready to be shown.
+  /// Check if the ad is ready to be shown with the specified [adUnitId].
   static Future<bool?> isInterstitialReady(String adUnitId) {
     return channel.invokeMethod('isInterstitialReady', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Shows the interstitial ad for a given ad unit id.
+  /// Shows the interstitial ad for a given ad unit identification.
   ///
   /// [Showing an Interstitial Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/interstitials#showing-an-interstitial-ad)
   static void showInterstitial(String adUnitId, {placement, customData}) {
@@ -413,7 +424,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extra parameter to the interstitial ad for a given ad unit id.
+  /// Sets an extra parameter to the interstitial ad for a given ad unit identification.
   static void setInterstitialExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setInterstitialExtraParameter', {
       'ad_unit_id': adUnitId,
@@ -426,7 +437,7 @@ class AppLovinMAX {
   // Rewarded Ads
   //
 
-  /// Sets a [RewardedAdListener] listener that notifies ad events.
+  /// Sets a [RewardedAdListener] listener with which you can receive notifications about ad events.
   static void setRewardedAdListener(RewardedAdListener listener) {
     _rewardedAdListener = listener;
   }
@@ -440,16 +451,16 @@ class AppLovinMAX {
     });
   }
 
-  /// Check if the ad is ready to be shown.
+  /// Check if the ad is ready to be shown with the specified [adUnitId].
   static Future<bool?> isRewardedAdReady(String adUnitId) {
     return channel.invokeMethod('isRewardedAdReady', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Shows the rewarded ad for a given ad unit id.
+  /// Shows the rewarded ad for a given ad unit identification.
   ///
-  /// [Showing a rewarded ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/rewarded-ads#showing-a-rewarded-ad)
+  /// [Showing a Rewarded Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/rewarded-ads#showing-a-rewarded-ad)
   static void showRewardedAd(String adUnitId, {placement, customData}) {
     channel.invokeMethod('showRewardedAd', {
       'ad_unit_id': adUnitId,
@@ -458,7 +469,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extra parameter to the rewarded ad for a given ad unit id.
+  /// Sets an extra parameter to the rewarded ad for a given ad unit identification.
   static void setRewardedAdExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setRewardedAdExtraParameter', {
       'ad_unit_id': adUnitId,

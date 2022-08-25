@@ -20,8 +20,11 @@ abstract class AdListener {
 
 /// Defines a fullscreen ad listener.
 abstract class FullscreenAdListener extends AdListener {
+  /// The SDK invokes this method when the ad has been successfully displayed.
   final Function(MaxAd ad) onAdDisplayedCallback;
+  /// The SDK invokes this method when the ad could not be displayed.
   final Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback;
+  /// The SDK invokes this method when the ad has been dismissed.
   final Function(MaxAd ad) onAdHiddenCallback;
 
   /// @nodoc

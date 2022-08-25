@@ -1,4 +1,4 @@
-/// Represents an AdView (Banner or MREC) position.
+/// Represents an AdView ad position.
 enum AdViewPosition {
   topCenter("top_center"),
   topRight("top_right"),
