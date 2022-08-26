@@ -1,11 +1,16 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:applovin_max/src/ad_classes.dart';
 
-/// Base Ad Listener
+/// Defines a base listener to be notified about ad events.
 abstract class AdListener {
+  /// The SDK invokes this method when a new ad has been loaded.
   final Function(MaxAd ad) onAdLoadedCallback;
+  /// The SDK invokes this method when an ad could not be retrieved.
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
+  /// The SDK invokes this method when the ad is clicked.
   final Function(MaxAd ad) onAdClickedCallback;
 
+  /// @nodoc
   const AdListener({
     required this.onAdLoadedCallback,
     required this.onAdLoadFailedCallback,
@@ -13,12 +18,16 @@ abstract class AdListener {
   });
 }
 
-// Fullscreen Ad Listener
+/// Defines a fullscreen ad listener.
 abstract class FullscreenAdListener extends AdListener {
+  /// The SDK invokes this method when the ad has been successfully displayed.
   final Function(MaxAd ad) onAdDisplayedCallback;
+  /// The SDK invokes this method when the ad could not be displayed.
   final Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback;
+  /// The SDK invokes this method when the ad has been dismissed.
   final Function(MaxAd ad) onAdHiddenCallback;
 
+  /// @nodoc
   const FullscreenAdListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
@@ -29,11 +38,14 @@ abstract class FullscreenAdListener extends AdListener {
   }) : super(onAdLoadedCallback: onAdLoadedCallback, onAdLoadFailedCallback: onAdLoadFailedCallback, onAdClickedCallback: onAdClickedCallback);
 }
 
-// AdView Ad (Banner / MREC) Listener
+/// Defines an AdView ad (Banner / MREC) listener to be notified about ad view events.
 class AdViewAdListener extends AdListener {
+  /// The SDK invokes this method when the [MaxAdView] has expanded to the full screen.
   final Function(MaxAd ad) onAdExpandedCallback;
+  /// The SDK invokes this method when the [MaxAdView] has collapsed back to its original size.
   final Function(MaxAd ad) onAdCollapsedCallback;
 
+  /// @nodoc
   const AdViewAdListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
@@ -43,8 +55,9 @@ class AdViewAdListener extends AdListener {
   }) : super(onAdLoadedCallback: onAdLoadedCallback, onAdLoadFailedCallback: onAdLoadFailedCallback, onAdClickedCallback: onAdClickedCallback);
 }
 
-// Interstitial Ad Listener
+/// Defines an interstitial ad listener.
 class InterstitialListener extends FullscreenAdListener {
+  /// @nodoc
   const InterstitialListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
@@ -62,10 +75,12 @@ class InterstitialListener extends FullscreenAdListener {
         );
 }
 
-// Rewarded Ad Listener
+/// Defines a rewarded ad listener.
 class RewardedAdListener extends FullscreenAdListener {
+  /// The SDK invokes this method when a reward was granted.
   final Function(MaxAd ad, MaxReward reward) onAdReceivedRewardCallback;
 
+  /// @nodoc
   const RewardedAdListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
