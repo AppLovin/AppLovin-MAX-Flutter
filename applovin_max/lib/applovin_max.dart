@@ -166,7 +166,7 @@ class AppLovinMAX {
     return channel.invokeMethod('hasUserConsent');
   }
 
-  /// Marks the user as age-restricted (i.e. under 16).
+  /// Marks the user as age-restricted.
   ///
   /// [Prohibition on Personal Information from Children](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#prohibition-on-personal-information-from-children)
   static void setIsAgeRestrictedUser(bool isAgeRestrictedUser) {
@@ -283,7 +283,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Updates the banner position for a given ad unit identification.
+  /// Updates the banner position with the specified [adUnitId].
   static void updateBannerPosition(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('updateBannerPosition', {
       'ad_unit_id': adUnitId,
@@ -291,7 +291,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extra parameter to the banner for a given ad unit identification.
+  /// Sets an extra parameter to the banner with the specified [adUnitId].
   ///
   /// For example, pass "adaptive_banner" and "false" to this method as the key/value pair
   /// to disable Adaptive Banners for the specified [adUnitId.
@@ -305,7 +305,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the banner for a given ad unit identification.
+  /// Shows the banner with the specified [adUnitId].
   ///
   /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
   static void showBanner(String adUnitId) {
@@ -314,7 +314,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Hides the banner for a given ad unit identification.
+  /// Hides the banner with the specified [adUnitId].
   ///
   /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
   static void hideBanner(String adUnitId) {
@@ -359,7 +359,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Updates the MREC position for a given ad unit identification.
+  /// Updates the MREC position with the specified [adUnitId].
   static void updateMRecPosition(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('updateMRecPosition', {
       'ad_unit_id': adUnitId,
@@ -367,14 +367,14 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the MREC for a given ad unit identification.
+  /// Shows the MREC with the specified [adUnitId].
   static void showMRec(String adUnitId) {
     channel.invokeMethod('showMRec', {
       'ad_unit_id': adUnitId,
     });
   }
 
-  /// Hides the MREC for a given ad unit identification.
+  /// Hides the MREC with the specified [adUnitId].
   static void hideMRec(String adUnitId) {
     channel.invokeMethod('hideMRec', {
       'ad_unit_id': adUnitId,
@@ -413,7 +413,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the interstitial ad for a given ad unit identification.
+  /// Shows the interstitial ad with the specified [adUnitId].
   ///
   /// [Showing an Interstitial Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/interstitials#showing-an-interstitial-ad)
   static void showInterstitial(String adUnitId, {placement, customData}) {
@@ -424,7 +424,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extra parameter to the interstitial ad for a given ad unit identification.
+  /// Sets an extra parameter to the interstitial ad with the specified [adUnitId].
   static void setInterstitialExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setInterstitialExtraParameter', {
       'ad_unit_id': adUnitId,
@@ -458,7 +458,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Shows the rewarded ad for a given ad unit identification.
+  /// Shows the rewarded ad with the specified [adUnitId].
   ///
   /// [Showing a Rewarded Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/rewarded-ads#showing-a-rewarded-ad)
   static void showRewardedAd(String adUnitId, {placement, customData}) {
@@ -469,7 +469,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Sets an extra parameter to the rewarded ad for a given ad unit identification.
+  /// Sets an extra parameter to the rewarded ad with the specified [adUnitId].
   static void setRewardedAdExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setRewardedAdExtraParameter', {
       'ad_unit_id': adUnitId,

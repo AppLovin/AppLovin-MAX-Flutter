@@ -6,7 +6,7 @@ class MaxAd {
   final String networkName;
   /// The ad’s revenue amount, or 0 if no revenue amount exists.
   final String revenue;
-  /// The creative id tied to the ad, if any. You can report creative issues to the corresponding ad network using this id.
+  /// The creative ID tied to the ad, if any. You can report creative issues to the corresponding ad network using this ID.
   final String creativeId;
   /// The DSP network that provided the loaded ad when the ad is served through AppLovin Exchange.
   final String dspName;
