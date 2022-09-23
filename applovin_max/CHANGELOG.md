@@ -1,5 +1,9 @@
 ## Versions
 
+## x.x.x
+    * Add API to enable or disable the Creative Debugger `AppLovinMAX.setCreativeDebuggerEnabled(...)`.
+    * Add API documentation.
+    * Fix warnings from `flutter analyze`.
 ## 2.0.0
     * Add support for rendering banners [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method) and MRECs [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method) as widgets.
 ## 1.0.8
