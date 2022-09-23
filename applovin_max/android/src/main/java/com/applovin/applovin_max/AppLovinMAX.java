@@ -171,28 +171,24 @@ public class AppLovinMAX
         sdk.setPluginVersion( "Flutter-" + pluginVersion );
         sdk.setMediationProvider( AppLovinMediationProvider.MAX );
 
-        // Set user id if needed
         if ( !TextUtils.isEmpty( userIdToSet ) )
         {
             sdk.setUserIdentifier( userIdToSet );
             userIdToSet = null;
         }
 
-        // Set test device ids if needed
         if ( testDeviceAdvertisingIdsToSet != null )
         {
             sdk.getSettings().setTestDeviceAdvertisingIds( testDeviceAdvertisingIdsToSet );
             testDeviceAdvertisingIdsToSet = null;
         }
 
-        // Set verbose logging state if needed
         if ( verboseLoggingToSet != null )
         {
             sdk.getSettings().setVerboseLogging( verboseLoggingToSet );
             verboseLoggingToSet = null;
         }
 
-        // Set creative debugger enabled if needed.
         if ( creativeDebuggerEnabledToSet != null )
         {
             sdk.getSettings().setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
@@ -307,16 +303,16 @@ public class AppLovinMAX
         return sdk.getSettings().isMuted();
     }
 
-    public void setVerboseLogging(final boolean verboseLoggingEnabled)
+    public void setVerboseLogging(final boolean enabled)
     {
         if ( isPluginInitialized )
         {
-            sdk.getSettings().setVerboseLogging( verboseLoggingEnabled );
+            sdk.getSettings().setVerboseLogging( enabled );
             verboseLoggingToSet = null;
         }
         else
         {
-            verboseLoggingToSet = verboseLoggingEnabled;
+            verboseLoggingToSet = enabled;
         }
     }
 
@@ -1198,6 +1194,13 @@ public class AppLovinMAX
         {
             boolean isVerboseLogging = call.argument( "value" );
             setVerboseLogging( isVerboseLogging );
+
+            result.success( null );
+        }
+        else if ( "setCreativeDebuggerEnabled".equals( call.method ) )
+        {
+            boolean isCreativeDebuggerEnabled = call.argument( "value" );
+            setCreativeDebuggerEnabled( isCreativeDebuggerEnabled );
 
             result.success( null );
         }
