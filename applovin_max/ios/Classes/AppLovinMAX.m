@@ -24,6 +24,7 @@
 @property (nonatomic,   copy, nullable) NSString *userIdentifierToSet;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *testDeviceIdentifiersToSet;
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
+@property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
 
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
@@ -137,25 +138,28 @@ static FlutterMethodChannel *ALSharedChannel;
     [self.sdk setPluginVersion: [@"Flutter-" stringByAppendingString: pluginVersion]];
     [self.sdk setMediationProvider: ALMediationProviderMAX];
     
-    // Set user id if needed
     if ( [self.userIdentifierToSet al_isValidString] )
     {
         self.sdk.userIdentifier = self.userIdentifierToSet;
         self.userIdentifierToSet = nil;
     }
     
-    // Set test device ids if needed
     if ( self.testDeviceIdentifiersToSet )
     {
         self.sdk.settings.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
         self.testDeviceIdentifiersToSet = nil;
     }
     
-    // Set verbose logging state if needed
     if ( self.verboseLoggingToSet )
     {
         self.sdk.settings.isVerboseLogging = self.verboseLoggingToSet.boolValue;
         self.verboseLoggingToSet = nil;
+    }
+    
+    if ( self.creativeDebuggerEnabledToSet )
+    {
+        self.sdk.settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
+        self.creativeDebuggerEnabledToSet = nil;
     }
     
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
@@ -282,6 +286,19 @@ static FlutterMethodChannel *ALSharedChannel;
     else
     {
         self.verboseLoggingToSet = @(enabled);
+    }
+}
+
+- (void)setCreativeDebuggerEnabled:(BOOL)enabled
+{
+    if ( [self isPluginInitialized] )
+    {
+        self.sdk.settings.creativeDebuggerEnabled = enabled;
+        self.creativeDebuggerEnabledToSet = nil;
+    }
+    else
+    {
+        self.creativeDebuggerEnabledToSet = @(enabled);
     }
 }
 
@@ -1118,6 +1135,13 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         BOOL isVerboseLogging = ((NSNumber *)call.arguments[@"value"]).boolValue;
         [self setVerboseLogging: isVerboseLogging];
+        
+        result(nil);
+    }
+    else if ( [@"setCreativeDebuggerEnabled" isEqualToString: call.method] )
+    {
+        BOOL isCreativeDebuggerEnabled = ((NSNumber *)call.arguments[@"value"]).boolValue;
+        [self setCreativeDebuggerEnabled: isCreativeDebuggerEnabled];
         
         result(nil);
     }

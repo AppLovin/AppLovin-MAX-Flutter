@@ -24,7 +24,7 @@ class AppLovinMAX {
   /// @nodoc
   ///
   /// Disabled dartdoc.
-  AppLovinMAX() { }
+  AppLovinMAX() {}
 
   /// Initializes the SDK.
   ///
@@ -231,8 +231,17 @@ class AppLovinMAX {
   /// Enables verbose logging for the SDK.
   ///
   /// [Enable Verbose Logging](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#enable-verbose-logging)
-  static void setVerboseLogging(enabled) {
+  static void setVerboseLogging(bool enabled) {
     channel.invokeMethod('setVerboseLogging', {
+      'value': enabled,
+    });
+  }
+
+  /// Whether the creative debugger will be displayed on fullscreen ads after flipping the device screen down twice. Defaults to true.
+  ///
+  /// [Enable Creative Debugger](https://dash.applovin.com/documentation/mediation/flutter/testing-networks/creative-debugger)
+  static void setCreativeDebuggerEnabled(bool enabled) {
+    channel.invokeMethod('setCreativeDebuggerEnabled', {
       'value': enabled,
     });
   }
