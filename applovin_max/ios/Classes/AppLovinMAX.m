@@ -152,7 +152,7 @@ static FlutterMethodChannel *ALSharedChannel;
     
     if ( self.verboseLoggingToSet )
     {
-        self.sdk.settings.isVerboseLogging = self.verboseLoggingToSet.boolValue;
+        self.sdk.settings.verboseLoggingEnabled = self.verboseLoggingToSet.boolValue;
         self.verboseLoggingToSet = nil;
     }
     
@@ -280,7 +280,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( [self isPluginInitialized] )
     {
-        self.sdk.settings.isVerboseLogging = enabled;
+        self.sdk.settings.verboseLoggingEnabled = enabled;
         self.verboseLoggingToSet = nil;
     }
     else

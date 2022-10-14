@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+    * Depends on Android SDK v11.5.2 and iOS SDK v11.5.1.
     * Add API to enable or disable the Creative Debugger `AppLovinMAX.setCreativeDebuggerEnabled(...)`.
     * Add API documentation.
     * Fix warnings from `flutter analyze`.
