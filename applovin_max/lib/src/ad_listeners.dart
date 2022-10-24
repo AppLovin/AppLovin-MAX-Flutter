@@ -9,12 +9,15 @@ abstract class AdListener {
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
   /// The SDK invokes this method when the ad is clicked.
   final Function(MaxAd ad) onAdClickedCallback;
+  /// The SDK invokes this method when a revenue event is detected for the ad.
+  final Function(MaxAd ad)? onAdRevenuePaidCallback;
 
   /// @nodoc
   const AdListener({
     required this.onAdLoadedCallback,
     required this.onAdLoadFailedCallback,
     required this.onAdClickedCallback,
+    this.onAdRevenuePaidCallback,
   });
 }
 
@@ -32,10 +35,16 @@ abstract class FullscreenAdListener extends AdListener {
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
     required Function(MaxAd ad) onAdClickedCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
     required this.onAdDisplayedCallback,
     required this.onAdDisplayFailedCallback,
     required this.onAdHiddenCallback,
-  }) : super(onAdLoadedCallback: onAdLoadedCallback, onAdLoadFailedCallback: onAdLoadFailedCallback, onAdClickedCallback: onAdClickedCallback);
+  }) : super(
+          onAdLoadedCallback: onAdLoadedCallback,
+          onAdLoadFailedCallback: onAdLoadFailedCallback,
+          onAdClickedCallback: onAdClickedCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
+        );
 }
 
 /// Defines an AdView ad (Banner / MREC) listener to be notified about ad view events.
@@ -50,9 +59,15 @@ class AdViewAdListener extends AdListener {
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
     required Function(MaxAd ad) onAdClickedCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
     required this.onAdExpandedCallback,
     required this.onAdCollapsedCallback,
-  }) : super(onAdLoadedCallback: onAdLoadedCallback, onAdLoadFailedCallback: onAdLoadFailedCallback, onAdClickedCallback: onAdClickedCallback);
+  }) : super(
+          onAdLoadedCallback: onAdLoadedCallback,
+          onAdLoadFailedCallback: onAdLoadFailedCallback,
+          onAdClickedCallback: onAdClickedCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
+        );
 }
 
 /// Defines an interstitial ad listener.
@@ -65,6 +80,7 @@ class InterstitialListener extends FullscreenAdListener {
     required Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback,
     required Function(MaxAd ad) onAdClickedCallback,
     required Function(MaxAd ad) onAdHiddenCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
   }) : super(
           onAdLoadedCallback: onAdLoadedCallback,
           onAdLoadFailedCallback: onAdLoadFailedCallback,
@@ -72,6 +88,7 @@ class InterstitialListener extends FullscreenAdListener {
           onAdDisplayFailedCallback: onAdDisplayFailedCallback,
           onAdClickedCallback: onAdClickedCallback,
           onAdHiddenCallback: onAdHiddenCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
         );
 }
 
@@ -88,6 +105,7 @@ class RewardedAdListener extends FullscreenAdListener {
     required Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback,
     required Function(MaxAd ad) onAdClickedCallback,
     required Function(MaxAd ad) onAdHiddenCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
     required this.onAdReceivedRewardCallback,
   }) : super(
           onAdLoadedCallback: onAdLoadedCallback,
@@ -96,5 +114,6 @@ class RewardedAdListener extends FullscreenAdListener {
           onAdDisplayFailedCallback: onAdDisplayFailedCallback,
           onAdClickedCallback: onAdClickedCallback,
           onAdHiddenCallback: onAdHiddenCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
         );
 }

@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdFormat;
 import com.applovin.mediation.MaxAdListener;
+import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.MaxReward;
@@ -50,7 +51,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class AppLovinMAX
-        implements FlutterPlugin, MethodCallHandler, ActivityAware, MaxAdListener, MaxAdViewAdListener, MaxRewardedAdListener
+        implements FlutterPlugin, MethodCallHandler, ActivityAware, MaxAdListener, MaxAdViewAdListener, MaxRewardedAdListener, MaxAdRevenueListener
 {
     private static final String SDK_TAG = "AppLovinSdk";
     private static final String TAG     = "AppLovinMAX";
@@ -676,6 +677,36 @@ public class AppLovinMAX
     }
 
     @Override
+    public void onAdRevenuePaid(final MaxAd ad)
+    {
+        final MaxAdFormat adFormat = ad.getFormat();
+        final String name;
+        if ( MaxAdFormat.BANNER == adFormat || MaxAdFormat.LEADER == adFormat )
+        {
+            name = "OnBannerAdRevenuePaid";
+        }
+        else if ( MaxAdFormat.MREC == adFormat )
+        {
+            name = "OnMRecAdRevenuePaid";
+        }
+        else if ( MaxAdFormat.INTERSTITIAL == adFormat )
+        {
+            name = "OnInterstitialAdRevenuePaid";
+        }
+        else if ( MaxAdFormat.REWARDED == adFormat )
+        {
+            name = "OnRewardedAdRevenuePaid";
+        }
+        else
+        {
+            logInvalidAdFormat( adFormat );
+            return;
+        }
+
+        fireCallback( name, getAdInfo( ad ) );
+    }
+
+    @Override
     public void onRewardedVideoCompleted(final MaxAd ad)
     {
         // This event is not forwarded
@@ -835,6 +866,7 @@ public class AppLovinMAX
         }
 
         adView.setListener( null );
+        adView.setRevenueListener( null );
         adView.destroy();
 
         mAdViews.remove( adUnitId );
@@ -932,6 +964,7 @@ public class AppLovinMAX
         {
             result = new MaxInterstitialAd( adUnitId, sdk, getCurrentActivity() );
             result.setListener( this );
+            result.setRevenueListener( this );
 
             mInterstitials.put( adUnitId, result );
         }
@@ -946,6 +979,7 @@ public class AppLovinMAX
         {
             result = MaxRewardedAd.getInstance( adUnitId, sdk, getCurrentActivity() );
             result.setListener( this );
+            result.setRevenueListener( this );
 
             mRewardedAds.put( adUnitId, result );
         }
@@ -965,6 +999,7 @@ public class AppLovinMAX
         {
             result = new MaxAdView( adUnitId, adFormat, sdk, getCurrentActivity() );
             result.setListener( this );
+            result.setRevenueListener( this );
 
             mAdViews.put( adUnitId, result );
             mAdViewPositions.put( adUnitId, adViewPosition );

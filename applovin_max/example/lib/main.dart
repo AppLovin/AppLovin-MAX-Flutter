@@ -102,6 +102,9 @@ class _MyAppState extends State<MyApp> {
         _interstitialLoadState = AdLoadState.notLoaded;
         logStatus('Interstitial ad hidden');
       },
+      onAdRevenuePaidCallback: (ad) {
+        logStatus('Interstitial ad revenue paid: ' + ad.revenue);
+      },
     ));
 
     /// Rewarded Ad Listeners
@@ -138,6 +141,8 @@ class _MyAppState extends State<MyApp> {
       logStatus('Rewarded ad hidden');
     }, onAdReceivedRewardCallback: (ad, reward) {
       logStatus('Rewarded ad granted reward');
+    }, onAdRevenuePaidCallback: (ad) {
+      logStatus('Rewarded ad revenue paid: ' + ad.revenue);
     }));
 
     /// Banner Ad Listeners
@@ -151,6 +156,8 @@ class _MyAppState extends State<MyApp> {
       logStatus('Banner ad expanded');
     }, onAdCollapsedCallback: (ad) {
       logStatus('Banner ad collapsed');
+    }, onAdRevenuePaidCallback: (ad) {
+      logStatus('Banner ad revenue paid: ' + ad.revenue);
     }));
 
     /// MREC Ad Listeners
@@ -164,6 +171,8 @@ class _MyAppState extends State<MyApp> {
       logStatus('MREC ad expanded');
     }, onAdCollapsedCallback: (ad) {
       logStatus('MREC ad collapsed');
+    }, onAdRevenuePaidCallback: (ad) {
+      logStatus('MREC ad revenue paid: ' + ad.revenue);
     }));
   }
 
@@ -360,6 +369,8 @@ class _MyAppState extends State<MyApp> {
                       logStatus('Banner widget ad expanded');
                     }, onAdCollapsedCallback: (ad) {
                       logStatus('Banner widget ad collapsed');
+                    }, onAdRevenuePaidCallback: (ad) {
+                      logStatus('Banner widget ad revenue paid: ' + ad.revenue);
                     })),
               if (_isWidgetMRecShowing)
                 MaxAdView(
@@ -375,6 +386,8 @@ class _MyAppState extends State<MyApp> {
                       logStatus('MREC widget ad expanded');
                     }, onAdCollapsedCallback: (ad) {
                       logStatus('MREC widget ad collapsed');
+                    }, onAdRevenuePaidCallback: (ad) {
+                      logStatus('MREC widget ad revenue paid: ' + ad.revenue);
                     })),
             ],
           )),

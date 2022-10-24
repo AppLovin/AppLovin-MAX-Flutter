@@ -48,6 +48,8 @@ class AppLovinMAX {
         _bannerAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdCollapsedEvent" == method) {
         _bannerAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
+      } else if ("OnBannerAdRevenuePaid" == method) {
+        _bannerAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
       }
 
       /// MREC Ad Events
@@ -58,10 +60,12 @@ class AppLovinMAX {
         _mrecAdListener?.onAdLoadFailedCallback(adUnitId, error);
       } else if ("OnMRecAdClickedEvent" == method) {
         _mrecAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
-      } else if ("OnMrecAdExpandedEvent" == method) {
+      } else if ("OnMRecAdExpandedEvent" == method) {
         _mrecAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
-      } else if ("OnMrecAdCollapsedEvent" == method) {
+      } else if ("OnMRecAdCollapsedEvent" == method) {
         _mrecAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
+      } else if ("OnMRecAdRevenuePaid" == method) {
+        _mrecAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
       }
 
       /// Interstitial Ad Events
@@ -79,6 +83,8 @@ class AppLovinMAX {
         _interstitialListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
       } else if ("OnInterstitialHiddenEvent" == method) {
         _interstitialListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
+      } else if ("OnInterstitialAdRevenuePaid" == method) {
+        _interstitialListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
       }
 
       /// Rewarded Ad Events
@@ -99,6 +105,8 @@ class AppLovinMAX {
       } else if ("OnRewardedAdReceivedRewardEvent" == method) {
         var reward = MaxReward(int.parse(arguments["rewardAmount"]), arguments["rewardLabel"]);
         _rewardedAdListener?.onAdReceivedRewardCallback(createAd(adUnitId, arguments), reward);
+      } else if ("OnRewardedAdRevenuePaid" == method) {
+        _rewardedAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
       }
     });
 

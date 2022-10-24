@@ -9,7 +9,7 @@
 #import "AppLovinMAX.h"
 #import <AppLovinSDK/AppLovinSDK.h>
 
-@interface AppLovinMAXAdView()<MAAdViewAdDelegate>
+@interface AppLovinMAXAdView()<MAAdViewAdDelegate, MAAdRevenueDelegate>
 @property (nonatomic, strong) FlutterMethodChannel *channel;
 @property (nonatomic, strong) MAAdView *adView;
 @end
@@ -33,6 +33,7 @@
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat sdk: sdk];
         self.adView.frame = frame;
         self.adView.delegate = self;
+        self.adView.revenueDelegate = self;
         
         self.adView.placement = placement;
         self.adView.customData = customData;
@@ -75,6 +76,11 @@
 - (void)didCollapseAd:(MAAd *)ad
 {
     [self sendEventWithName: @"OnAdViewAdCollapsedEvent" ad: ad];
+}
+
+- (void)didPayRevenueForAd:(MAAd *)ad
+{
+    [self sendEventWithName: @"OnAdViewAdRevenuePaidEvent" ad: ad];
 }
 
 - (void)didDisplayAd:(MAAd *)ad {}
