@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdFormat;
+import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
@@ -23,7 +24,7 @@ import io.flutter.plugin.platform.PlatformView;
  * Created by Thomas So on July 17 2022
  */
 public class AppLovinMAXAdView
-        implements PlatformView, MaxAdViewAdListener
+        implements PlatformView, MaxAdViewAdListener, MaxAdRevenueListener
 {
     private final MethodChannel channel;
     private final MaxAdView     adView;
@@ -35,6 +36,7 @@ public class AppLovinMAXAdView
 
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
         adView.setListener( this );
+        adView.setRevenueListener( this );
 
         adView.setPlacement( placement );
         adView.setCustomData( customData );
@@ -62,6 +64,7 @@ public class AppLovinMAXAdView
         {
             adView.destroy();
             adView.setListener( null );
+            adView.setRevenueListener( null );
         }
     }
 
@@ -107,6 +110,12 @@ public class AppLovinMAXAdView
 
     @Override
     public void onAdHidden(final MaxAd ad) { }
+
+    @Override
+    public void onAdRevenuePaid(final MaxAd ad)
+    {
+        sendEvent( "OnAdViewAdRevenuePaidEvent", ad );
+    }
 
     private void sendEvent(final String event, final MaxAd ad)
     {
