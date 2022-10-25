@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 2.2.0
     * Depends on Android SDK v11.5.3 and iOS SDK v11.5.3.
     * Add support for ad revenue callbacks.
 ## 2.1.0

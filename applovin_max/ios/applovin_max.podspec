@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
     'AppLovin Corporation' => 'devsupport@applovin.com'
   }
   s.name             = 'applovin_max'
-  s.version          = '2.1.0'
+  s.version          = '2.2.0'
   s.summary          = 'AppLovin MAX Flutter Plugin'
   s.description      = <<-DESC
 AppLovin MAX Flutter Plugin
