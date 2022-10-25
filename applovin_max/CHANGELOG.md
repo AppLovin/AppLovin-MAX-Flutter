@@ -1,7 +1,8 @@
 ## Versions
 
 ## x.x.x
-    * Add support for ad revenue callbacks
+    * Depends on Android SDK v11.5.3 and iOS SDK v11.5.3.
+    * Add support for ad revenue callbacks.
 ## 2.1.0
     * Depends on Android SDK v11.5.2 and iOS SDK v11.5.1.
     * Add API to enable or disable the Creative Debugger `AppLovinMAX.setCreativeDebuggerEnabled(...)`.
