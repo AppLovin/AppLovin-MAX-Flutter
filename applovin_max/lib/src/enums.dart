@@ -37,3 +37,37 @@ enum ConsentDialogState {
   ///
   doesNotApply
 }
+
+///
+/// Represents content ratings for the ads shown to users.
+///
+/// They correspond to IQG Media Ratings.
+///
+enum AdContentRating {
+  None(0),
+  AllAudiences(1),
+  EveryoneOverTwelve(2),
+  MatureAudiences(3);
+
+  /// @nodoc
+  final int value;
+
+  /// @nodoc
+  const AdContentRating(this.value);
+}
+
+///
+/// Represents gender.
+///
+enum UserGender {
+  Unknown('U'),
+  Female('F'),
+  Male('M'),
+  Other('O');
+
+  /// @nodoc
+  final String value;
+
+  /// @nodoc
+  const UserGender(this.value);
+}

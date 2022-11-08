@@ -1,11 +1,13 @@
 import 'package:applovin_max/src/ad_classes.dart';
 import 'package:applovin_max/src/ad_listeners.dart';
 import 'package:applovin_max/src/enums.dart';
+import 'package:applovin_max/src/targeting_data.dart';
 import 'package:flutter/services.dart';
 
 export 'package:applovin_max/src/ad_classes.dart';
 export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
+export 'package:applovin_max/src/targeting_data.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
 
 /// Represents the AppLovin SDK.
@@ -15,6 +17,9 @@ class AppLovinMAX {
 
   /// @nodoc
   static MethodChannel channel = const MethodChannel('applovin_max');
+
+  /// The targeting data object for you to provide user or app data that will improve how we target ads.
+  static final TargetingData targetingData = TargetingData(channel);
 
   static AdViewAdListener? _bannerAdListener;
   static AdViewAdListener? _mrecAdListener;

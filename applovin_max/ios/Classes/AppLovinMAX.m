@@ -315,6 +315,138 @@ static FlutterMethodChannel *ALSharedChannel;
     }
 }
 
+#pragma mark - Data Passing
+
+- (void)setTargetingDataYearOfBirth:(nonnull NSNumber *)yearOfBirth
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataYearOfBirth"];
+        return;
+    }
+    
+    if ( yearOfBirth )
+    {
+        self.sdk.targetingData.yearOfBirth = yearOfBirth.intValue <= 0 ? nil : yearOfBirth;
+    }
+    else
+    {
+        self.sdk.targetingData.yearOfBirth = nil;
+    }
+}
+
+- (void)setTargetingDataGender:(nullable NSString *)gender
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataGender"];
+        return;
+    }
+    
+    ALGender alGender = ALGenderUnknown;
+    
+    if ( gender )
+    {
+        if ( [@"F" isEqualToString: gender] )
+        {
+            alGender =  ALGenderFemale;
+        }
+        else if ( [@"M" isEqualToString: gender] )
+        {
+            alGender =  ALGenderMale;
+        }
+        else if ( [@"O" isEqualToString: gender] )
+        {
+            alGender =  ALGenderOther;
+        }
+    }
+    
+    self.sdk.targetingData.gender = alGender;
+}
+
+- (void)setTargetingDataMaximumAdContentRating:(nonnull NSNumber *)maximumAdContentRating
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataMaximumAdContentRating"];
+        return;
+    }
+    
+    ALAdContentRating rating = ALAdContentRatingNone;
+    
+    int intVal = maximumAdContentRating ? maximumAdContentRating.intValue : 0;
+    
+    if ( intVal == 1 )
+    {
+        rating = ALAdContentRatingAllAudiences;
+    }
+    else if ( intVal == 2 )
+    {
+        rating = ALAdContentRatingEveryoneOverTwelve;
+    }
+    else if ( intVal == 3 )
+    {
+        rating = ALAdContentRatingMatureAudiences;
+    }
+    
+    self.sdk.targetingData.maximumAdContentRating = rating;
+}
+
+- (void)setTargetingDataEmail:(nullable NSString *)email
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataEmail"];
+        return;
+    }
+    
+    self.sdk.targetingData.email = email;
+}
+
+- (void)setTargetingDataPhoneNumber:(nullable NSString *)phoneNumber
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataPhoneNumber"];
+        return;
+    }
+    
+    self.sdk.targetingData.phoneNumber = phoneNumber;
+}
+
+- (void)setTargetingDataKeywords:(nullable NSArray<NSString *> *)keywords
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataKeywords"];
+        return;
+    }
+    
+    self.sdk.targetingData.keywords = keywords;
+}
+
+- (void)setTargetingDataInterests:(nullable NSArray<NSString *> *)interests
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"setTargetingDataInterests"];
+        return;
+    }
+    
+    self.sdk.targetingData.interests = interests;
+}
+
+- (void)clearAllTargetingData
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"clearAllTargetingData"];
+        return;
+    }
+    
+    [self.sdk.targetingData clearAll];
+}
+
 #pragma mark - Banners
 
 - (void)createBannerForAdUnitIdentifier:(NSString *)adUnitIdentifier position:(NSString *)position
@@ -827,6 +959,11 @@ static FlutterMethodChannel *ALSharedChannel;
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat
 {
     [self log: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+}
+
+- (void)logUninitializedAccessError:(NSString *)callingMethod
+{
+    [self log: @"ERROR: Failed to execute %@() - please ensure the AppLovin Flutter Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
 }
 
 - (void)log:(NSString *)format, ...
@@ -1355,6 +1492,68 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *key = call.arguments[@"key"];
         NSString *value = call.arguments[@"value"];
         [self setRewardedAdExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataYearOfBirth" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSNumber *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataYearOfBirth: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataGender" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataGender: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataMaximumAdContentRating" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataMaximumAdContentRating: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataEmail" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataEmail: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataPhoneNumber" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataPhoneNumber: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataKeywords" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataKeywords: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataInterests" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self  setTargetingDataInterests: value];
+        
+        result(nil);
+    }
+    else if ( [@"clearAllTargetingData" isEqualToString: call.method] )
+    {
+        [self clearAllTargetingData];
         
         result(nil);
     }
