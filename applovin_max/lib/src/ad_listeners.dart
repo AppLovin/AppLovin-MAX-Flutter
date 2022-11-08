@@ -1,5 +1,4 @@
 import 'package:applovin_max/applovin_max.dart';
-import 'package:applovin_max/src/ad_classes.dart';
 
 /// Defines a base listener to be notified about ad events.
 abstract class AdListener {

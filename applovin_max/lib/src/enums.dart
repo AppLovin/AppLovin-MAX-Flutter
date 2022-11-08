@@ -44,10 +44,10 @@ enum ConsentDialogState {
 /// They correspond to IQG Media Ratings.
 ///
 enum AdContentRating {
-  None(0),
-  AllAudiences(1),
-  EveryoneOverTwelve(2),
-  MatureAudiences(3);
+  none(0),
+  allAudiences(1),
+  everyoneOverTwelve(2),
+  matureAudiences(3);
 
   /// @nodoc
   final int value;
@@ -60,10 +60,10 @@ enum AdContentRating {
 /// Represents gender.
 ///
 enum UserGender {
-  Unknown('U'),
-  Female('F'),
-  Male('M'),
-  Other('O');
+  unknown('U'),
+  female('F'),
+  male('M'),
+  other('O');
 
   /// @nodoc
   final String value;

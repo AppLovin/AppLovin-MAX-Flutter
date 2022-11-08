@@ -29,7 +29,7 @@ class AppLovinMAX {
   /// @nodoc
   ///
   /// Disabled dartdoc.
-  AppLovinMAX() {}
+  AppLovinMAX() ;
 
   /// Initializes the SDK.
   ///

@@ -24,10 +24,10 @@ class TargetingData {
   /// Set this property to [UserGender.Unknown] to clear this value.
   ///
   set gender(UserGender value) {
-    if (value == UserGender.Unknown ||
-        value == UserGender.Female ||
-        value == UserGender.Male ||
-        value == UserGender.Other) {
+    if (value == UserGender.unknown ||
+        value == UserGender.female ||
+        value == UserGender.male ||
+        value == UserGender.other) {
       _channel.invokeMethod('setTargetingDataGender', {
         'value': value.value,
       });
@@ -39,10 +39,10 @@ class TargetingData {
   /// Set this property to [AdContentRating.None] to clear this value.
   ///
   set maximumAdContentRating(AdContentRating value) {
-    if (value == AdContentRating.None ||
-        value == AdContentRating.AllAudiences ||
-        value == AdContentRating.EveryoneOverTwelve ||
-        value == AdContentRating.MatureAudiences) {
+    if (value == AdContentRating.none ||
+        value == AdContentRating.allAudiences ||
+        value == AdContentRating.everyoneOverTwelve ||
+        value == AdContentRating.matureAudiences) {
       _channel.invokeMethod('setTargetingDataMaximumAdContentRating', {
         'value': value.value,
       });
