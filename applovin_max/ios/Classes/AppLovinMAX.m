@@ -26,6 +26,14 @@
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
 @property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
 
+@property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
+@property (nonatomic, strong, nullable) NSNumber *targetingMaximumAdContentRatingToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingEmailToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingPhoneNumberToSet;
+@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingKeywordsToSet;
+@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingInterestsToSet;
+
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MARewardedAd *> *rewardedAds;
@@ -160,6 +168,48 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.sdk.settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
         self.creativeDebuggerEnabledToSet = nil;
+    }
+    
+    if ( self.targetingYearOfBirthToSet )
+    {
+        self.sdk.targetingData.yearOfBirth = self.targetingYearOfBirthToSet.intValue <= 0 ? nil : self.targetingYearOfBirthToSet;
+        self.targetingYearOfBirthToSet = nil;
+    }
+    
+    if ( self.targetingGenderToSet )
+    {
+        [self setTargetingDataGender: self.targetingGenderToSet];
+        self.targetingGenderToSet = nil;
+    }
+    
+    if ( self.targetingMaximumAdContentRatingToSet )
+    {
+        [self setTargetingDataMaximumAdContentRating: self.targetingMaximumAdContentRatingToSet];
+        self.targetingMaximumAdContentRatingToSet = nil;
+    }
+    
+    if ( self.targetingEmailToSet )
+    {
+        self.sdk.targetingData.email = self.targetingEmailToSet;
+        self.targetingEmailToSet = nil;
+    }
+    
+    if ( self.targetingPhoneNumberToSet )
+    {
+        self.sdk.targetingData.phoneNumber = self.targetingPhoneNumberToSet;
+        self.targetingPhoneNumberToSet = nil;
+    }
+    
+    if ( self.targetingKeywordsToSet )
+    {
+        self.sdk.targetingData.keywords = self.targetingKeywordsToSet;
+        self.targetingKeywordsToSet = nil;
+    }
+    
+    if ( self.targetingInterestsToSet )
+    {
+        self.sdk.targetingData.interests = self.targetingInterestsToSet;
+        self.targetingInterestsToSet = nil;
     }
     
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
@@ -317,11 +367,11 @@ static FlutterMethodChannel *ALSharedChannel;
 
 #pragma mark - Data Passing
 
-- (void)setTargetingDataYearOfBirth:(nonnull NSNumber *)yearOfBirth
+- (void)setTargetingDataYearOfBirth:(nullable NSNumber *)yearOfBirth
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataYearOfBirth"];
+        self.targetingYearOfBirthToSet = yearOfBirth;
         return;
     }
     
@@ -339,7 +389,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataGender"];
+        self.targetingGenderToSet = gender;
         return;
     }
     
@@ -364,11 +414,11 @@ static FlutterMethodChannel *ALSharedChannel;
     self.sdk.targetingData.gender = alGender;
 }
 
-- (void)setTargetingDataMaximumAdContentRating:(nonnull NSNumber *)maximumAdContentRating
+- (void)setTargetingDataMaximumAdContentRating:(nullable NSNumber *)maximumAdContentRating
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataMaximumAdContentRating"];
+        self.targetingMaximumAdContentRatingToSet = maximumAdContentRating;
         return;
     }
     
@@ -396,7 +446,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataEmail"];
+        self.targetingEmailToSet = email;
         return;
     }
     
@@ -407,7 +457,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataPhoneNumber"];
+        self.targetingPhoneNumberToSet = phoneNumber;
         return;
     }
     
@@ -418,7 +468,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataKeywords"];
+        self.targetingKeywordsToSet = keywords;
         return;
     }
     
@@ -429,7 +479,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( !self.sdk )
     {
-        [self logUninitializedAccessError: @"setTargetingDataInterests"];
+        self.targetingInterestsToSet = interests;
         return;
     }
     
@@ -788,7 +838,7 @@ static FlutterMethodChannel *ALSharedChannel;
         [self logInvalidAdFormat: adFormat];
         return;
     }
-
+    
     [self sendEventWithName: name body: [self adInfoForAd: ad]];
 }
 

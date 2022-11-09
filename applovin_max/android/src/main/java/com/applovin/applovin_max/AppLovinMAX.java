@@ -76,6 +76,14 @@ public class AppLovinMAX
     private Boolean      verboseLoggingToSet;
     private Boolean      creativeDebuggerEnabledToSet;
 
+    private Integer      targetingYearOfBirthToSet;
+    private String       targetingGenderToSet;
+    private Integer      targetingMaximumAdContentRatingToSet;
+    private String       targetingEmailToSet;
+    private String       targetingPhoneNumberToSet;
+    private List<String> targetingKeywordsToSet;
+    private List<String> targetingInterestsToSet;
+
     // Fullscreen Ad Fields
     private final Map<String, MaxInterstitialAd> mInterstitials = new HashMap<>( 2 );
     private final Map<String, MaxRewardedAd>     mRewardedAds   = new HashMap<>( 2 );
@@ -196,6 +204,48 @@ public class AppLovinMAX
         {
             sdk.getSettings().setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
             creativeDebuggerEnabledToSet = null;
+        }
+
+        if ( targetingYearOfBirthToSet != null )
+        {
+            sdk.getTargetingData().setYearOfBirth( targetingYearOfBirthToSet <= 0 ? null : targetingYearOfBirthToSet );
+            targetingYearOfBirthToSet = null;
+        }
+
+        if ( targetingGenderToSet != null )
+        {
+            setTargetingDataGender( targetingGenderToSet );
+            targetingGenderToSet = null;
+        }
+
+        if ( targetingMaximumAdContentRatingToSet != null )
+        {
+            setTargetingDataMaximumAdContentRating( targetingMaximumAdContentRatingToSet );
+            targetingMaximumAdContentRatingToSet = null;
+        }
+
+        if ( targetingEmailToSet != null )
+        {
+            sdk.getTargetingData().setEmail( targetingEmailToSet );
+            targetingEmailToSet = null;
+        }
+
+        if ( targetingPhoneNumberToSet != null )
+        {
+            sdk.getTargetingData().setPhoneNumber( targetingPhoneNumberToSet );
+            targetingPhoneNumberToSet = null;
+        }
+
+        if ( targetingKeywordsToSet != null )
+        {
+            sdk.getTargetingData().setKeywords( targetingKeywordsToSet );
+            targetingKeywordsToSet = null;
+        }
+
+        if ( targetingInterestsToSet != null )
+        {
+            sdk.getTargetingData().setInterests( targetingInterestsToSet );
+            targetingInterestsToSet = null;
         }
 
         sdk.initializeSdk( configuration -> {
@@ -353,7 +403,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataYearOfBirth" );
+            targetingYearOfBirthToSet = yearOfBirth;
             return;
         }
 
@@ -364,7 +414,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataGender" );
+            targetingGenderToSet = gender;
             return;
         }
 
@@ -393,7 +443,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataMaximumAdContentRating" );
+            targetingMaximumAdContentRatingToSet = maximumAdContentRating;
             return;
         }
 
@@ -419,7 +469,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataEmail" );
+            targetingEmailToSet = email;
             return;
         }
 
@@ -430,7 +480,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataPhoneNumber" );
+            targetingPhoneNumberToSet = phoneNumber;
             return;
         }
 
@@ -441,7 +491,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataKeywords" );
+            targetingKeywordsToSet = keywords;
             return;
         }
 
@@ -452,7 +502,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "setTargetingDataInterests" );
+            targetingInterestsToSet = interests;
             return;
         }
 
