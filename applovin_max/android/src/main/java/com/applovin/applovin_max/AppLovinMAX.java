@@ -25,6 +25,7 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.MaxReward;
 import com.applovin.mediation.MaxRewardedAdListener;
 import com.applovin.mediation.ads.MaxAdView;
+import com.applovin.mediation.ads.MaxAppOpenAd;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.mediation.ads.MaxRewardedAd;
 import com.applovin.sdk.AppLovinAdContentRating;
@@ -87,6 +88,7 @@ public class AppLovinMAX
     // Fullscreen Ad Fields
     private final Map<String, MaxInterstitialAd> mInterstitials = new HashMap<>( 2 );
     private final Map<String, MaxRewardedAd>     mRewardedAds   = new HashMap<>( 2 );
+    private final Map<String, MaxAppOpenAd>      mAppOpenAds    = new HashMap<>( 2 );
 
     // Banner Fields
     private final Map<String, MaxAdView>   mAdViews                    = new HashMap<>( 2 );
@@ -575,10 +577,10 @@ public class AppLovinMAX
         result.success( interstitial.isReady() );
     }
 
-    public void showInterstitial(final String adUnitId, final String placement)
+    public void showInterstitial(final String adUnitId, final String placement, final String customData)
     {
         MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
-        interstitial.showAd( placement );
+        interstitial.showAd( placement, customData );
     }
 
     public void setInterstitialExtraParameter(final String adUnitId, final String key, final String value)
@@ -601,16 +603,42 @@ public class AppLovinMAX
         result.success( rewardedAd.isReady() );
     }
 
-    public void showRewardedAd(final String adUnitId, final String placement)
+    public void showRewardedAd(final String adUnitId, final String placement, final String customData)
     {
         MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
-        rewardedAd.showAd( placement );
+        rewardedAd.showAd( placement, customData );
     }
 
     public void setRewardedAdExtraParameter(final String adUnitId, final String key, final String value)
     {
         MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
         rewardedAd.setExtraParameter( key, value );
+    }
+
+    // APP OPEN AD
+
+    public void loadAppOpenAd(final String adUnitId)
+    {
+        MaxAppOpenAd appOpenAd = retrieveAppOpenAd( adUnitId );
+        appOpenAd.loadAd();
+    }
+
+    public void isAppOpenAdReady(final String adUnitId, final Result result)
+    {
+        MaxAppOpenAd appOpenAd = retrieveAppOpenAd( adUnitId );
+        result.success( appOpenAd.isReady() );
+    }
+
+    public void showAppOpenAd(final String adUnitId, final String placement, final String customData)
+    {
+        MaxAppOpenAd appOpenAd = retrieveAppOpenAd( adUnitId );
+        appOpenAd.showAd( placement, customData );
+    }
+
+    public void setAppOpenAdExtraParameter(final String adUnitId, final String key, final String value)
+    {
+        MaxAppOpenAd appOpenAd = retrieveAppOpenAd( adUnitId );
+        appOpenAd.setExtraParameter( key, value );
     }
 
     // AD CALLBACKS
@@ -647,6 +675,10 @@ public class AppLovinMAX
         {
             name = "OnRewardedAdLoadedEvent";
         }
+        else if ( MaxAdFormat.APP_OPEN == adFormat )
+        {
+            name = "OnAppOpenAdLoadedEvent";
+        }
         else
         {
             logInvalidAdFormat( adFormat );
@@ -677,6 +709,10 @@ public class AppLovinMAX
         else if ( mRewardedAds.containsKey( adUnitId ) )
         {
             name = "OnRewardedAdLoadFailedEvent";
+        }
+        else if ( mAppOpenAds.containsKey( adUnitId ) )
+        {
+            name = "OnAppOpenAdLoadFailedEvent";
         }
         else
         {
@@ -716,6 +752,10 @@ public class AppLovinMAX
         {
             name = "OnRewardedAdClickedEvent";
         }
+        else if ( MaxAdFormat.APP_OPEN == adFormat )
+        {
+            name = "OnAppOpenAdClickedEvent";
+        }
         else
         {
             logInvalidAdFormat( adFormat );
@@ -730,16 +770,20 @@ public class AppLovinMAX
     {
         // BMLs do not support [DISPLAY] events
         final MaxAdFormat adFormat = ad.getFormat();
-        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED ) return;
+        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED && adFormat != MaxAdFormat.APP_OPEN ) return;
 
         final String name;
         if ( MaxAdFormat.INTERSTITIAL == adFormat )
         {
             name = "OnInterstitialDisplayedEvent";
         }
-        else // REWARDED
+        else if ( MaxAdFormat.REWARDED == adFormat )
         {
             name = "OnRewardedAdDisplayedEvent";
+        }
+        else // APP OPEN
+        {
+            name = "OnAppOpenAdDisplayedEvent";
         }
 
         fireCallback( name, getAdInfo( ad ) );
@@ -750,16 +794,20 @@ public class AppLovinMAX
     {
         // BMLs do not support [DISPLAY] events
         final MaxAdFormat adFormat = ad.getFormat();
-        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED ) return;
+        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED && adFormat != MaxAdFormat.APP_OPEN ) return;
 
         final String name;
         if ( MaxAdFormat.INTERSTITIAL == adFormat )
         {
             name = "OnInterstitialAdFailedToDisplayEvent";
         }
-        else // REWARDED
+        else if ( MaxAdFormat.REWARDED == adFormat )
         {
             name = "OnRewardedAdFailedToDisplayEvent";
+        }
+        else // APP OPEN
+        {
+            name = "OnAppOpenAdFailedToDisplayEvent";
         }
 
         try
@@ -777,16 +825,20 @@ public class AppLovinMAX
     {
         // BMLs do not support [HIDDEN] events
         final MaxAdFormat adFormat = ad.getFormat();
-        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED ) return;
+        if ( adFormat != MaxAdFormat.INTERSTITIAL && adFormat != MaxAdFormat.REWARDED && adFormat != MaxAdFormat.APP_OPEN ) return;
 
         String name;
         if ( MaxAdFormat.INTERSTITIAL == adFormat )
         {
             name = "OnInterstitialHiddenEvent";
         }
-        else // REWARDED
+        else if ( MaxAdFormat.REWARDED == adFormat )
         {
             name = "OnRewardedAdHiddenEvent";
+        }
+        else // APP OPEN
+        {
+            name = "OnAppOpenAdHiddenEvent";
         }
 
         fireCallback( name, getAdInfo( ad ) );
@@ -838,6 +890,10 @@ public class AppLovinMAX
         else if ( MaxAdFormat.REWARDED == adFormat )
         {
             name = "OnRewardedAdRevenuePaid";
+        }
+        else if ( MaxAdFormat.APP_OPEN == adFormat )
+        {
+            name = "OnAppOpenAdRevenuePaid";
         }
         else
         {
@@ -1124,6 +1180,21 @@ public class AppLovinMAX
             result.setRevenueListener( this );
 
             mRewardedAds.put( adUnitId, result );
+        }
+
+        return result;
+    }
+
+    private MaxAppOpenAd retrieveAppOpenAd(String adUnitId)
+    {
+        MaxAppOpenAd result = mAppOpenAds.get( adUnitId );
+        if ( result == null )
+        {
+            result = new MaxAppOpenAd( adUnitId, sdk );
+            result.setListener( this );
+            result.setRevenueListener( this );
+
+            mAppOpenAds.put( adUnitId, result );
         }
 
         return result;
@@ -1550,7 +1621,8 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String placement = call.argument( "placement" );
-            showInterstitial( adUnitId, placement );
+            String customData = call.argument( "custom_data" );
+            showInterstitial( adUnitId, placement, customData );
 
             result.success( null );
         }
@@ -1579,7 +1651,8 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String placement = call.argument( "placement" );
-            showRewardedAd( adUnitId, placement );
+            String customData = call.argument( "custom_data" );
+            showRewardedAd( adUnitId, placement, customData );
 
             result.success( null );
         }
@@ -1589,6 +1662,36 @@ public class AppLovinMAX
             String key = call.argument( "key" );
             String value = call.argument( "value" );
             setRewardedAdExtraParameter( adUnitId, key, value );
+
+            result.success( null );
+        }
+        else if ( "loadAppOpenAd".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            loadAppOpenAd( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "isAppOpenAdReady".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            isAppOpenAdReady( adUnitId, result );
+        }
+        else if ( "showAppOpenAd".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            String placement = call.argument( "placement" );
+            String customData = call.argument( "custom_data" );
+            showAppOpenAd( adUnitId, placement, customData );
+
+            result.success( null );
+        }
+        else if ( "setAppOpenAdExtraParameter".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            String key = call.argument( "key" );
+            String value = call.argument( "value" );
+            setAppOpenAdExtraParameter( adUnitId, key, value );
 
             result.success( null );
         }

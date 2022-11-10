@@ -25,6 +25,7 @@ class AppLovinMAX {
   static AdViewAdListener? _mrecAdListener;
   static InterstitialListener? _interstitialListener;
   static RewardedAdListener? _rewardedAdListener;
+  static AppOpenAdListener? _appOpenAdListener;
 
   /// @nodoc
   ///
@@ -112,6 +113,25 @@ class AppLovinMAX {
         _rewardedAdListener?.onAdReceivedRewardCallback(createAd(adUnitId, arguments), reward);
       } else if ("OnRewardedAdRevenuePaid" == method) {
         _rewardedAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+      }
+
+      /// App Open Ad Events
+      else if ("OnAppOpenAdLoadedEvent" == method) {
+        _appOpenAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
+      } else if ("OnAppOpenAdLoadFailedEvent" == method) {
+        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
+        _appOpenAdListener?.onAdLoadFailedCallback(adUnitId, error);
+      } else if ("OnAppOpenAdClickedEvent" == method) {
+        _appOpenAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
+      } else if ("OnAppOpenAdDisplayedEvent" == method) {
+        _appOpenAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
+      } else if ("OnAppOpenAdFailedToDisplayEvent" == method) {
+        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
+        _appOpenAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
+      } else if ("OnAppOpenAdHiddenEvent" == method) {
+        _appOpenAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
+      } else if ("OnAppOpenAdRevenuePaid" == method) {
+        _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
       }
     });
 
@@ -494,6 +514,47 @@ class AppLovinMAX {
   /// Sets an extra parameter to the rewarded ad with the specified [adUnitId].
   static void setRewardedAdExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setRewardedAdExtraParameter', {
+      'ad_unit_id': adUnitId,
+      'key': key,
+      'value': value,
+    });
+  }
+
+  //
+  // App Open Ad
+  //
+
+  /// Sets a [AppOpenAdListener] listener with which you can receive notifications about ad events.
+  static void setAppOpenAdListener(AppOpenAdListener listener) {
+    _appOpenAdListener = listener;
+  }
+
+  /// Check if the ad is ready to be shown with the specified [adUnitId].
+  static Future<bool?> isAppOpenAdReady(String adUnitId) {
+    return channel.invokeMethod('isAppOpenAdReady', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Loads an app open ad using your [adUnitId].
+  static void loadAppOpenAd(String adUnitId) {
+    channel.invokeMethod('loadAppOpenAd', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Shows the app open ad with the specified [adUnitId].
+  static void showAppOpenAd(String adUnitId, {placement, customData}) {
+    channel.invokeMethod('showAppOpenAd', {
+      'ad_unit_id': adUnitId,
+      'placement': placement,
+      'custom_data': customData,
+    });
+  }
+
+  /// Sets an extra parameter to the rewarded ad with the specified [adUnitId].
+  static void setAppOpenAdExtraParameter(String adUnitId, String key, String value) {
+    channel.invokeMethod('setAppOpenAdExtraParameter', {
       'ad_unit_id': adUnitId,
       'key': key,
       'value': value,

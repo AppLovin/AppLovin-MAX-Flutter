@@ -21,7 +21,7 @@ class TargetingData {
 
   /// The gender of the user.
   ///
-  /// Set this property to [UserGender.Unknown] to clear this value.
+  /// Set this property to [UserGender.unknown] to clear this value.
   ///
   set gender(UserGender value) {
     if (value == UserGender.unknown ||
@@ -36,7 +36,7 @@ class TargetingData {
 
   /// The maximum ad content rating shown to the user.
   ///
-  /// Set this property to [AdContentRating.None] to clear this value.
+  /// Set this property to [AdContentRating.none] to clear this value.
   ///
   set maximumAdContentRating(AdContentRating value) {
     if (value == AdContentRating.none ||

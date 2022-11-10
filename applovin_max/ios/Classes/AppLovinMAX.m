@@ -37,6 +37,7 @@
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MARewardedAd *> *rewardedAds;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, MAAppOpenAd *> *appOpenAds;
 
 // Banner Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAdView *> *adViews;
@@ -81,6 +82,7 @@ static FlutterMethodChannel *ALSharedChannel;
         
         self.interstitials = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.rewardedAds = [NSMutableDictionary dictionaryWithCapacity: 2];
+        self.appOpenAds = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViews = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewAdFormats = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewPositions = [NSMutableDictionary dictionaryWithCapacity: 2];
@@ -552,10 +554,10 @@ static FlutterMethodChannel *ALSharedChannel;
     result(@([interstitial isReady]));
 }
 
-- (void)showInterstitialForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement
+- (void)showInterstitialForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement customData:(NSString *)customData
 {
     MAInterstitialAd *interstitial = [self retrieveInterstitialForAdUnitIdentifier: adUnitIdentifier];
-    [interstitial showAdForPlacement: placement];
+    [interstitial showAdForPlacement: placement customData: customData];
 }
 
 - (void)setInterstitialExtraParameterForAdUnitIdentifier:(NSString *)adUnitIdentifier key:(NSString *)key value:(NSString *)value
@@ -578,16 +580,42 @@ static FlutterMethodChannel *ALSharedChannel;
     result(@([rewardedAd isReady]));
 }
 
-- (void)showRewardedAdForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement
+- (void)showRewardedAdForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement customData:(NSString *)customData
 {
     MARewardedAd *rewardedAd = [self retrieveRewardedAdForAdUnitIdentifier: adUnitIdentifier];
-    [rewardedAd showAdForPlacement: placement];
+    [rewardedAd showAdForPlacement: placement customData: customData];
 }
 
 - (void)setRewardedAdExtraParameterForAdUnitIdentifier:(NSString *)adUnitIdentifier key:(NSString *)key value:(NSString *)value
 {
     MARewardedAd *rewardedAd = [self retrieveRewardedAdForAdUnitIdentifier: adUnitIdentifier];
     [rewardedAd setExtraParameterForKey: key value: value];
+}
+
+#pragma mark - App Open Ad
+
+- (void)loadAppOpenAdForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    MAAppOpenAd *appOpenAd = [self retrieveAppOpenAdForAdUnitIdentifier: adUnitIdentifier];
+    [appOpenAd loadAd];
+}
+
+- (void)isAppOpenAdReadyForAdUnitIdentifier:(NSString *)adUnitIdentifier result:(FlutterResult)result
+{
+    MAAppOpenAd *appOpenAd = [self retrieveAppOpenAdForAdUnitIdentifier: adUnitIdentifier];
+    result(@([appOpenAd isReady]));
+}
+
+- (void)showAppOpenAdForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement customData:(NSString *)customData
+{
+    MAAppOpenAd *appOpenAd = [self retrieveAppOpenAdForAdUnitIdentifier: adUnitIdentifier];
+    [appOpenAd showAdForPlacement: placement customData: customData];
+}
+
+- (void)setAppOpenAdExtraParameterForAdUnitIdentifier:(NSString *)adUnitIdentifier key:(NSString *)key value:(NSString *)value
+{
+    MAAppOpenAd *appOpenAd = [self retrieveAppOpenAdForAdUnitIdentifier: adUnitIdentifier];
+    [appOpenAd setExtraParameterForKey: key value: value];
 }
 
 #pragma mark - Ad Callbacks
@@ -620,6 +648,10 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         name = @"OnRewardedAdLoadedEvent";
     }
+    else if ( MAAdFormat.appOpen == adFormat )
+    {
+        name = @"OnAppOpenAdLoadedEvent";
+    }
     else
     {
         [self logInvalidAdFormat: adFormat];
@@ -649,6 +681,10 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( self.rewardedAds[adUnitIdentifier] )
     {
         name = @"OnRewardedAdLoadFailedEvent";
+    }
+    else if ( self.appOpenAds[adUnitIdentifier] )
+    {
+        name = @"OnAppOpenAdLoadFailedEvent";
     }
     else
     {
@@ -682,6 +718,10 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         name = @"OnRewardedAdClickedEvent";
     }
+    else if ( MAAdFormat.appOpen == adFormat )
+    {
+        name = @"OnAppOpenAdClickedEvent";
+    }
     else
     {
         [self logInvalidAdFormat: adFormat];
@@ -695,16 +735,20 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     // BMLs do not support [DISPLAY] events in Unity
     MAAdFormat *adFormat = ad.format;
-    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded ) return;
+    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded && adFormat != MAAdFormat.appOpen ) return;
     
     NSString *name;
     if ( MAAdFormat.interstitial == adFormat )
     {
         name = @"OnInterstitialDisplayedEvent";
     }
-    else // REWARDED
+    else if ( MAAdFormat.rewarded == adFormat )
     {
         name = @"OnRewardedAdDisplayedEvent";
+    }
+    else // APP OPEN
+    {
+        name = @"OnAppOpenAdDisplayedEvent";
     }
     
     [self sendEventWithName: name body: [self adInfoForAd: ad]];
@@ -714,16 +758,20 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     // BMLs do not support [DISPLAY] events in Unity
     MAAdFormat *adFormat = ad.format;
-    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded ) return;
+    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded && adFormat != MAAdFormat.appOpen ) return;
     
     NSString *name;
     if ( MAAdFormat.interstitial == adFormat )
     {
         name = @"OnInterstitialAdFailedToDisplayEvent";
     }
-    else // REWARDED
+    else if ( MAAdFormat.rewarded == adFormat )
     {
         name = @"OnRewardedAdFailedToDisplayEvent";
+    }
+    else // APP OPEN
+    {
+        name = @"OnAppOpenAdFailedToDisplayEvent";
     }
     
     // TODO: Add "code", "message"
@@ -737,16 +785,20 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     // BMLs do not support [HIDDEN] events in Unity
     MAAdFormat *adFormat = ad.format;
-    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded ) return;
+    if ( adFormat != MAAdFormat.interstitial && adFormat != MAAdFormat.rewarded && adFormat != MAAdFormat.appOpen ) return;
     
     NSString *name;
     if ( MAAdFormat.interstitial == adFormat )
     {
         name = @"OnInterstitialHiddenEvent";
     }
-    else // REWARDED
+    else if ( MAAdFormat.rewarded == adFormat )
     {
         name = @"OnRewardedAdHiddenEvent";
+    }
+    else // APP OPEN
+    {
+        name = @"OnAppOpenAdHiddenEvent";
     }
     
     [self sendEventWithName: name body: [self adInfoForAd: ad]];
@@ -797,6 +849,10 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( MAAdFormat.rewarded == adFormat )
     {
         name = @"OnRewardedAdRevenuePaid";
+    }
+    else if ( MAAdFormat.appOpen == adFormat )
+    {
+        name = @"OnAppOpenAdRevenuePaid";
     }
     else
     {
@@ -1024,6 +1080,20 @@ static FlutterMethodChannel *ALSharedChannel;
         result.delegate = self;
         
         self.rewardedAds[adUnitIdentifier] = result;
+    }
+    
+    return result;
+}
+
+- (MAAppOpenAd *)retrieveAppOpenAdForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    MAAppOpenAd *result = self.appOpenAds[adUnitIdentifier];
+    if ( !result )
+    {
+        result = [[MAAppOpenAd alloc] initWithAdUnitIdentifier: adUnitIdentifier sdk: self.sdk];
+        result.delegate = self;
+        
+        self.appOpenAds[adUnitIdentifier] = result;
     }
     
     return result;
@@ -1508,8 +1578,10 @@ static FlutterMethodChannel *ALSharedChannel;
         
         id rawPlacement = call.arguments[@"placement"];
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        id rawCustomData = call.arguments[@"custom_data"];
+        NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
         
-        [self showInterstitialForAdUnitIdentifier: adUnitId placement: placement];
+        [self showInterstitialForAdUnitIdentifier: adUnitId placement: placement customData: customData];
         
         result(nil);
     }
@@ -1540,8 +1612,10 @@ static FlutterMethodChannel *ALSharedChannel;
         
         id rawPlacement = call.arguments[@"placement"];
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        id rawCustomData = call.arguments[@"custom_data"];
+        NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
         
-        [self showRewardedAdForAdUnitIdentifier: adUnitId placement: placement];
+        [self showRewardedAdForAdUnitIdentifier: adUnitId placement: placement customData: customData];
         
         result(nil);
     }
@@ -1551,6 +1625,40 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *key = call.arguments[@"key"];
         NSString *value = call.arguments[@"value"];
         [self setRewardedAdExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
+        
+        result(nil);
+    }
+    else if ( [@"loadAppOpenAd" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self loadAppOpenAdForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"isAppOpenAdReady" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self isAppOpenAdReadyForAdUnitIdentifier: adUnitId result: result];
+    }
+    else if ( [@"showAppOpenAd" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        
+        id rawPlacement = call.arguments[@"placement"];
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        id rawCustomData = call.arguments[@"custom_data"];
+        NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
+        
+        [self showAppOpenAdForAdUnitIdentifier: adUnitId placement: placement customData: customData];
+        
+        result(nil);
+    }
+    else if ( [@"setAppOpenAdExtraParameter" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        NSString *key = call.arguments[@"key"];
+        NSString *value = call.arguments[@"value"];
+        [self setAppOpenAdExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
         
         result(nil);
     }
