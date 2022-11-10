@@ -178,13 +178,13 @@ static FlutterMethodChannel *ALSharedChannel;
     
     if ( self.targetingGenderToSet )
     {
-        self.sdk.targetingData.gender = [[self class] getAppLovinGender: self.targetingGenderToSet];
+        self.sdk.targetingData.gender = [self toAppLovinGender: self.targetingGenderToSet];
         self.targetingGenderToSet = nil;
     }
     
     if ( self.targetingMaximumAdContentRatingToSet )
     {
-        self.sdk.targetingData.maximumAdContentRating = [[self class] getAppLovinAdContentRating: self.targetingMaximumAdContentRatingToSet];
+        self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: self.targetingMaximumAdContentRatingToSet];
         self.targetingMaximumAdContentRatingToSet = nil;
     }
     
@@ -393,7 +393,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    self.sdk.targetingData.gender = [[self class] getAppLovinGender: gender];
+    self.sdk.targetingData.gender = [self toAppLovinGender: gender];
 }
 
 - (void)setTargetingDataMaximumAdContentRating:(nullable NSNumber *)maximumAdContentRating
@@ -404,7 +404,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    self.sdk.targetingData.maximumAdContentRating = [[self class] getAppLovinAdContentRating: maximumAdContentRating];
+    self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: maximumAdContentRating];
 }
 
 - (void)setTargetingDataEmail:(nullable NSString *)email
@@ -1222,7 +1222,7 @@ static FlutterMethodChannel *ALSharedChannel;
              @"dspName" : ad.DSPName ?: @""};
 }
 
-+ (ALGender)getAppLovinGender:(nullable NSString *)gender
+- (ALGender)toAppLovinGender:(nullable NSString *)gender
 {
     if ( gender )
     {
@@ -1243,7 +1243,7 @@ static FlutterMethodChannel *ALSharedChannel;
     return ALGenderUnknown;
 }
 
-+ (ALAdContentRating)getAppLovinAdContentRating:(nullable NSNumber *) maximumAdContentRating
+- (ALAdContentRating)toAppLovinAdContentRating:(nullable NSNumber *)maximumAdContentRating
 {
     if ( maximumAdContentRating )
     {
