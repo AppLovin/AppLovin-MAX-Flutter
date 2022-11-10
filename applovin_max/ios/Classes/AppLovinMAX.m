@@ -178,13 +178,13 @@ static FlutterMethodChannel *ALSharedChannel;
     
     if ( self.targetingGenderToSet )
     {
-        [self setTargetingDataGender: self.targetingGenderToSet];
+        self.sdk.targetingData.gender = [[self class] getAppLovinGender: self.targetingGenderToSet];
         self.targetingGenderToSet = nil;
     }
     
     if ( self.targetingMaximumAdContentRatingToSet )
     {
-        [self setTargetingDataMaximumAdContentRating: self.targetingMaximumAdContentRatingToSet];
+        self.sdk.targetingData.maximumAdContentRating = [[self class] getAppLovinAdContentRating: self.targetingMaximumAdContentRatingToSet];
         self.targetingMaximumAdContentRatingToSet = nil;
     }
     
@@ -393,25 +393,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    ALGender alGender = ALGenderUnknown;
-    
-    if ( gender )
-    {
-        if ( [@"F" isEqualToString: gender] )
-        {
-            alGender =  ALGenderFemale;
-        }
-        else if ( [@"M" isEqualToString: gender] )
-        {
-            alGender =  ALGenderMale;
-        }
-        else if ( [@"O" isEqualToString: gender] )
-        {
-            alGender =  ALGenderOther;
-        }
-    }
-    
-    self.sdk.targetingData.gender = alGender;
+    self.sdk.targetingData.gender = [[self class] getAppLovinGender: gender];
 }
 
 - (void)setTargetingDataMaximumAdContentRating:(nullable NSNumber *)maximumAdContentRating
@@ -422,24 +404,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    ALAdContentRating rating = ALAdContentRatingNone;
-    
-    int intVal = maximumAdContentRating ? maximumAdContentRating.intValue : 0;
-    
-    if ( intVal == 1 )
-    {
-        rating = ALAdContentRatingAllAudiences;
-    }
-    else if ( intVal == 2 )
-    {
-        rating = ALAdContentRatingEveryoneOverTwelve;
-    }
-    else if ( intVal == 3 )
-    {
-        rating = ALAdContentRatingMatureAudiences;
-    }
-    
-    self.sdk.targetingData.maximumAdContentRating = rating;
+    self.sdk.targetingData.maximumAdContentRating = [[self class] getAppLovinAdContentRating: maximumAdContentRating];
 }
 
 - (void)setTargetingDataEmail:(nullable NSString *)email
@@ -1255,6 +1220,50 @@ static FlutterMethodChannel *ALSharedChannel;
              @"placement" : ad.placement ?: @"",
              @"revenue" : @(ad.revenue).stringValue,
              @"dspName" : ad.DSPName ?: @""};
+}
+
++ (ALGender)getAppLovinGender:(nullable NSString *)gender
+{
+    if ( gender )
+    {
+        if ( [@"F" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderFemale;
+        }
+        else if ( [@"M" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderMale;
+        }
+        else if ( [@"O" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderOther;
+        }
+    }
+    
+    return ALGenderUnknown;
+}
+
++ (ALAdContentRating)getAppLovinAdContentRating:(nullable NSNumber *) maximumAdContentRating
+{
+    if ( maximumAdContentRating )
+    {
+        int intVal = maximumAdContentRating.intValue;
+        
+        if ( intVal == 1 )
+        {
+            return ALAdContentRatingAllAudiences;
+        }
+        else if ( intVal == 2 )
+        {
+            return ALAdContentRatingEveryoneOverTwelve;
+        }
+        else if ( intVal == 3 )
+        {
+            return ALAdContentRatingMatureAudiences;
+        }
+    }
+    
+    return ALAdContentRatingNone;
 }
 
 #pragma mark - Flutter Event Channel

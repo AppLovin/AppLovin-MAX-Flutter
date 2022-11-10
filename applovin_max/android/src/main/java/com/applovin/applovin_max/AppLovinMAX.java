@@ -214,13 +214,13 @@ public class AppLovinMAX
 
         if ( targetingGenderToSet != null )
         {
-            setTargetingDataGender( targetingGenderToSet );
+            sdk.getTargetingData().setGender( getAppLovinGender( targetingGenderToSet ) );
             targetingGenderToSet = null;
         }
 
         if ( targetingMaximumAdContentRatingToSet != null )
         {
-            setTargetingDataMaximumAdContentRating( targetingMaximumAdContentRatingToSet );
+            sdk.getTargetingData().setMaximumAdContentRating( getAppLovinAdContentRating( targetingMaximumAdContentRatingToSet ) );
             targetingMaximumAdContentRatingToSet = null;
         }
 
@@ -418,25 +418,7 @@ public class AppLovinMAX
             return;
         }
 
-        AppLovinGender alGender = AppLovinGender.UNKNOWN;
-
-        if ( gender != null )
-        {
-            if ( "F".equals( gender ) )
-            {
-                alGender = AppLovinGender.FEMALE;
-            }
-            else if ( "M".equals( gender ) )
-            {
-                alGender = AppLovinGender.MALE;
-            }
-            else if ( "O".equals( gender ) )
-            {
-                alGender = AppLovinGender.OTHER;
-            }
-        }
-
-        sdk.getTargetingData().setGender( alGender );
+        sdk.getTargetingData().setGender( getAppLovinGender( gender ) );
     }
 
     public void setTargetingDataMaximumAdContentRating(final int maximumAdContentRating)
@@ -447,22 +429,7 @@ public class AppLovinMAX
             return;
         }
 
-        AppLovinAdContentRating rating = AppLovinAdContentRating.NONE;
-
-        if ( maximumAdContentRating == 1 )
-        {
-            rating = AppLovinAdContentRating.ALL_AUDIENCES;
-        }
-        else if ( maximumAdContentRating == 2 )
-        {
-            rating = AppLovinAdContentRating.EVERYONE_OVER_TWELVE;
-        }
-        else if ( maximumAdContentRating == 3 )
-        {
-            rating = AppLovinAdContentRating.MATURE_AUDIENCES;
-        }
-
-        sdk.getTargetingData().setMaximumAdContentRating( rating );
+        sdk.getTargetingData().setMaximumAdContentRating( getAppLovinAdContentRating( maximumAdContentRating ) );
     }
 
     public void setTargetingDataEmail(@Nullable final String email)
@@ -1322,6 +1289,45 @@ public class AppLovinMAX
     private static Point getOffsetPixels(final float xDp, final float yDp, final Context context)
     {
         return new Point( AppLovinSdkUtils.dpToPx( context, (int) xDp ), AppLovinSdkUtils.dpToPx( context, (int) yDp ) );
+    }
+
+    private static AppLovinGender getAppLovinGender(@Nullable String gender)
+    {
+        if ( gender != null )
+        {
+            if ( "F".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.FEMALE;
+            }
+            else if ( "M".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.MALE;
+            }
+            else if ( "O".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.OTHER;
+            }
+        }
+
+        return AppLovinGender.UNKNOWN;
+    }
+
+    private static AppLovinAdContentRating getAppLovinAdContentRating(int maximumAdContentRating)
+    {
+        if ( maximumAdContentRating == 1 )
+        {
+            return AppLovinAdContentRating.ALL_AUDIENCES;
+        }
+        else if ( maximumAdContentRating == 2 )
+        {
+            return AppLovinAdContentRating.EVERYONE_OVER_TWELVE;
+        }
+        else if ( maximumAdContentRating == 3 )
+        {
+            return AppLovinAdContentRating.MATURE_AUDIENCES;
+        }
+
+        return AppLovinAdContentRating.NONE;
     }
 
     // Flutter channel
