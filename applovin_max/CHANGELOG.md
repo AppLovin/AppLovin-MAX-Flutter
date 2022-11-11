@@ -1,7 +1,9 @@
 ## Versions
 
-## x.x.x
+## 2.3.0
     * Depends on Android SDK v11.5.5 and iOS SDK v11.5.5.
+    * Add support for App Open ads.
+    * Add support for passing additional data.
 ## 2.2.0
     * Depends on Android SDK v11.5.3 and iOS SDK v11.5.3.
     * Add support for ad revenue callbacks.
