@@ -1,7 +1,6 @@
 import 'dart:ui' as ui;
 
 import 'package:applovin_max/applovin_max.dart';
-import 'package:applovin_max/src/ad_classes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -26,6 +26,14 @@
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
 @property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
 
+@property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
+@property (nonatomic, strong, nullable) NSNumber *targetingMaximumAdContentRatingToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingEmailToSet;
+@property (nonatomic,   copy, nullable) NSString *targetingPhoneNumberToSet;
+@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingKeywordsToSet;
+@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingInterestsToSet;
+
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MARewardedAd *> *rewardedAds;
@@ -160,6 +168,48 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.sdk.settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
         self.creativeDebuggerEnabledToSet = nil;
+    }
+    
+    if ( self.targetingYearOfBirthToSet )
+    {
+        self.sdk.targetingData.yearOfBirth = self.targetingYearOfBirthToSet.intValue <= 0 ? nil : self.targetingYearOfBirthToSet;
+        self.targetingYearOfBirthToSet = nil;
+    }
+    
+    if ( self.targetingGenderToSet )
+    {
+        self.sdk.targetingData.gender = [self toAppLovinGender: self.targetingGenderToSet];
+        self.targetingGenderToSet = nil;
+    }
+    
+    if ( self.targetingMaximumAdContentRatingToSet )
+    {
+        self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: self.targetingMaximumAdContentRatingToSet];
+        self.targetingMaximumAdContentRatingToSet = nil;
+    }
+    
+    if ( self.targetingEmailToSet )
+    {
+        self.sdk.targetingData.email = self.targetingEmailToSet;
+        self.targetingEmailToSet = nil;
+    }
+    
+    if ( self.targetingPhoneNumberToSet )
+    {
+        self.sdk.targetingData.phoneNumber = self.targetingPhoneNumberToSet;
+        self.targetingPhoneNumberToSet = nil;
+    }
+    
+    if ( self.targetingKeywordsToSet )
+    {
+        self.sdk.targetingData.keywords = self.targetingKeywordsToSet;
+        self.targetingKeywordsToSet = nil;
+    }
+    
+    if ( self.targetingInterestsToSet )
+    {
+        self.sdk.targetingData.interests = self.targetingInterestsToSet;
+        self.targetingInterestsToSet = nil;
     }
     
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
@@ -313,6 +363,103 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.testDeviceIdentifiersToSet = testDeviceAdvertisingIds;
     }
+}
+
+#pragma mark - Data Passing
+
+- (void)setTargetingDataYearOfBirth:(nullable NSNumber *)yearOfBirth
+{
+    if ( !self.sdk )
+    {
+        self.targetingYearOfBirthToSet = yearOfBirth;
+        return;
+    }
+    
+    if ( yearOfBirth )
+    {
+        self.sdk.targetingData.yearOfBirth = yearOfBirth.intValue <= 0 ? nil : yearOfBirth;
+    }
+    else
+    {
+        self.sdk.targetingData.yearOfBirth = nil;
+    }
+}
+
+- (void)setTargetingDataGender:(nullable NSString *)gender
+{
+    if ( !self.sdk )
+    {
+        self.targetingGenderToSet = gender;
+        return;
+    }
+    
+    self.sdk.targetingData.gender = [self toAppLovinGender: gender];
+}
+
+- (void)setTargetingDataMaximumAdContentRating:(nullable NSNumber *)maximumAdContentRating
+{
+    if ( !self.sdk )
+    {
+        self.targetingMaximumAdContentRatingToSet = maximumAdContentRating;
+        return;
+    }
+    
+    self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: maximumAdContentRating];
+}
+
+- (void)setTargetingDataEmail:(nullable NSString *)email
+{
+    if ( !self.sdk )
+    {
+        self.targetingEmailToSet = email;
+        return;
+    }
+    
+    self.sdk.targetingData.email = email;
+}
+
+- (void)setTargetingDataPhoneNumber:(nullable NSString *)phoneNumber
+{
+    if ( !self.sdk )
+    {
+        self.targetingPhoneNumberToSet = phoneNumber;
+        return;
+    }
+    
+    self.sdk.targetingData.phoneNumber = phoneNumber;
+}
+
+- (void)setTargetingDataKeywords:(nullable NSArray<NSString *> *)keywords
+{
+    if ( !self.sdk )
+    {
+        self.targetingKeywordsToSet = keywords;
+        return;
+    }
+    
+    self.sdk.targetingData.keywords = keywords;
+}
+
+- (void)setTargetingDataInterests:(nullable NSArray<NSString *> *)interests
+{
+    if ( !self.sdk )
+    {
+        self.targetingInterestsToSet = interests;
+        return;
+    }
+    
+    self.sdk.targetingData.interests = interests;
+}
+
+- (void)clearAllTargetingData
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"clearAllTargetingData"];
+        return;
+    }
+    
+    [self.sdk.targetingData clearAll];
 }
 
 #pragma mark - Banners
@@ -656,7 +803,7 @@ static FlutterMethodChannel *ALSharedChannel;
         [self logInvalidAdFormat: adFormat];
         return;
     }
-
+    
     [self sendEventWithName: name body: [self adInfoForAd: ad]];
 }
 
@@ -827,6 +974,11 @@ static FlutterMethodChannel *ALSharedChannel;
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat
 {
     [self log: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+}
+
+- (void)logUninitializedAccessError:(NSString *)callingMethod
+{
+    [self log: @"ERROR: Failed to execute %@() - please ensure the AppLovin Flutter Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
 }
 
 - (void)log:(NSString *)format, ...
@@ -1068,6 +1220,50 @@ static FlutterMethodChannel *ALSharedChannel;
              @"placement" : ad.placement ?: @"",
              @"revenue" : @(ad.revenue).stringValue,
              @"dspName" : ad.DSPName ?: @""};
+}
+
+- (ALGender)toAppLovinGender:(nullable NSString *)gender
+{
+    if ( gender )
+    {
+        if ( [@"F" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderFemale;
+        }
+        else if ( [@"M" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderMale;
+        }
+        else if ( [@"O" al_isEqualToStringIgnoringCase: gender] )
+        {
+            return ALGenderOther;
+        }
+    }
+    
+    return ALGenderUnknown;
+}
+
+- (ALAdContentRating)toAppLovinAdContentRating:(nullable NSNumber *)maximumAdContentRating
+{
+    if ( maximumAdContentRating )
+    {
+        int intVal = maximumAdContentRating.intValue;
+        
+        if ( intVal == 1 )
+        {
+            return ALAdContentRatingAllAudiences;
+        }
+        else if ( intVal == 2 )
+        {
+            return ALAdContentRatingEveryoneOverTwelve;
+        }
+        else if ( intVal == 3 )
+        {
+            return ALAdContentRatingMatureAudiences;
+        }
+    }
+    
+    return ALAdContentRatingNone;
 }
 
 #pragma mark - Flutter Event Channel
@@ -1355,6 +1551,68 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *key = call.arguments[@"key"];
         NSString *value = call.arguments[@"value"];
         [self setRewardedAdExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataYearOfBirth" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSNumber *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataYearOfBirth: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataGender" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataGender: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataMaximumAdContentRating" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataMaximumAdContentRating: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataEmail" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataEmail: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataPhoneNumber" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataPhoneNumber: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataKeywords" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self setTargetingDataKeywords: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTargetingDataInterests" isEqualToString: call.method] )
+    {
+        id rawValue = call.arguments[@"value"];
+        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        [self  setTargetingDataInterests: value];
+        
+        result(nil);
+    }
+    else if ( [@"clearAllTargetingData" isEqualToString: call.method] )
+    {
+        [self clearAllTargetingData];
         
         result(nil);
     }

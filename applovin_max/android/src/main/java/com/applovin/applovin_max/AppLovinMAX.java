@@ -27,6 +27,8 @@ import com.applovin.mediation.MaxRewardedAdListener;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.mediation.ads.MaxRewardedAd;
+import com.applovin.sdk.AppLovinAdContentRating;
+import com.applovin.sdk.AppLovinGender;
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
@@ -73,6 +75,14 @@ public class AppLovinMAX
     private List<String> testDeviceAdvertisingIdsToSet;
     private Boolean      verboseLoggingToSet;
     private Boolean      creativeDebuggerEnabledToSet;
+
+    private Integer      targetingYearOfBirthToSet;
+    private String       targetingGenderToSet;
+    private Integer      targetingMaximumAdContentRatingToSet;
+    private String       targetingEmailToSet;
+    private String       targetingPhoneNumberToSet;
+    private List<String> targetingKeywordsToSet;
+    private List<String> targetingInterestsToSet;
 
     // Fullscreen Ad Fields
     private final Map<String, MaxInterstitialAd> mInterstitials = new HashMap<>( 2 );
@@ -194,6 +204,48 @@ public class AppLovinMAX
         {
             sdk.getSettings().setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
             creativeDebuggerEnabledToSet = null;
+        }
+
+        if ( targetingYearOfBirthToSet != null )
+        {
+            sdk.getTargetingData().setYearOfBirth( targetingYearOfBirthToSet <= 0 ? null : targetingYearOfBirthToSet );
+            targetingYearOfBirthToSet = null;
+        }
+
+        if ( targetingGenderToSet != null )
+        {
+            sdk.getTargetingData().setGender( getAppLovinGender( targetingGenderToSet ) );
+            targetingGenderToSet = null;
+        }
+
+        if ( targetingMaximumAdContentRatingToSet != null )
+        {
+            sdk.getTargetingData().setMaximumAdContentRating( getAppLovinAdContentRating( targetingMaximumAdContentRatingToSet ) );
+            targetingMaximumAdContentRatingToSet = null;
+        }
+
+        if ( targetingEmailToSet != null )
+        {
+            sdk.getTargetingData().setEmail( targetingEmailToSet );
+            targetingEmailToSet = null;
+        }
+
+        if ( targetingPhoneNumberToSet != null )
+        {
+            sdk.getTargetingData().setPhoneNumber( targetingPhoneNumberToSet );
+            targetingPhoneNumberToSet = null;
+        }
+
+        if ( targetingKeywordsToSet != null )
+        {
+            sdk.getTargetingData().setKeywords( targetingKeywordsToSet );
+            targetingKeywordsToSet = null;
+        }
+
+        if ( targetingInterestsToSet != null )
+        {
+            sdk.getTargetingData().setInterests( targetingInterestsToSet );
+            targetingInterestsToSet = null;
         }
 
         sdk.initializeSdk( configuration -> {
@@ -343,6 +395,96 @@ public class AppLovinMAX
         {
             testDeviceAdvertisingIdsToSet = advertisingIds;
         }
+    }
+
+    // Data Passing
+
+    public void setTargetingDataYearOfBirth(final int yearOfBirth)
+    {
+        if ( sdk == null )
+        {
+            targetingYearOfBirthToSet = yearOfBirth;
+            return;
+        }
+
+        sdk.getTargetingData().setYearOfBirth( yearOfBirth <= 0 ? null : yearOfBirth );
+    }
+
+    public void setTargetingDataGender(@Nullable final String gender)
+    {
+        if ( sdk == null )
+        {
+            targetingGenderToSet = gender;
+            return;
+        }
+
+        sdk.getTargetingData().setGender( getAppLovinGender( gender ) );
+    }
+
+    public void setTargetingDataMaximumAdContentRating(final int maximumAdContentRating)
+    {
+        if ( sdk == null )
+        {
+            targetingMaximumAdContentRatingToSet = maximumAdContentRating;
+            return;
+        }
+
+        sdk.getTargetingData().setMaximumAdContentRating( getAppLovinAdContentRating( maximumAdContentRating ) );
+    }
+
+    public void setTargetingDataEmail(@Nullable final String email)
+    {
+        if ( sdk == null )
+        {
+            targetingEmailToSet = email;
+            return;
+        }
+
+        sdk.getTargetingData().setEmail( email );
+    }
+
+    public void setTargetingDataPhoneNumber(@Nullable final String phoneNumber)
+    {
+        if ( sdk == null )
+        {
+            targetingPhoneNumberToSet = phoneNumber;
+            return;
+        }
+
+        sdk.getTargetingData().setPhoneNumber( phoneNumber );
+    }
+
+    public void setTargetingDataKeywords(@Nullable final List<String> keywords)
+    {
+        if ( sdk == null )
+        {
+            targetingKeywordsToSet = keywords;
+            return;
+        }
+
+        sdk.getTargetingData().setKeywords( keywords );
+    }
+
+    public void setTargetingDataInterests(@Nullable final List<String> interests)
+    {
+        if ( sdk == null )
+        {
+            targetingInterestsToSet = interests;
+            return;
+        }
+
+        sdk.getTargetingData().setInterests( interests );
+    }
+
+    public void clearAllTargetingData()
+    {
+        if ( sdk == null )
+        {
+            logUninitializedAccessError( "clearAllTargetingData" );
+            return;
+        }
+
+        sdk.getTargetingData().clearAll();
     }
 
     // BANNERS
@@ -1149,6 +1291,45 @@ public class AppLovinMAX
         return new Point( AppLovinSdkUtils.dpToPx( context, (int) xDp ), AppLovinSdkUtils.dpToPx( context, (int) yDp ) );
     }
 
+    private static AppLovinGender getAppLovinGender(@Nullable String gender)
+    {
+        if ( gender != null )
+        {
+            if ( "F".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.FEMALE;
+            }
+            else if ( "M".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.MALE;
+            }
+            else if ( "O".equalsIgnoreCase( gender ) )
+            {
+                return AppLovinGender.OTHER;
+            }
+        }
+
+        return AppLovinGender.UNKNOWN;
+    }
+
+    private static AppLovinAdContentRating getAppLovinAdContentRating(int maximumAdContentRating)
+    {
+        if ( maximumAdContentRating == 1 )
+        {
+            return AppLovinAdContentRating.ALL_AUDIENCES;
+        }
+        else if ( maximumAdContentRating == 2 )
+        {
+            return AppLovinAdContentRating.EVERYONE_OVER_TWELVE;
+        }
+        else if ( maximumAdContentRating == 3 )
+        {
+            return AppLovinAdContentRating.MATURE_AUDIENCES;
+        }
+
+        return AppLovinAdContentRating.NONE;
+    }
+
     // Flutter channel
 
     @Override
@@ -1408,6 +1589,61 @@ public class AppLovinMAX
             String key = call.argument( "key" );
             String value = call.argument( "value" );
             setRewardedAdExtraParameter( adUnitId, key, value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataYearOfBirth".equals( call.method ) )
+        {
+            int value = call.argument( "value" );
+            setTargetingDataYearOfBirth( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataGender".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setTargetingDataGender( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataMaximumAdContentRating".equals( call.method ) )
+        {
+            int value = call.argument( "value" );
+            setTargetingDataMaximumAdContentRating( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataEmail".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setTargetingDataEmail( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataPhoneNumber".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setTargetingDataPhoneNumber( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataKeywords".equals( call.method ) )
+        {
+            List<String> value = call.argument( "value" );
+            setTargetingDataKeywords( value );
+
+            result.success( null );
+        }
+        else if ( "setTargetingDataInterests".equals( call.method ) )
+        {
+            List<String> value = call.argument( "value" );
+            setTargetingDataInterests( value );
+
+            result.success( null );
+        }
+        else if ( "clearAllTargetingData".equals( call.method ) )
+        {
+            clearAllTargetingData();
 
             result.success( null );
         }
