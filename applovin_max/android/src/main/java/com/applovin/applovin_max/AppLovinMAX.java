@@ -76,6 +76,7 @@ public class AppLovinMAX
     private List<String> testDeviceAdvertisingIdsToSet;
     private Boolean      verboseLoggingToSet;
     private Boolean      creativeDebuggerEnabledToSet;
+    private Boolean      locationCollectionEnabledToSet;
 
     private Integer      targetingYearOfBirthToSet;
     private String       targetingGenderToSet;
@@ -218,6 +219,12 @@ public class AppLovinMAX
         {
             sdk.getTargetingData().setYearOfBirth( targetingYearOfBirthToSet <= 0 ? null : targetingYearOfBirthToSet );
             targetingYearOfBirthToSet = null;
+        }
+
+        if ( locationCollectionEnabledToSet != null )
+        {
+            sdk.getSettings().setLocationCollectionEnabled( locationCollectionEnabledToSet );
+            locationCollectionEnabledToSet = null;
         }
 
         if ( targetingGenderToSet != null )
@@ -402,6 +409,19 @@ public class AppLovinMAX
         else
         {
             testDeviceAdvertisingIdsToSet = advertisingIds;
+        }
+    }
+
+    public void setLocationCollectionEnabled(final boolean enabled)
+    {
+        if ( isPluginInitialized )
+        {
+            sdk.getSettings().setLocationCollectionEnabled( enabled );
+            locationCollectionEnabledToSet = null;
+        }
+        else
+        {
+            locationCollectionEnabledToSet = enabled;
         }
     }
 
@@ -1501,6 +1521,13 @@ public class AppLovinMAX
         {
             List<String> testDeviceAdvertisingIds = call.argument( "value" );
             setTestDeviceAdvertisingIds( testDeviceAdvertisingIds );
+
+            result.success( null );
+        }
+        else if ( "setLocationCollectionEnabled".equals( call.method ) )
+        {
+            boolean isLocationCollectionEnabled = call.argument( "value" );
+            setLocationCollectionEnabled( isLocationCollectionEnabled );
 
             result.success( null );
         }
