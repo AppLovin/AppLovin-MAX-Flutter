@@ -116,8 +116,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       if ("OnAdViewAdLoadedEvent" == method) {
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        widget.listener?.onAdLoadFailedCallback(adUnitId, error);
+        widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));
       } else if ("OnAdViewAdClickedEvent" == method) {
         widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdExpandedEvent" == method) {

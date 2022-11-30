@@ -46,8 +46,7 @@ class AppLovinMAX {
       if ("OnBannerAdLoadedEvent" == method) {
         _bannerAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _bannerAdListener?.onAdLoadFailedCallback(adUnitId, error);
+        _bannerAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
       } else if ("OnBannerAdClickedEvent" == method) {
         _bannerAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
       } else if ("OnBannerAdExpandedEvent" == method) {
@@ -62,8 +61,7 @@ class AppLovinMAX {
       else if ("OnMRecAdLoadedEvent" == method) {
         _mrecAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
       } else if ("OnMRecAdLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _mrecAdListener?.onAdLoadFailedCallback(adUnitId, error);
+        _mrecAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
       } else if ("OnMRecAdClickedEvent" == method) {
         _mrecAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
       } else if ("OnMRecAdExpandedEvent" == method) {
@@ -78,15 +76,13 @@ class AppLovinMAX {
       else if ("OnInterstitialLoadedEvent" == method) {
         _interstitialListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _interstitialListener?.onAdLoadFailedCallback(adUnitId, error);
+        _interstitialListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
       } else if ("OnInterstitialClickedEvent" == method) {
         _interstitialListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialDisplayedEvent" == method) {
         _interstitialListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialAdFailedToDisplayEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _interstitialListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
+        _interstitialListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
       } else if ("OnInterstitialHiddenEvent" == method) {
         _interstitialListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
       } else if ("OnInterstitialAdRevenuePaid" == method) {
@@ -97,19 +93,17 @@ class AppLovinMAX {
       else if ("OnRewardedAdLoadedEvent" == method) {
         _rewardedAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _rewardedAdListener?.onAdLoadFailedCallback(adUnitId, error);
+        _rewardedAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
       } else if ("OnRewardedAdClickedEvent" == method) {
         _rewardedAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdDisplayedEvent" == method) {
         _rewardedAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdFailedToDisplayEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _rewardedAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
+        _rewardedAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
       } else if ("OnRewardedAdHiddenEvent" == method) {
         _rewardedAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
       } else if ("OnRewardedAdReceivedRewardEvent" == method) {
-        var reward = MaxReward(int.parse(arguments["rewardAmount"]), arguments["rewardLabel"]);
+        var reward = MaxReward(arguments["rewardAmount"], arguments["rewardLabel"]);
         _rewardedAdListener?.onAdReceivedRewardCallback(createAd(adUnitId, arguments), reward);
       } else if ("OnRewardedAdRevenuePaid" == method) {
         _rewardedAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
@@ -119,15 +113,13 @@ class AppLovinMAX {
       else if ("OnAppOpenAdLoadedEvent" == method) {
         _appOpenAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnAppOpenAdLoadFailedEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _appOpenAdListener?.onAdLoadFailedCallback(adUnitId, error);
+        _appOpenAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
       } else if ("OnAppOpenAdClickedEvent" == method) {
         _appOpenAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnAppOpenAdDisplayedEvent" == method) {
         _appOpenAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
       } else if ("OnAppOpenAdFailedToDisplayEvent" == method) {
-        var error = MaxError(arguments["errorCode"], arguments["errorMessage"]);
-        _appOpenAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), error);
+        _appOpenAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
       } else if ("OnAppOpenAdHiddenEvent" == method) {
         _appOpenAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
       } else if ("OnAppOpenAdRevenuePaid" == method) {
@@ -150,6 +142,17 @@ class AppLovinMAX {
       arguments["creativeId"],
       arguments["dspName"],
       arguments["placement"],
+      Map<String, dynamic>.from(arguments["waterfall"]),
+    );
+  }
+
+  /// @nodoc
+  static MaxError createError(dynamic arguments) {
+    return MaxError(
+      arguments["errorCode"],
+      arguments["errorMessage"],
+      arguments["adLoadFailureInfo"],
+      Map<String, dynamic>.from(arguments["waterfall"]),
     );
   }
 

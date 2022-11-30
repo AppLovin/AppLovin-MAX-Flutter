@@ -21,7 +21,10 @@ import com.applovin.mediation.MaxAdFormat;
 import com.applovin.mediation.MaxAdListener;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxAdWaterfallInfo;
 import com.applovin.mediation.MaxError;
+import com.applovin.mediation.MaxMediatedNetworkInfo;
+import com.applovin.mediation.MaxNetworkResponseInfo;
 import com.applovin.mediation.MaxReward;
 import com.applovin.mediation.MaxRewardedAdListener;
 import com.applovin.mediation.ads.MaxAdView;
@@ -746,12 +749,19 @@ public class AppLovinMAX
             return;
         }
 
+        AppLovinMAX.getInstance().fireErrorCallback( name, adUnitId, error );
+    }
+
+    public void fireErrorCallback(final String name, final String adUnitId, final MaxError error)
+    {
         try
         {
-            Map<String, String> params = new HashMap<>( 3 );
+            Map<String, Object> params = new HashMap<>( 5 );
             params.put( "adUnitId", adUnitId );
-            params.put( "errorCode", Integer.toString( error.getCode() ) );
+            params.put( "errorCode", error.getCode() );
             params.put( "errorMessage", error.getMessage() );
+            params.put( "adLoadFailureInfo", error.getAdLoadFailureInfo() );
+            params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
             fireCallback( name, params );
         }
         catch ( Throwable ignored ) { }
@@ -838,8 +848,8 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, String> params = getAdInfo( ad );
-            params.put( "errorCode", Integer.toString( error.getCode() ) );
+            Map<String, Object> params = getAdInfo( ad );
+            params.put( "errorCode", error.getCode() );
             params.put( "errorMessage", error.getMessage() );
             fireCallback( name, params );
         }
@@ -953,11 +963,11 @@ public class AppLovinMAX
         }
 
         final String rewardLabel = reward != null ? reward.getLabel() : "";
-        final String rewardAmount = Integer.toString( reward != null ? reward.getAmount() : 0 );
+        final int rewardAmount = reward != null ? reward.getAmount() : 0;
 
         try
         {
-            Map<String, String> params = getAdInfo( ad );
+            Map<String, Object> params = getAdInfo( ad );
             params.put( "rewardLabel", rewardLabel );
             params.put( "rewardAmount", rewardAmount );
             fireCallback( "OnRewardedAdReceivedRewardEvent", params );
@@ -1326,6 +1336,89 @@ public class AppLovinMAX
         relativeLayout.setGravity( gravity );
     }
 
+    // AD INFO
+
+    private Map<String, Object> getAdInfo(final MaxAd ad)
+    {
+        Map<String, Object> adInfo = new HashMap<>( 7 );
+        adInfo.put( "adUnitId", ad.getAdUnitId() );
+        adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
+        adInfo.put( "networkName", ad.getNetworkName() );
+        adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
+        adInfo.put( "revenue", ad.getRevenue() );
+        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
+        adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
+
+        return adInfo;
+    }
+
+    // AD WATERFALL INFO
+
+    private Map<String, Object> createAdWaterfallInfo(final MaxAdWaterfallInfo waterfallInfo)
+    {
+        Map<String, Object> waterfallInfoObject = new HashMap<>();
+        if ( waterfallInfo == null ) return waterfallInfoObject;
+
+        waterfallInfoObject.put( "name", waterfallInfo.getName() );
+        waterfallInfoObject.put( "testName", waterfallInfo.getTestName() );
+
+        List<Object> networkResponsesArray = new ArrayList<>();
+        for ( MaxNetworkResponseInfo response : waterfallInfo.getNetworkResponses() )
+        {
+            networkResponsesArray.add( createNetworkResponseInfo( response ) );
+        }
+        waterfallInfoObject.put( "networkResponses", networkResponsesArray );
+
+        waterfallInfoObject.put( "latencyMillis", waterfallInfo.getLatencyMillis() );
+
+        return waterfallInfoObject;
+    }
+
+    private Map<String, Object> createNetworkResponseInfo(final MaxNetworkResponseInfo response)
+    {
+        Map<String, Object> networkResponseObject = new HashMap<>();
+        networkResponseObject.put( "adLoadState", response.getAdLoadState().ordinal() );
+
+        MaxMediatedNetworkInfo mediatedNetworkInfo = response.getMediatedNetwork();
+        if ( mediatedNetworkInfo != null )
+        {
+            Map<String, String> networkInfoObject = new HashMap<>( 4 );
+            networkInfoObject.put( "name", mediatedNetworkInfo.getName() );
+            networkInfoObject.put( "adapterClassName", mediatedNetworkInfo.getAdapterClassName() );
+            networkInfoObject.put( "adapterVersion", mediatedNetworkInfo.getAdapterVersion() );
+            networkInfoObject.put( "sdkVersion", mediatedNetworkInfo.getSdkVersion() );
+
+            networkResponseObject.put( "mediatedNetwork", networkInfoObject );
+        }
+
+        Bundle credentialBundle = response.getCredentials();
+        Map<String, String> credentials = new HashMap<>();
+        for ( String key : credentialBundle.keySet() )
+        {
+            Object obj = credentialBundle.get( key );
+            if ( obj instanceof String )
+            {
+                credentials.put( key, (String) obj );
+            }
+        }
+        networkResponseObject.put( "credentials", credentials );
+
+        MaxError error = response.getError();
+        if ( error != null )
+        {
+            Map<String, Object> errorObject = new HashMap<>( 3 );
+            errorObject.put( "message", error.getMessage() );
+            errorObject.put( "adLoadFailureInfo", error.getAdLoadFailureInfo() );
+            errorObject.put( "code", error.getCode() );
+
+            networkResponseObject.put( "error", errorObject );
+        }
+
+        networkResponseObject.put( "latencyMillis", response.getLatencyMillis() );
+
+        return networkResponseObject;
+    }
+
     // Utility Methods
 
     public MaxAdFormat getDeviceSpecificBannerAdViewAdFormat()
@@ -1368,19 +1461,6 @@ public class AppLovinMAX
         {
             throw new IllegalArgumentException( "Invalid ad format" );
         }
-    }
-
-    private Map<String, String> getAdInfo(final MaxAd ad)
-    {
-        Map<String, String> adInfo = new HashMap<>( 6 );
-        adInfo.put( "adUnitId", ad.getAdUnitId() );
-        adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
-        adInfo.put( "networkName", ad.getNetworkName() );
-        adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
-        adInfo.put( "revenue", Double.toString( ad.getRevenue() ) );
-        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
-
-        return adInfo;
     }
 
     private static Point getOffsetPixels(final float xDp, final float yDp, final Context context)
@@ -1794,12 +1874,12 @@ public class AppLovinMAX
         fireCallback( name, getAdInfo( ad ), channel );
     }
 
-    public void fireCallback(final String name, final Map<String, String> params)
+    public void fireCallback(final String name, final Map<String, Object> params)
     {
         fireCallback( name, params, sharedChannel );
     }
 
-    public void fireCallback(final String name, final Map<String, String> params, final MethodChannel channel)
+    public void fireCallback(final String name, final Map<String, Object> params, final MethodChannel channel)
     {
         channel.invokeMethod( name, params );
     }

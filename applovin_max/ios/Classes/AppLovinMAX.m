@@ -178,7 +178,7 @@ static FlutterMethodChannel *ALSharedChannel;
         self.sdk.settings.locationCollectionEnabled = self.locationCollectionEnabledToSet.boolValue;
         self.locationCollectionEnabledToSet = nil;
     }
-
+    
     if ( self.targetingYearOfBirthToSet )
     {
         self.sdk.targetingData.yearOfBirth = self.targetingYearOfBirthToSet.intValue <= 0 ? nil : self.targetingYearOfBirthToSet;
@@ -712,10 +712,18 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    // TODO: Add "code", "message", and "adLoadFailureInfo"
-    NSString *errorCodeStr = [@(error.code) stringValue];
-    [self sendEventWithName: name body: @{@"adUnitId" : adUnitIdentifier,
-                                          @"errorCode" : errorCodeStr}];
+    [self sendErrorEventWithName: name forAdUnitIdentifier: adUnitIdentifier withError: error];
+}
+
+- (void)sendErrorEventWithName:(NSString *)name forAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
+{
+    NSDictionary *body = @{@"adUnitId": adUnitIdentifier,
+                           @"errorCode" : @(error.code),
+                           @"errorMessage" : error.message,
+                           @"adLoadFailureInfo" : error.adLoadFailureInfo ?: @"",
+                           @"waterfall": [self createAdWaterfallInfo: error.waterfall]};
+    
+    [self sendEventWithName: name body: body];
 }
 
 - (void)didClickAd:(MAAd *)ad
@@ -794,8 +802,8 @@ static FlutterMethodChannel *ALSharedChannel;
         name = @"OnAppOpenAdFailedToDisplayEvent";
     }
     
-    // TODO: Add "code", "message"
-    NSMutableDictionary *body = [@{@"errorCode" : @(error.code)} mutableCopy];
+    NSMutableDictionary *body = [@{@"errorCode" : @(error.code),
+                                   @"errorMessage" : error.message} mutableCopy];
     [body addEntriesFromDictionary: [self adInfoForAd: ad]];
     
     [self sendEventWithName: name body: body];
@@ -902,11 +910,8 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    NSString *rewardLabel = reward.label ?: @"";
-    NSString *rewardAmount = [@(reward.amount) stringValue];
-    
-    NSMutableDictionary<NSString *, NSString *> *body = [@{@"rewardLabel": rewardLabel,
-                                                           @"rewardAmount": rewardAmount} mutableCopy];
+    NSMutableDictionary *body = [@{@"rewardLabel": reward.label ?: @"",
+                                   @"rewardAmount": @(reward.amount)} mutableCopy];
     [body addEntriesFromDictionary: [self adInfoForAd: ad]];
     
     [self sendEventWithName: @"OnRewardedAdReceivedRewardEvent" body: body];
@@ -1301,15 +1306,76 @@ static FlutterMethodChannel *ALSharedChannel;
     }
 }
 
-- (NSDictionary<NSString *, NSString *> *)adInfoForAd:(MAAd *)ad
+- (NSDictionary<NSString *, NSObject *> *)adInfoForAd:(MAAd *)ad
 {
     // NOTE: Empty strings might get co-erced into [NSNull null] through Flutter channel and cause issues
     return @{@"adUnitId" : ad.adUnitIdentifier,
              @"creativeId" : ad.creativeIdentifier ?: @"",
              @"networkName" : ad.networkName,
              @"placement" : ad.placement ?: @"",
-             @"revenue" : @(ad.revenue).stringValue,
-             @"dspName" : ad.DSPName ?: @""};
+             @"revenue" : @(ad.revenue),
+             @"dspName" : ad.DSPName ?: @"",
+             @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
+}
+
+- (NSDictionary<NSString *, NSObject *> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
+{
+    NSMutableDictionary<NSString *, NSObject *> *waterfallInfoDict = [NSMutableDictionary dictionary];
+    if ( !waterfallInfo ) return waterfallInfoDict;
+    
+    waterfallInfoDict[@"name"] = waterfallInfo.name;
+    waterfallInfoDict[@"testName"] = waterfallInfo.testName;
+    
+    NSMutableArray<NSDictionary<NSString *, NSObject *> *> *networkResponsesArray = [NSMutableArray arrayWithCapacity: waterfallInfo.networkResponses.count];
+    for ( MANetworkResponseInfo *response in  waterfallInfo.networkResponses )
+    {
+        [networkResponsesArray addObject: [self createNetworkResponseInfo: response]];
+    }
+    waterfallInfoDict[@"networkResponses"] = networkResponsesArray;
+    
+    // Convert latency from seconds to milliseconds to match Android.
+    long long latencyMillis = waterfallInfo.latency * 1000;
+    waterfallInfoDict[@"latencyMillis"] = @(latencyMillis);
+    
+    return waterfallInfoDict;
+}
+
+- (NSDictionary<NSString *, NSObject *> *)createNetworkResponseInfo:(MANetworkResponseInfo *)response
+{
+    NSMutableDictionary<NSString *, NSObject *> *networkResponseDict = [NSMutableDictionary dictionary];
+    
+    networkResponseDict[@"adLoadState"] = @(response.adLoadState);
+    
+    MAMediatedNetworkInfo *mediatedNetworkInfo = response.mediatedNetwork;
+    if ( mediatedNetworkInfo )
+    {
+        NSMutableDictionary <NSString *, NSObject *> *networkInfoObject = [NSMutableDictionary dictionary];
+        networkInfoObject[@"name"] = mediatedNetworkInfo.name;
+        networkInfoObject[@"adapterClassName"] = mediatedNetworkInfo.adapterClassName;
+        networkInfoObject[@"adapterVersion"] = mediatedNetworkInfo.adapterVersion;
+        networkInfoObject[@"sdkVersion"] = mediatedNetworkInfo.sdkVersion;
+        
+        networkResponseDict[@"mediatedNetwork"] = networkInfoObject;
+    }
+    
+    networkResponseDict[@"credentials"] = response.credentials;
+    
+    MAError *error = response.error;
+    if ( error )
+    {
+        NSMutableDictionary<NSString *, NSObject *> *errorObject = [NSMutableDictionary dictionary];
+        errorObject[@"message"] = error.message;
+        errorObject[@"adLoadFailure"] = error.adLoadFailureInfo;
+        errorObject[@"code"] = @(error.code);
+        
+        networkResponseDict[@"error"] = errorObject;
+    }
+    
+    // Convert latency from seconds to milliseconds to match Android.
+    long long latencySeconds = response.latency * 1000;
+    networkResponseDict[@"latencyMillis"] = @(latencySeconds);
+    
+    return networkResponseDict;
 }
 
 - (ALGender)toAppLovinGender:(nullable NSString *)gender
@@ -1363,12 +1429,12 @@ static FlutterMethodChannel *ALSharedChannel;
     [self sendEventWithName: name body: [self adInfoForAd: ad] channel: channel];
 }
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSObject *> *)body
 {
     [self sendEventWithName: name body: body channel: ALSharedChannel];
 }
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body channel:(FlutterMethodChannel *)channel
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSObject *> *)body channel:(FlutterMethodChannel *)channel
 {
     [channel invokeMethod: name arguments: body];
 }

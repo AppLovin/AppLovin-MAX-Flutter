@@ -57,10 +57,9 @@
 
 - (void)didFailToLoadAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
 {
-    [[AppLovinMAX shared] sendEventWithName: @"OnAdViewAdLoadFailedEvent"
-                                       body: @{@"adUnitId" : adUnitIdentifier,
-                                               @"errorCode" : [@(error.code) stringValue]}
-                                    channel: self.channel];
+    [[AppLovinMAX shared] sendErrorEventWithName: @"OnAdViewAdLoadFailedEvent"
+                             forAdUnitIdentifier: adUnitIdentifier
+                                       withError: error];
 }
 
 - (void)didClickAd:(MAAd *)ad
