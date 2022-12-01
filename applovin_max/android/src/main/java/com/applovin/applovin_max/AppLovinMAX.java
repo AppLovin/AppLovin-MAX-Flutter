@@ -215,16 +215,16 @@ public class AppLovinMAX
             creativeDebuggerEnabledToSet = null;
         }
 
-        if ( targetingYearOfBirthToSet != null )
-        {
-            sdk.getTargetingData().setYearOfBirth( targetingYearOfBirthToSet <= 0 ? null : targetingYearOfBirthToSet );
-            targetingYearOfBirthToSet = null;
-        }
-
         if ( locationCollectionEnabledToSet != null )
         {
             sdk.getSettings().setLocationCollectionEnabled( locationCollectionEnabledToSet );
             locationCollectionEnabledToSet = null;
+        }
+
+        if ( targetingYearOfBirthToSet != null )
+        {
+            sdk.getTargetingData().setYearOfBirth( targetingYearOfBirthToSet <= 0 ? null : targetingYearOfBirthToSet );
+            targetingYearOfBirthToSet = null;
         }
 
         if ( targetingGenderToSet != null )
