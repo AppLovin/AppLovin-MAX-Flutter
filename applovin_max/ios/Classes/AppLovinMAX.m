@@ -25,6 +25,7 @@
 @property (nonatomic, strong, nullable) NSArray<NSString *> *testDeviceIdentifiersToSet;
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
 @property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
+@property (nonatomic, strong, nullable) NSNumber *locationCollectionEnabledToSet;
 
 @property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
 @property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
@@ -172,6 +173,12 @@ static FlutterMethodChannel *ALSharedChannel;
         self.creativeDebuggerEnabledToSet = nil;
     }
     
+    if ( self.locationCollectionEnabledToSet )
+    {
+        self.sdk.settings.locationCollectionEnabled = self.locationCollectionEnabledToSet.boolValue;
+        self.locationCollectionEnabledToSet = nil;
+    }
+
     if ( self.targetingYearOfBirthToSet )
     {
         self.sdk.targetingData.yearOfBirth = self.targetingYearOfBirthToSet.intValue <= 0 ? nil : self.targetingYearOfBirthToSet;
@@ -364,6 +371,19 @@ static FlutterMethodChannel *ALSharedChannel;
     else
     {
         self.testDeviceIdentifiersToSet = testDeviceAdvertisingIds;
+    }
+}
+
+- (void)setLocationCollectionEnabled:(BOOL)enabled
+{
+    if ( [self isPluginInitialized] )
+    {
+        self.sdk.settings.locationCollectionEnabled = enabled;
+        self.locationCollectionEnabledToSet = nil;
+    }
+    else
+    {
+        self.locationCollectionEnabledToSet = @(enabled);
     }
 }
 
@@ -1444,6 +1464,13 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         NSArray<NSString *> *testDeviceAdvertisingIds = call.arguments[@"value"];
         [self setTestDeviceAdvertisingIds: testDeviceAdvertisingIds];
+        
+        result(nil);
+    }
+    else if ( [@"setLocationCollectionEnabled" isEqualToString: call.method] )
+    {
+        BOOL isLocationCollectionEnabled = ((NSNumber *)call.arguments[@"value"]).boolValue;
+        [self setLocationCollectionEnabled: isLocationCollectionEnabled];
         
         result(nil);
     }

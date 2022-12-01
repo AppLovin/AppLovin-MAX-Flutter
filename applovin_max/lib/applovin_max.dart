@@ -286,6 +286,15 @@ class AppLovinMAX {
     });
   }
 
+  /// Whether or not the AppLovin SDK will collect the device location. Defaults to true.
+  ///
+  /// [Location Passing](https://dash.applovin.com/documentation/mediation/flutter/getting-started/data-passing#location-passing)
+  static void setLocationCollectionEnabled(bool enabled) {
+    channel.invokeMethod('setLocationCollectionEnabled', {
+      'value': enabled,
+    });
+  }
+
   //
   // BANNERS
   //
