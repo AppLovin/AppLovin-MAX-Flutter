@@ -5,20 +5,22 @@ class MaxAd {
   /// The ad network from which this ad was loaded.
   final String networkName;
   /// The ad’s revenue amount, or 0 if no revenue amount exists.
-  final String revenue;
+  final double revenue;
   /// The creative ID tied to the ad, if any. You can report creative issues to the corresponding ad network using this ID.
   final String creativeId;
   /// The DSP network that provided the loaded ad when the ad is served through AppLovin Exchange.
   final String dspName;
   ///  The placement name that you assign when you integrate each ad format.
-  String? placement;
+  final String placement;
+  /// The underlying waterfall of ad responses.
+  final Map<String, dynamic> waterfall;
 
   /// @nodoc
-  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.dspName, this.placement);
+  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.dspName, this.placement, this.waterfall);
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, dspName: $dspName, creativeId: $creativeId, placement: $placement!]';
+    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall]';
   }
 }
 
@@ -44,12 +46,16 @@ class MaxError {
   final int code;
   /// The error message for the error.
   final String message;
+  /// The failure info for ad load
+  final String adLoadFailureInfo;
+  /// The underlying waterfall of ad responses.
+  final Map<String, dynamic> waterfall;
 
   /// @nodoc
-  MaxError(this.code, this.message);
+  MaxError(this.code, this.message, this.adLoadFailureInfo, this.waterfall);
 
   @override
   String toString() {
-    return '[MaxError code: $code, message: $message]';
+    return '[MaxError code: $code, message: $message, info: $adLoadFailureInfo, waterfall: $waterfall]';
   }
 }

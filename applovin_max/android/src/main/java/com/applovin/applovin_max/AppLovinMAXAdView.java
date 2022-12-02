@@ -77,11 +77,7 @@ public class AppLovinMAXAdView
     @Override
     public void onAdLoadFailed(final String adUnitId, final MaxError error)
     {
-        Map<String, String> params = new HashMap<String, String>( 2 );
-        params.put( "adUnitId", adUnitId );
-        params.put( "errorCode", String.valueOf( error.getCode() ) );
-
-        AppLovinMAX.getInstance().fireCallback( "OnAdViewAdLoadFailedEvent", params, channel );
+        AppLovinMAX.getInstance().fireErrorCallback( "OnAdViewAdLoadFailedEvent", adUnitId, error );
     }
 
     @Override
