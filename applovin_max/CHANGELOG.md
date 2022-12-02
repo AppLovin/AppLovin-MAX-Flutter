@@ -1,8 +1,8 @@
 ## Versions
 
 ## x.x.x
-    * Add support for ad waterfall.
-    * Add support for `AppLovinMAX.setLocationCollectionEnabled(bool enabled)` API
+    * Add support for waterfall info API.
+    * Add support for `AppLovinMAX.setLocationCollectionEnabled(bool enabled)` API.
 ## 2.3.1
     * Fix banner/MREC widget ad issue on Android. (https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/32)
 ## 2.3.0

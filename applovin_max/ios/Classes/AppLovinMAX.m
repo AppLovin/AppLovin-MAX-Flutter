@@ -1365,7 +1365,6 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         NSMutableDictionary<NSString *, NSObject *> *errorObject = [NSMutableDictionary dictionary];
         errorObject[@"message"] = error.message;
-        errorObject[@"adLoadFailure"] = error.adLoadFailureInfo;
         errorObject[@"code"] = @(error.code);
         
         networkResponseDict[@"error"] = errorObject;

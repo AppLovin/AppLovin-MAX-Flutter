@@ -1406,9 +1406,8 @@ public class AppLovinMAX
         MaxError error = response.getError();
         if ( error != null )
         {
-            Map<String, Object> errorObject = new HashMap<>( 3 );
+            Map<String, Object> errorObject = new HashMap<>( 2 );
             errorObject.put( "message", error.getMessage() );
-            errorObject.put( "adLoadFailureInfo", error.getAdLoadFailureInfo() );
             errorObject.put( "code", error.getCode() );
 
             networkResponseObject.put( "error", errorObject );
