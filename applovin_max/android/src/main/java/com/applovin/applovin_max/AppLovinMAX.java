@@ -760,7 +760,6 @@ public class AppLovinMAX
             params.put( "adUnitId", adUnitId );
             params.put( "errorCode", error.getCode() );
             params.put( "errorMessage", error.getMessage() );
-            params.put( "adLoadFailureInfo", error.getAdLoadFailureInfo() );
             params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
             fireCallback( name, params );
         }

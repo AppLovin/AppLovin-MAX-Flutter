@@ -46,16 +46,14 @@ class MaxError {
   final int code;
   /// The error message for the error.
   final String message;
-  /// The failure info for ad load
-  final String adLoadFailureInfo;
   /// The underlying waterfall of ad responses.
   final Map<String, dynamic> waterfall;
 
   /// @nodoc
-  MaxError(this.code, this.message, this.adLoadFailureInfo, this.waterfall);
+  MaxError(this.code, this.message, this.waterfall);
 
   @override
   String toString() {
-    return '[MaxError code: $code, message: $message, info: $adLoadFailureInfo, waterfall: $waterfall]';
+    return '[MaxError code: $code, message: $message, waterfall: $waterfall]';
   }
 }

@@ -151,7 +151,6 @@ class AppLovinMAX {
     return MaxError(
       arguments["errorCode"],
       arguments["errorMessage"],
-      arguments["adLoadFailureInfo"],
       Map<String, dynamic>.from(arguments["waterfall"]),
     );
   }
