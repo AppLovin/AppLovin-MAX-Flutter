@@ -720,7 +720,6 @@ static FlutterMethodChannel *ALSharedChannel;
     NSDictionary *body = @{@"adUnitId": adUnitIdentifier,
                            @"errorCode" : @(error.code),
                            @"errorMessage" : error.message,
-                           @"adLoadFailureInfo" : error.adLoadFailureInfo ?: @"",
                            @"waterfall": [self createAdWaterfallInfo: error.waterfall]};
     
     [self sendEventWithName: name body: body];
