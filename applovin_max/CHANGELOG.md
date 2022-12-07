@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+    * Depends on Android SDK v11.6.0 and iOS SDK v11.6.0.
     * Add support for waterfall info API.
     * Add support for `AppLovinMAX.setLocationCollectionEnabled(bool enabled)` API.
 ## 2.3.1

@@ -3,10 +3,7 @@
 # Run `pod lib lint applovin_max.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.authors =
-  {
-    'AppLovin Corporation' => 'devsupport@applovin.com'
-  }
+  s.authors          = 'AppLovin Corporation'
   s.name             = 'applovin_max'
   s.version          = '2.3.1'
   s.summary          = 'AppLovin MAX Flutter Plugin'
@@ -21,7 +18,7 @@ DESC
   s.platform = :ios, '9.0'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'AppLovinSDK', '11.5.5'
+  s.dependency 'AppLovinSDK', '11.6.0'
   
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
