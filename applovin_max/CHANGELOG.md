@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 2.3.3
     * Depends on Android SDK v11.6.1 and iOS SDK v11.6.1.
 ## 2.3.2
     * Depends on Android SDK v11.6.0 and iOS SDK v11.6.0.
