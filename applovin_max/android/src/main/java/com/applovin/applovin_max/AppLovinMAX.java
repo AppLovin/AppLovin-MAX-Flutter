@@ -43,8 +43,10 @@ import com.applovin.sdk.AppLovinUserService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -94,11 +96,12 @@ public class AppLovinMAX
     private final Map<String, MaxRewardedAd>     mRewardedAds   = new HashMap<>( 2 );
     private final Map<String, MaxAppOpenAd>      mAppOpenAds    = new HashMap<>( 2 );
 
-    // Banner Fields
-    private final Map<String, MaxAdView>   mAdViews                    = new HashMap<>( 2 );
-    private final Map<String, MaxAdFormat> mAdViewAdFormats            = new HashMap<>( 2 );
-    private final Map<String, String>      mAdViewPositions            = new HashMap<>( 2 );
-    private final List<String>             mAdUnitIdsToShowAfterCreate = new ArrayList<>( 2 );
+    // AdView Fields
+    private final Map<String, MaxAdView>   mAdViews                            = new HashMap<>( 2 );
+    private final Map<String, MaxAdFormat> mAdViewAdFormats                    = new HashMap<>( 2 );
+    private final Map<String, String>      mAdViewPositions                    = new HashMap<>( 2 );
+    private final List<String>             mAdUnitIdsToShowAfterCreate         = new ArrayList<>( 2 );
+    private final Set<String>              mDisabledAutoRefreshAdViewAdUnitIds = new HashSet<>( 2 );
 
     public static AppLovinMAX getInstance()
     {
@@ -555,6 +558,21 @@ public class AppLovinMAX
         hideAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
     }
 
+    public void loadBanner(final String adUnitId)
+    {
+        loadAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
+    }
+
+    public void startBannerAutoRefresh(final String adUnitId)
+    {
+        startAdViewAutoRefresh( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
+    }
+
+    public void stopBannerAutoRefresh(final String adUnitId)
+    {
+        stopAdViewAutoRefresh( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
+    }
+
     public void destroyBanner(final String adUnitId)
     {
         destroyAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
@@ -585,6 +603,21 @@ public class AppLovinMAX
     public void hideMRec(final String adUnitId)
     {
         hideAdView( adUnitId, MaxAdFormat.MREC );
+    }
+
+    public void loadMRec(final String adUnitId)
+    {
+        loadAdView( adUnitId, MaxAdFormat.MREC );
+    }
+
+    public void startMRecAutoRefresh(final String adUnitId)
+    {
+        startAdViewAutoRefresh( adUnitId, MaxAdFormat.MREC );
+    }
+
+    public void stopMRecAutoRefresh(final String adUnitId)
+    {
+        stopAdViewAutoRefresh( adUnitId, MaxAdFormat.MREC );
     }
 
     public void destroyMRec(final String adUnitId)
@@ -1005,12 +1038,74 @@ public class AppLovinMAX
 
         adView.loadAd();
 
+        // Disable auto-refresh if publisher sets it before creating the ad view.
+        if ( mDisabledAutoRefreshAdViewAdUnitIds.contains( adUnitId ) )
+        {
+            adView.stopAutoRefresh();
+        }
+
         // The publisher may have requested to show the banner before it was created. Now that the banner is created, show it.
         if ( mAdUnitIdsToShowAfterCreate.contains( adUnitId ) )
         {
             showAdView( adUnitId, adFormat );
             mAdUnitIdsToShowAfterCreate.remove( adUnitId );
         }
+    }
+
+    private void loadAdView(final String adUnitId, final MaxAdFormat adFormat)
+    {
+        MaxAdView adView = retrieveAdView( adUnitId, adFormat );
+        if ( adView == null )
+        {
+            e( adFormat.getLabel() + " does not exist" );
+            return;
+        }
+
+        if ( !mDisabledAutoRefreshAdViewAdUnitIds.contains( adUnitId ) )
+        {
+            if ( adView.getVisibility() != View.VISIBLE )
+            {
+                e( "Auto-refresh will resume when the " + adFormat.getLabel() + " ad is shown. You should only call LoadBanner() or LoadMRec() if you explicitly pause auto-refresh and want to manually load an ad." );
+                return;
+            }
+
+            e( "You must stop auto-refresh if you want to manually load " + adFormat.getLabel() + " ads." );
+            return;
+        }
+
+        adView.loadAd();
+    }
+
+    private void startAdViewAutoRefresh(final String adUnitId, final MaxAdFormat adFormat)
+    {
+        d( "Starting " + adFormat.getLabel() + " auto refresh for ad unit identifier \"" + adUnitId + "\"" );
+
+        mDisabledAutoRefreshAdViewAdUnitIds.remove( adUnitId );
+
+        MaxAdView adView = retrieveAdView( adUnitId, adFormat );
+        if ( adView == null )
+        {
+            e( adFormat.getLabel() + " does not exist for ad unit identifier \"" + adUnitId + "\"" );
+            return;
+        }
+
+        adView.startAutoRefresh();
+    }
+
+    private void stopAdViewAutoRefresh(final String adUnitId, final MaxAdFormat adFormat)
+    {
+        d( "Stopping " + adFormat.getLabel() + " auto refresh for ad unit identifier \"" + adUnitId + "\"" );
+
+        mDisabledAutoRefreshAdViewAdUnitIds.add( adUnitId );
+
+        MaxAdView adView = retrieveAdView( adUnitId, adFormat );
+        if ( adView == null )
+        {
+            e( adFormat.getLabel() + " does not exist for ad unit identifier \"" + adUnitId + "\"" );
+            return;
+        }
+
+        adView.stopAutoRefresh();
     }
 
     private void setAdViewPlacement(final String adUnitId, final MaxAdFormat adFormat, final String placement)
@@ -1063,6 +1158,11 @@ public class AppLovinMAX
 
         adView.setVisibility( View.VISIBLE );
         adView.startAutoRefresh();
+
+        if ( !mDisabledAutoRefreshAdViewAdUnitIds.contains( adUnitId ) )
+        {
+            adView.startAutoRefresh();
+        }
     }
 
     private void hideAdView(final String adUnitId, final MaxAdFormat adFormat)
@@ -1251,6 +1351,9 @@ public class AppLovinMAX
 
             mAdViews.put( adUnitId, result );
             mAdViewPositions.put( adUnitId, adViewPosition );
+
+            // Allow pubs to pause auto-refresh immediately, by default.
+            result.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
         }
 
         return result;
@@ -1664,6 +1767,27 @@ public class AppLovinMAX
 
             result.success( null );
         }
+        else if ( "startBannerAutoRefresh".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            startBannerAutoRefresh( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "stopBannerAutoRefresh".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            stopBannerAutoRefresh( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "loadBanner".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            loadBanner( adUnitId );
+
+            result.success( null );
+        }
         else if ( "destroyBanner".equals( call.method ) )
         {
             String adUnitId = call.argument( "ad_unit_id" );
@@ -1706,6 +1830,27 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             hideMRec( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "startMRecAutoRefresh".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            startMRecAutoRefresh( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "stopMRecAutoRefresh".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            stopMRecAutoRefresh( adUnitId );
+
+            result.success( null );
+        }
+        else if ( "loadMRec".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            loadMRec( adUnitId );
 
             result.success( null );
         }

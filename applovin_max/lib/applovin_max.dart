@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 export 'package:applovin_max/src/ad_classes.dart';
 export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
-export 'package:applovin_max/src/targeting_data.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
+export 'package:applovin_max/src/targeting_data.dart';
 
 /// Represents the AppLovin SDK.
 class AppLovinMAX {
@@ -30,7 +30,7 @@ class AppLovinMAX {
   /// @nodoc
   ///
   /// Disabled dartdoc.
-  AppLovinMAX() ;
+  AppLovinMAX();
 
   /// Initializes the SDK.
   ///
@@ -376,6 +376,29 @@ class AppLovinMAX {
     });
   }
 
+  /// Starts or resumes auto-refreshing of the banner for the specified [adUnitId].
+  static void startBannerAutoRefresh(String adUnitId) {
+    channel.invokeMethod('startBannerAutoRefresh', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Pauses auto-refreshing of the banner for the specified [adUnitId].
+  static void stopBannerAutoRefresh(String adUnitId) {
+    channel.invokeMethod('stopBannerAutoRefresh', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Load a new banner ad.
+  /// NOTE: The [createBanner] method loads the first banner ad and initiates an automated banner refresh process.
+  /// You only need to call this method if you pause banner refresh.
+  static void loadBanner(String adUnitId) {
+    channel.invokeMethod('loadBanner', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
   /// Cleans up system resources allocated for the banner.
   static void destroyBanner(String adUnitId) {
     channel.invokeMethod('destroyBanner', {
@@ -430,6 +453,29 @@ class AppLovinMAX {
   /// Hides the MREC with the specified [adUnitId].
   static void hideMRec(String adUnitId) {
     channel.invokeMethod('hideMRec', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Starts or resumes auto-refreshing of the MREC for the specified [adUnitId].
+  static void startMRecAutoRefresh(String adUnitId) {
+    channel.invokeMethod('startMRecAutoRefresh', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Pauses auto-refreshing of the MREC for the specified [adUnitId].
+  static void stopMRecAutoRefresh(String adUnitId) {
+    channel.invokeMethod('stopMRecAutoRefresh', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  /// Load a new MREC ad.
+  /// NOTE: The [createMRec] method loads the first MREC ad and initiates an automated MREC refresh process.
+  /// You only need to call this method if you pause MREC refresh.
+  static void loadMRec(String adUnitId) {
+    channel.invokeMethod('loadMRec', {
       'ad_unit_id': adUnitId,
     });
   }
