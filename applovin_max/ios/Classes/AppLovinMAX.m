@@ -1905,7 +1905,7 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( [@"setTargetingDataMaximumAdContentRating" isEqualToString: call.method] )
     {
         id rawValue = call.arguments[@"value"];
-        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
+        NSNumber *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
         [self setTargetingDataMaximumAdContentRating: value];
         
         result(nil);
