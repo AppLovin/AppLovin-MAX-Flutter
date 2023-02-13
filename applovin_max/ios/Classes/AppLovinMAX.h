@@ -23,7 +23,7 @@
 /**
  * Utility method for sending generic events through the Flutter channel into Dart.
  */
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSString *> *)body channel:(FlutterMethodChannel *)channel;
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSObject *> *)body channel:(FlutterMethodChannel *)channel;
 
 /**
  * Utility method for sending error events through the Flutter channel into Dart.
