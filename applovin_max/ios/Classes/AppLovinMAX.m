@@ -40,12 +40,13 @@
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MARewardedAd *> *rewardedAds;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAppOpenAd *> *appOpenAds;
 
-// Banner Fields
+// AdView Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAdView *> *adViews;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAdFormat *> *adViewAdFormats;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *adViewPositions;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSArray<NSLayoutConstraint *> *> *adViewConstraints;
 @property (nonatomic, strong) NSMutableArray<NSString *> *adUnitIdentifiersToShowAfterCreate;
+@property (nonatomic, strong) NSMutableSet<NSString *> *disabledAutoRefreshAdViewAdUnitIdentifiers;
 @property (nonatomic, strong) UIView *safeAreaBackground;
 @property (nonatomic, strong, nullable) UIColor *publisherBannerBackgroundColor;
 
@@ -89,6 +90,7 @@ static FlutterMethodChannel *ALSharedChannel;
         self.adViewPositions = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
+        self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
         
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
@@ -521,6 +523,21 @@ static FlutterMethodChannel *ALSharedChannel;
     [self hideAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
 }
 
+- (void)startBannerAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self startAdViewAutoRefreshForAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
+}
+
+- (void)stopBannerAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self stopAdViewAutoRefreshForAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
+}
+
+- (void)loadBannerForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self loadAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
+}
+
 - (void)destroyBannerForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     [self destroyAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
@@ -551,6 +568,21 @@ static FlutterMethodChannel *ALSharedChannel;
 - (void)hideMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     [self hideAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
+}
+
+- (void)startMRecAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self startAdViewAutoRefreshForAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
+}
+
+- (void)stopMRecAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self stopAdViewAutoRefreshForAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
+}
+
+- (void)loadMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self loadAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
 }
 
 - (void)destroyMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier
@@ -1037,6 +1069,62 @@ static FlutterMethodChannel *ALSharedChannel;
     [view stopAutoRefresh];
 }
 
+- (void)loadAdViewWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+    if ( !adView )
+    {
+        [self log: @"%@ does not exist for ad unit identifier %@.", adFormat.label, adUnitIdentifier];
+        return;
+    }
+    
+    if ( ![self.disabledAutoRefreshAdViewAdUnitIdentifiers containsObject: adUnitIdentifier] )
+    {
+        if ( [adView isHidden] )
+        {
+            [self log: @"Auto-refresh will resume when the %@ ad is shown. You should only call LoadBanner() or LoadMRec() if you explicitly pause auto-refresh and want to manually load an ad.", adFormat.label];
+            return;
+        }
+        
+        [self log: @"You must stop auto-refresh if you want to manually load %@ ads.", adFormat.label];
+        return;
+    }
+    
+    [adView loadAd];
+}
+
+- (void)startAdViewAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    [self log: @"Starting %@ auto refresh for ad unit identifier \"%@\"", adFormat.label, adUnitIdentifier];
+    
+    [self.disabledAutoRefreshAdViewAdUnitIdentifiers removeObject: adUnitIdentifier];
+    
+    MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+    if ( !adView )
+    {
+        [self log: @"%@ does not exist for ad unit identifier %@.", adFormat.label, adUnitIdentifier];
+        return;
+    }
+    
+    [adView startAutoRefresh];
+}
+
+- (void)stopAdViewAutoRefreshForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    [self log: @"Stopping %@ auto refresh for ad unit identifier \"%@\"", adFormat.label, adUnitIdentifier];
+    
+    [self.disabledAutoRefreshAdViewAdUnitIdentifiers addObject: adUnitIdentifier];
+    
+    MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+    if ( !adView )
+    {
+        [self log: @"%@ does not exist for ad unit identifier %@.", adFormat.label, adUnitIdentifier];
+        return;
+    }
+    
+    [adView stopAutoRefresh];
+}
+
 - (void)destroyAdViewWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
     [self log: @"Destroying %@ with ad unit identifier \"%@\"", adFormat, adUnitIdentifier];
@@ -1145,12 +1233,15 @@ static FlutterMethodChannel *ALSharedChannel;
         
         self.adViews[adUnitIdentifier] = result;
         
-        // If this is programmatic (non native RN)
+        // If this is programmatic
         if ( attach )
         {
             self.adViewPositions[adUnitIdentifier] = adViewPosition;
             [ROOT_VIEW_CONTROLLER.view addSubview: result];
         }
+        
+        // Allow pubs to pause auto-refresh immediately, by default.
+        [result setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
     }
     
     return result;
@@ -1596,6 +1687,27 @@ static FlutterMethodChannel *ALSharedChannel;
         
         result(nil);
     }
+    else if ( [@"startBannerAutoRefresh" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self startBannerAutoRefreshForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"stopBannerAutoRefresh" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self stopBannerAutoRefreshForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"loadBanner" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self loadBannerForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
     else if ( [@"destroyBanner" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
@@ -1641,6 +1753,27 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         [self hideMRecForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"startMRecAutoRefresh" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self startMRecAutoRefreshForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"stopMRecAutoRefresh" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self stopMRecAutoRefreshForAdUnitIdentifier: adUnitId];
+        
+        result(nil);
+    }
+    else if ( [@"loadMRec" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [self loadMRecForAdUnitIdentifier: adUnitId];
         
         result(nil);
     }
