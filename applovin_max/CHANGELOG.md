@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-    * Add support for stopping/starting banner and MREC auto-refresh programmatically.
+    * Add support for stopping/starting banner and MREC auto-refresh programmatically and via the is `MaxAdView.isAutoRefreshEnabled` state.
     * Add support for manually loading banner and MREC ads if auto-refesh is stopped via `AppLovinMAX.loadBanner()` and `AppLovinMAX.loadMRec()`.
 ## 2.3.3
     * Depends on Android SDK v11.6.1 and iOS SDK v11.6.1.

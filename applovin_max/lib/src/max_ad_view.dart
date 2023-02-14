@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 enum AdFormat {
   /// The banner ad.
   banner("banner"),
+
   /// The MREC ad.
   mrec("mrec");
 
@@ -44,17 +45,21 @@ class MaxAdView extends StatefulWidget {
   /// The listener for various ad callbacks.
   final AdViewAdListener? listener;
 
+  /// A boolean value representing whether the ad currently has auto-refresh enabled or not. Defaults to true.
+  bool isAutoRefreshEnabled;
+
   /// Creates a new ad view directly in the user's widget tree.
   ///
   /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
   /// * [MREC Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method)
-  const MaxAdView({
+  MaxAdView({
     Key? key,
     required this.adUnitId,
     required this.adFormat,
     this.placement,
     this.customData,
     this.listener,
+    this.isAutoRefreshEnabled = true,
   }) : super(key: key);
 
   /// @nodoc
@@ -63,6 +68,22 @@ class MaxAdView extends StatefulWidget {
 }
 
 class _MaxAdViewState extends State<MaxAdView> {
+  /// Unique [MethodChannel] to this [MaxAdView] instance.
+  MethodChannel? _methodChannel;
+
+  @override
+  void didUpdateWidget(MaxAdView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isAutoRefreshEnabled != widget.isAutoRefreshEnabled) {
+      if (widget.isAutoRefreshEnabled) {
+        _methodChannel!.invokeMethod('startAutoRefresh');
+      } else {
+        _methodChannel!.invokeMethod('stopAutoRefresh');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -76,6 +97,7 @@ class _MaxAdViewState extends State<MaxAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
+              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
@@ -93,6 +115,7 @@ class _MaxAdViewState extends State<MaxAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
+              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
@@ -105,9 +128,8 @@ class _MaxAdViewState extends State<MaxAdView> {
   }
 
   void _onMaxAdViewCreated(int id) {
-    final MethodChannel channel = MethodChannel('applovin_max/adview_$id');
-
-    channel.setMethodCallHandler((call) async {
+    _methodChannel = MethodChannel('applovin_max/adview_$id');
+    _methodChannel!.setMethodCallHandler((call) async {
       var method = call.method;
       var arguments = call.arguments;
 
