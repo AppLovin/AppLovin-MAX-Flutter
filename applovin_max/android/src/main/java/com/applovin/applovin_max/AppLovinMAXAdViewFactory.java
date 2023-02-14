@@ -50,10 +50,10 @@ public class AppLovinMAXAdViewFactory
         AppLovinMAX.d( "Creating MaxAdView widget with Ad Unit ID: " + adUnitId );
 
         // Optional params
-
+        boolean isAutoRefreshEnabled = Boolean.parseBoolean( args.get( "is_auto_refresh_enabled" ) ); // Defaults to true
         String placement = args.containsKey( "placement" ) ? (String) args.get( "placement" ) : null;
         String customData = args.containsKey( "customData" ) ? (String) args.get( "customData" ) : null;
 
-        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, placement, customData, messenger, sdk, context );
+        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, isAutoRefreshEnabled, placement, customData, messenger, sdk, context );
     }
 }

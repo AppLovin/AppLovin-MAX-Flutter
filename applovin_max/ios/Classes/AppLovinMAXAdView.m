@@ -20,15 +20,36 @@
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
+         isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
-                    messenger:(id<FlutterBinaryMessenger>)messenger sdk:(ALSdk *)sdk
+                    messenger:(id<FlutterBinaryMessenger>)messenger
+                          sdk:(ALSdk *)sdk
 {
     self = [super init];
     if ( self )
     {
+        __weak typeof(self) weakSelf = self;
+        
         NSString *uniqueChannelName = [NSString stringWithFormat: @"applovin_max/adview_%lld", viewId];
         self.channel = [FlutterMethodChannel methodChannelWithName: uniqueChannelName binaryMessenger: messenger];
+        [self.channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
+            
+            if ( [@"startAutoRefresh" isEqualToString: call.method] )
+            {
+                [weakSelf.adView startAutoRefresh];
+                result(nil);
+            }
+            else if ( [@"stopAutoRefresh" isEqualToString: call.method] )
+            {
+                [weakSelf.adView stopAutoRefresh];
+                result(nil);
+            }
+            else
+            {
+                result(FlutterMethodNotImplemented);
+            }
+        }];
         
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat sdk: sdk];
         self.adView.frame = frame;
@@ -38,7 +59,14 @@
         self.adView.placement = placement;
         self.adView.customData = customData;
         
+        [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
+        
         [self.adView loadAd];
+        
+        if ( !isAutoRefreshEnabled )
+        {
+            [self.adView stopAutoRefresh];
+        }
     }
     return self;
 }
@@ -46,6 +74,12 @@
 - (UIView *)view
 {
     return self.adView;
+}
+
+- (void)dealloc
+{
+    [self.channel setMethodCallHandler: nil];
+    self.channel = nil;
 }
 
 #pragma mark - Ad Callbacks

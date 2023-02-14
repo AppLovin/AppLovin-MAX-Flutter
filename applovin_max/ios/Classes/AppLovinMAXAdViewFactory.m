@@ -48,6 +48,7 @@
     [AppLovinMAX log: @"Creating MaxAdView widget with Ad Unit ID: %@", adUnitId];
     
     // Optional params
+    BOOL isAutoRefreshEnabled = ((NSNumber *) args[@"is_auto_refresh_enabled"]).boolValue; // Defaults to true
     NSString *placement = args[@"placement"];
     NSString *customData = args[@"customData"];
     
@@ -55,6 +56,7 @@
                                              viewId: viewId
                                            adUnitId: adUnitId
                                            adFormat: adFormat
+                               isAutoRefreshEnabled: isAutoRefreshEnabled
                                           placement: placement
                                          customData: customData
                                           messenger: self.messenger

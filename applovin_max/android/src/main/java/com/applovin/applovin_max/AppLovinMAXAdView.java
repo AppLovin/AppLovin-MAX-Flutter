@@ -11,12 +11,10 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinSdk;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
@@ -29,10 +27,39 @@ public class AppLovinMAXAdView
     private final MethodChannel channel;
     private final MaxAdView     adView;
 
-    public AppLovinMAXAdView(final int viewId, final String adUnitId, final MaxAdFormat adFormat, @Nullable final String placement, @Nullable final String customData, final BinaryMessenger messenger, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdView(final int viewId,
+                             final String adUnitId,
+                             final MaxAdFormat adFormat,
+                             final boolean isAutoRefreshEnabled,
+                             @Nullable final String placement,
+                             @Nullable final String customData,
+                             final BinaryMessenger messenger,
+                             final AppLovinSdk sdk,
+                             final Context context)
     {
         String uniqueChannelName = "applovin_max/adview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
+        channel.setMethodCallHandler( new MethodChannel.MethodCallHandler()
+        {
+            @Override
+            public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result)
+            {
+                if ( "startAutoRefresh".equals( call.method ) )
+                {
+                    adView.startAutoRefresh();
+                    result.success( null );
+                }
+                else if ( "stopAutoRefresh".equals( call.method ) )
+                {
+                    adView.stopAutoRefresh();
+                    result.success( null );
+                }
+                else
+                {
+                    result.notImplemented();
+                }
+            }
+        } );
 
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
         adView.setListener( this );
@@ -41,7 +68,14 @@ public class AppLovinMAXAdView
         adView.setPlacement( placement );
         adView.setCustomData( customData );
 
+        adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
+
         adView.loadAd();
+
+        if ( !isAutoRefreshEnabled )
+        {
+            adView.stopAutoRefresh();
+        }
     }
 
     @Nullable
@@ -65,6 +99,11 @@ public class AppLovinMAXAdView
             adView.destroy();
             adView.setListener( null );
             adView.setRevenueListener( null );
+        }
+
+        if ( channel != null )
+        {
+            channel.setMethodCallHandler( null );
         }
     }
 
