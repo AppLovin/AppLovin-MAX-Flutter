@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix `MaxAdView` widget creation error on Android. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/76.
 ## 2.4.0
 * Add support for stopping/starting banner and MREC auto-refresh programmatically and via the is `MaxAdView.isAutoRefreshEnabled` state (banner [docs](https://dash.applovin.com/documentation/mediation/flutter/ad-formats/banners#stopping-and-starting-auto-refresh), MREC [docs](https://dash.applovin.com/documentation/mediation/flutter/ad-formats/mrecs#stopping-and-starting-auto-refresh)).
 * Add support for manually loading banner and MREC ads if auto-refesh is stopped via `AppLovinMAX.loadBanner()` and `AppLovinMAX.loadMRec()`.

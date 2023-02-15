@@ -31,7 +31,7 @@ public class AppLovinMAXAdViewFactory
 
     @NonNull
     @Override
-    public PlatformView create(@Nullable final Context context, final int viewId, final Object rawArgs)
+    public PlatformView create(@Nullable final Context context, final int viewId, final Object args)
     {
         // Ensure plugin has been initialized
         AppLovinSdk sdk = AppLovinMAX.getInstance().getSdk();
@@ -41,18 +41,18 @@ public class AppLovinMAXAdViewFactory
             return null;
         }
 
-        Map<String, String> args = (Map<String, String>) rawArgs;
+        Map<String, Object> params = (Map<String, Object>) args;
 
-        String adUnitId = (String) args.get( "ad_unit_id" );
-        String adFormatStr = (String) args.get( "ad_format" );
+        String adUnitId = (String) params.get( "ad_unit_id" );
+        String adFormatStr = (String) params.get( "ad_format" );
         MaxAdFormat adFormat = "mrec".equals( adFormatStr ) ? MaxAdFormat.MREC : AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
 
         AppLovinMAX.d( "Creating MaxAdView widget with Ad Unit ID: " + adUnitId );
 
         // Optional params
-        boolean isAutoRefreshEnabled = Boolean.parseBoolean( args.get( "is_auto_refresh_enabled" ) ); // Defaults to true
-        String placement = args.containsKey( "placement" ) ? (String) args.get( "placement" ) : null;
-        String customData = args.containsKey( "customData" ) ? (String) args.get( "customData" ) : null;
+        boolean isAutoRefreshEnabled = Boolean.TRUE.equals( params.get( "is_auto_refresh_enabled" ) ); // Defaults to true
+        String placement = params.containsKey( "placement" ) ? (String) params.get( "placement" ) : null;
+        String customData = params.containsKey( "customData" ) ? (String) params.get( "customData" ) : null;
 
         return new AppLovinMAXAdView( viewId, adUnitId, adFormat, isAutoRefreshEnabled, placement, customData, messenger, sdk, context );
     }
