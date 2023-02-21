@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix hot restart not working. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/20.
 ## 2.4.1
 * Depends on Android SDK v11.7.1 and iOS SDK v11.7.1.
 * Fix `MaxAdView` widget creation error on Android. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/76.

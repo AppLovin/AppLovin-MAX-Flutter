@@ -42,6 +42,7 @@ import com.applovin.sdk.AppLovinSdkUtils;
 import com.applovin.sdk.AppLovinUserService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -161,10 +162,7 @@ public class AppLovinMAX
         // Guard against running init logic multiple times
         if ( isPluginInitialized )
         {
-            Map<String, Object> configuration = new HashMap<>( 2 );
-            configuration.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
-            configuration.put( "countryCode", sdkConfiguration.getCountryCode() );
-            result.success( configuration );
+            result.success( getInitializationMessage() );
             return;
         }
 
@@ -280,12 +278,22 @@ public class AppLovinMAX
             sdkConfiguration = configuration;
             isSdkInitialized = true;
 
-            Map<String, Object> sdkConfiguration = new HashMap<>( 2 );
-            sdkConfiguration.put( "consentDialogState", configuration.getConsentDialogState().ordinal() );
-            sdkConfiguration.put( "countryCode", configuration.getCountryCode() );
-
-            result.success( sdkConfiguration );
+            result.success( getInitializationMessage() );
         } );
+    }
+
+    private Map<String, Object> getInitializationMessage()
+    {
+        if ( sdkConfiguration != null )
+        {
+            Map<String, Object> message = new HashMap<>( 2 );
+            message.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
+            message.put( "countryCode", sdkConfiguration.getCountryCode() );
+
+            return message;
+        }
+
+        return Collections.emptyMap();
     }
 
     // General Public API
