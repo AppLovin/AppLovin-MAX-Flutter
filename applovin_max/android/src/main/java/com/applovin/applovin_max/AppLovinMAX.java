@@ -161,6 +161,10 @@ public class AppLovinMAX
         // Guard against running init logic multiple times
         if ( isPluginInitialized )
         {
+            Map<String, Object> configuration = new HashMap<>( 2 );
+            configuration.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
+            configuration.put( "countryCode", sdkConfiguration.getCountryCode() );
+            result.success( configuration );
             return;
         }
 
