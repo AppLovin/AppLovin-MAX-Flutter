@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 2.4.2
 * Fix hot restart not working. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/20.
 ## 2.4.1
 * Depends on Android SDK v11.7.1 and iOS SDK v11.7.1.
