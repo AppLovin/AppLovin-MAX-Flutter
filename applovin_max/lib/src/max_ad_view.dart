@@ -97,7 +97,8 @@ class _MaxAdViewState extends State<MaxAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled
+              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+              "placement": widget.placement,
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
@@ -115,7 +116,8 @@ class _MaxAdViewState extends State<MaxAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled
+              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+              "placement": widget.placement,
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
