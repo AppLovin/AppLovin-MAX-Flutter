@@ -1,5 +1,7 @@
 ## Versions
 
+## 2.4.3
+* Fix placements and custom data not being passed for widget banners/MRECs.
 ## 2.4.2
 * Fix hot restart not working. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/20.
 ## 2.4.1
