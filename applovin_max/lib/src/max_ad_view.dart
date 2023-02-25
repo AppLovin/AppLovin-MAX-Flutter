@@ -98,7 +98,8 @@ class _MaxAdViewState extends State<MaxAdView> {
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
               "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "customData": widget.customData
+              "customData": widget.customData,
+              "placement": widget.placement
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
@@ -117,7 +118,8 @@ class _MaxAdViewState extends State<MaxAdView> {
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
               "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "customData": widget.customData
+              "customData": widget.customData,
+              "placement": widget.placement
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
