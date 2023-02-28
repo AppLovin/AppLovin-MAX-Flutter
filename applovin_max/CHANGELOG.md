@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 2.4.4
 * Fix iOS widget banners/MRECs crash when not passing in placement or custom data.
 ## 2.4.3
 * Fix placements and custom data not being passed for widget banners/MRECs.
