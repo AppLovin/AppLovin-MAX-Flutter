@@ -49,8 +49,8 @@
     
     // Optional params
     BOOL isAutoRefreshEnabled = ((NSNumber *) args[@"is_auto_refresh_enabled"]).boolValue; // Defaults to true
-    NSString *placement = args[@"placement"];
-    NSString *customData = args[@"customData"];
+    NSString *placement = [args[@"placement"] isKindOfClass: [NSString class]] ? args[@"placement"] : nil; // May be NSNull
+    NSString *customData = [args[@"customData"] isKindOfClass: [NSString class]] ? args[@"customData"] : nil; // May be NSNull
     
     return [[AppLovinMAXAdView alloc] initWithFrame: (CGRect) { .size = adFormat.size }
                                              viewId: viewId
