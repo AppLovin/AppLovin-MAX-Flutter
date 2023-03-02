@@ -45,15 +45,35 @@ public class AppLovinMAXAdViewFactory
 
         String adUnitId = (String) params.get( "ad_unit_id" );
         String adFormatStr = (String) params.get( "ad_format" );
-        MaxAdFormat adFormat = "mrec".equals( adFormatStr ) ? MaxAdFormat.MREC : AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
+        MaxAdFormat adFormat;
 
-        AppLovinMAX.d( "Creating MaxAdView widget with Ad Unit ID: " + adUnitId );
+        if ( "mrec".equals( adFormatStr ) )
+            adFormat = MaxAdFormat.MREC;
+        else if ("native".equals(adFormatStr)) {
+            adFormat = MaxAdFormat.NATIVE;
+        }
+        else {
+            AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
+        }
 
-        // Optional params
-        boolean isAutoRefreshEnabled = Boolean.TRUE.equals( params.get( "is_auto_refresh_enabled" ) ); // Defaults to true
-        String placement = params.containsKey( "placement" ) ? (String) params.get( "placement" ) : null;
-        String customData = params.containsKey( "customData" ) ? (String) params.get( "customData" ) : null;
 
-        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, isAutoRefreshEnabled, placement, customData, messenger, sdk, context );
+        if ( adFormat == MaxAdFormat.NATIVE ) {
+            AppLovinMAX.d("Creating MaxNativeAdView widget with Ad Unit ID: " + adUnitId);
+
+            return new AppLovinMAXNativeAdView( viewId, adUnitId, adFormat, messenger, sdk, context );
+        } else {
+            AppLovinMAX.d("Creating MaxAdView widget with Ad Unit ID: " + adUnitId);
+
+            // Optional params
+            boolean isAutoRefreshEnabled =
+                Boolean.TRUE.equals(params.get("is_auto_refresh_enabled")); // Defaults to true
+            String placement =
+                params.containsKey("placement") ? (String) params.get("placement") : null;
+            String customData =
+                params.containsKey("customData") ? (String) params.get("customData") : null;
+
+            return new AppLovinMAXAdView(viewId, adUnitId, adFormat, isAutoRefreshEnabled,
+                placement, customData, messenger, sdk, context);
+        }
     }
 }
