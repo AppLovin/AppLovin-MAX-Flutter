@@ -37,6 +37,7 @@ public class AppLovinMAXNativeAdView extends MaxNativeAdListener
     public AppLovinMAXNativeAdView(final int viewId,
                              final String adUnitId,
                              final boolean isAutoRefreshEnabled,
+                             final String adTemplate,
                              @Nullable final String placement,
                              @Nullable final String customData,
                              final BinaryMessenger messenger,
@@ -49,7 +50,7 @@ public class AppLovinMAXNativeAdView extends MaxNativeAdListener
         nativeAdLoader.setPlacement(placement);
         nativeAdLoader.setCustomData(customData);
 
-        adView = new MaxNativeAdView( "medium_template_1", context );
+        adView = new MaxNativeAdView( adTemplate, context );
 
         channel.setMethodCallHandler( new MethodChannel.MethodCallHandler()
         {

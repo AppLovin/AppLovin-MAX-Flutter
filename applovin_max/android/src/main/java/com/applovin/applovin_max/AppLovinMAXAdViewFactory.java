@@ -59,8 +59,10 @@ public class AppLovinMAXAdViewFactory
 
         if ( adFormat == MaxAdFormat.NATIVE ) {
             AppLovinMAX.d("Creating MaxNativeAdView widget with Ad Unit ID: " + adUnitId);
+            String adTemplateStr = (String) params.get( "ad_template" );
 
-            return new AppLovinMAXNativeAdView( viewId, adUnitId, adFormat, messenger, sdk, context );
+            String adTemplate = "medium".equals( adTemplateStr ) ? "medium_template_1" : "small_template_1";
+            return new AppLovinMAXNativeAdView( viewId, adUnitId, adTemplate, messenger, sdk, context );
         } else {
             AppLovinMAX.d("Creating MaxAdView widget with Ad Unit ID: " + adUnitId);
 
