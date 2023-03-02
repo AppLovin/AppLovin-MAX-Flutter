@@ -757,6 +757,16 @@ static FlutterMethodChannel *ALSharedChannel;
     [self sendEventWithName: name body: body];
 }
 
+- (void)sendErrorEventWithName:(NSString *)name forAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error channel:(FlutterMethodChannel *)channel
+{
+    NSDictionary *body = @{@"adUnitId": adUnitIdentifier,
+                           @"errorCode" : @(error.code),
+                           @"errorMessage" : error.message,
+                           @"waterfall": [self createAdWaterfallInfo: error.waterfall]};
+
+    [self sendEventWithName: name body: body channel: channel];
+}
+
 - (void)didClickAd:(MAAd *)ad
 {
     NSString *name;

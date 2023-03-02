@@ -30,6 +30,12 @@
  */
 - (void)sendErrorEventWithName:(NSString *)name forAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error;
 
+/**
+ * Utility method for sending error events through the Flutter channel into Dart.
+ */
+- (void)sendErrorEventWithName:(NSString *)name forAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error channel:(FlutterMethodChannel *)channel;
+
+
 + (void)log:(NSString *)format, ...;
 
 @end

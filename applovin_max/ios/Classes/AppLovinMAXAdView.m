@@ -93,7 +93,9 @@
 {
     [[AppLovinMAX shared] sendErrorEventWithName: @"OnAdViewAdLoadFailedEvent"
                              forAdUnitIdentifier: adUnitIdentifier
-                                       withError: error];
+                                       withError: error
+                                       channel: self.channel
+                                       ];
 }
 
 - (void)didClickAd:(MAAd *)ad
