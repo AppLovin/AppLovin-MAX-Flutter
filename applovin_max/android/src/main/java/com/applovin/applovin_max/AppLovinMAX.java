@@ -813,16 +813,7 @@ public class AppLovinMAX
 
     public void fireErrorCallback(final String name, final String adUnitId, final MaxError error)
     {
-        try
-        {
-            Map<String, Object> params = new HashMap<>( 5 );
-            params.put( "adUnitId", adUnitId );
-            params.put( "errorCode", error.getCode() );
-            params.put( "errorMessage", error.getMessage() );
-            params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
-            fireCallback( name, params );
-        }
-        catch ( Throwable ignored ) { }
+        fireErrorCallback(name, adUnitId, error, sharedChannel);
     }
 
     @Override
