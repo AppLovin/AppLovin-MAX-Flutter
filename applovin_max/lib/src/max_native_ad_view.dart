@@ -7,38 +7,34 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// Represents an ad format.
-enum AdFormat {
-  /// The banner ad.
-  banner("banner"),
+enum AdTemplate {
+  /// The small ad.
+  small("small"),
 
-  /// The MREC ad.
-  mrec("mrec"),
-
-  /// The native ad.
-  native("native")
-  ;
+  /// The medium ad.
+  medium("medium");
 
   /// @nodoc
   final String value;
 
   /// @nodoc
-  const AdFormat(this.value);
+  const AdTemplate(this.value);
 }
 
-const double _bannerWidth = 320;
-const double _bannerHeight = 50;
+const double _smallWidth = 320;
+const double _smallHeight = 50;
 const double _leaderWidth = 728;
 const double _leaderHeight = 90;
-const double _mrecWidth = 300;
-const double _mrecHeight = 250;
+const double _mediumWidth = 300;
+const double __mediumHeight = 250;
 
-/// Represents an AdView ad (Banner / MREC).
-class MaxAdView extends StatefulWidget {
+/// Represents an NativeAdView ad (small / medium).
+class MaxNativeAdView extends StatefulWidget {
   /// A string value representing the ad unit ID to load ads for.
   final String adUnitId;
 
-  /// A string value representing the ad format to load ads for. Should be either [AdFormat.banner] or [AdFormat.mrec].
-  final AdFormat adFormat;
+  /// A string value representing the ad template to load ads for. Should be either [AdTemplate.small] or [AdTemplate.medium].
+  final AdTemplate adTemplate;
 
   /// A string value representing the placement name that you assign when you integrate each ad format, for granular reporting in ad events.
   final String? placement;
@@ -47,47 +43,27 @@ class MaxAdView extends StatefulWidget {
   final String? customData;
 
   /// The listener for various ad callbacks.
-  final AdViewAdListener? listener;
-
-  /// A boolean value representing whether the ad currently has auto-refresh enabled or not. Defaults to true.
-  bool isAutoRefreshEnabled;
-
-  /// Creates a new ad view directly in the user's widget tree.
-  ///
-  /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
-  /// * [MREC Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method)
-  MaxAdView({
+  final NativeAdViewAdListener? listener;
+  
+  /// Creates a new native ad view directly in the user's widget tree.
+  const MaxNativeAdView({
     Key? key,
     required this.adUnitId,
-    required this.adFormat,
+    required this.adTemplate,
     this.placement,
     this.customData,
     this.listener,
-    this.isAutoRefreshEnabled = true,
   }) : super(key: key);
 
   /// @nodoc
   @override
-  State<MaxAdView> createState() => _MaxAdViewState();
+  State<MaxNativeAdView> createState() => _MaxAdViewState();
 }
 
-class _MaxAdViewState extends State<MaxAdView> {
-  /// Unique [MethodChannel] to this [MaxAdView] instance.
+class _MaxAdViewState extends State<MaxNativeAdView> {
+  /// Unique [MethodChannel] to this [MaxNativeAdView] instance.
   MethodChannel? _methodChannel;
-
-  @override
-  void didUpdateWidget(MaxAdView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.isAutoRefreshEnabled != widget.isAutoRefreshEnabled) {
-      if (widget.isAutoRefreshEnabled) {
-        _methodChannel!.invokeMethod('startAutoRefresh');
-      } else {
-        _methodChannel!.invokeMethod('stopAutoRefresh');
-      }
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -100,8 +76,7 @@ class _MaxAdViewState extends State<MaxAdView> {
             viewType: "applovin_max/adview",
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
-              "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+              "ad_template": widget.adTemplate.value,
               "customData": widget.customData,
               "placement": widget.placement
             },
@@ -120,8 +95,7 @@ class _MaxAdViewState extends State<MaxAdView> {
             viewType: "applovin_max/adview",
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
-              "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+              "ad_template": widget.adTemplate.value,
               "customData": widget.customData,
               "placement": widget.placement
             },
@@ -135,6 +109,10 @@ class _MaxAdViewState extends State<MaxAdView> {
     return Container();
   }
 
+  Future<void> load() async {
+     await _methodChannel?.invokeMethod("load");
+  }
+  
   void _onMaxAdViewCreated(int id) {
     _methodChannel = MethodChannel('applovin_max/adview_$id');
     _methodChannel!.setMethodCallHandler((call) async {
@@ -143,16 +121,12 @@ class _MaxAdViewState extends State<MaxAdView> {
 
       var adUnitId = arguments["adUnitId"];
 
-      if ("OnAdViewAdLoadedEvent" == method) {
+      if ("OnNativeAdViewAdLoadedEvent" == method) {
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
-      } else if ("OnAdViewAdLoadFailedEvent" == method) {
+      } else if ("OnNativeAdViewAdLoadFailedEvent" == method) {
         widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));
-      } else if ("OnAdViewAdClickedEvent" == method) {
+      } else if ("OnNativeAdViewAdClickedEvent" == method) {
         widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(adUnitId, arguments));
-      } else if ("OnAdViewAdExpandedEvent" == method) {
-        widget.listener?.onAdExpandedCallback(AppLovinMAX.createAd(adUnitId, arguments));
-      } else if ("OnAdViewAdCollapsedEvent" == method) {
-        widget.listener?.onAdCollapsedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdRevenuePaidEvent" == method) {
         widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(adUnitId, arguments));
       }
@@ -160,20 +134,20 @@ class _MaxAdViewState extends State<MaxAdView> {
   }
 
   double _getWidth() {
-    if (widget.adFormat == AdFormat.mrec) {
-      return _mrecWidth;
-    } else if (widget.adFormat == AdFormat.banner) {
-      return _isTablet() ? _leaderWidth : _bannerWidth;
+    if (widget.adTemplate == AdTemplate.medium) {
+      return _mediumWidth;
+    } else if (widget.adTemplate == AdTemplate.small) {
+      return _isTablet() ? _leaderWidth : _smallWidth;
     }
 
     return -1;
   }
 
   double _getHeight() {
-    if (widget.adFormat == AdFormat.mrec) {
-      return _mrecHeight;
-    } else if (widget.adFormat == AdFormat.banner) {
-      return _isTablet() ? _leaderHeight : _bannerHeight;
+    if (widget.adTemplate == AdTemplate.medium) {
+      return __mediumHeight;
+    } else if (widget.adTemplate == AdTemplate.small) {
+      return _isTablet() ? _leaderHeight : _smallHeight;
     }
 
     return -1;

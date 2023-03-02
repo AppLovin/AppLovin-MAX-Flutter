@@ -4,10 +4,13 @@ import 'package:applovin_max/applovin_max.dart';
 abstract class AdListener {
   /// The SDK invokes this method when a new ad has been loaded.
   final Function(MaxAd ad) onAdLoadedCallback;
+
   /// The SDK invokes this method when an ad could not be retrieved.
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
+
   /// The SDK invokes this method when the ad is clicked.
   final Function(MaxAd ad) onAdClickedCallback;
+
   /// The SDK invokes this method when a revenue event is detected for the ad.
   final Function(MaxAd ad)? onAdRevenuePaidCallback;
 
@@ -24,8 +27,10 @@ abstract class AdListener {
 abstract class FullscreenAdListener extends AdListener {
   /// The SDK invokes this method when the ad has been successfully displayed.
   final Function(MaxAd ad) onAdDisplayedCallback;
+
   /// The SDK invokes this method when the ad could not be displayed.
   final Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback;
+
   /// The SDK invokes this method when the ad has been dismissed.
   final Function(MaxAd ad) onAdHiddenCallback;
 
@@ -50,6 +55,7 @@ abstract class FullscreenAdListener extends AdListener {
 class AdViewAdListener extends AdListener {
   /// The SDK invokes this method when the [MaxAdView] has expanded to the full screen.
   final Function(MaxAd ad) onAdExpandedCallback;
+
   /// The SDK invokes this method when the [MaxAdView] has collapsed back to its original size.
   final Function(MaxAd ad) onAdCollapsedCallback;
 
@@ -135,6 +141,17 @@ class AppOpenAdListener extends FullscreenAdListener {
           onAdDisplayFailedCallback: onAdDisplayFailedCallback,
           onAdClickedCallback: onAdClickedCallback,
           onAdHiddenCallback: onAdHiddenCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
+        );
+}
+
+class NativeAdViewAdListener extends AdListener {
+  NativeAdViewAdListener({
+    required super.onAdLoadedCallback,
+    required super.onAdLoadFailedCallback,
+    required super.onAdClickedCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
+  }) : super(
           onAdRevenuePaidCallback: onAdRevenuePaidCallback,
         );
 }

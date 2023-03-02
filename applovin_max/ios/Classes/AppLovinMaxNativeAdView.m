@@ -4,8 +4,6 @@
 
 @interface AppLovinMAXNativeAdView()<MANativeAdDelegate, MAAdRevenueDelegate>
 
-@property (nonatomic, weak) IBOutlet UIView *nativeAdContainerView;
-
 @property (nonatomic, strong) FlutterMethodChannel *channel;
 @property (nonatomic, strong) MANativeAdLoader *nativeAdLoader;
 @property (nonatomic, strong) MAAd *nativeAd;
@@ -82,48 +80,8 @@
     }
     // Save ad for cleanup
     self.nativeAd = ad;
-    if ( self.nativeAdView )
-    {
-        [self.nativeAdView removeFromSuperview];
-    }
 
-    // Add ad view to view
     self.nativeAdView = nativeAdView;
-    [self.nativeAdContainerView addSubview: nativeAdView];
-
-    // Set to false if modifying constraints after adding the ad view to your layout
-    self.nativeAdContainerView.translatesAutoresizingMaskIntoConstraints = NO;
-
-    // Set ad view to span width and height of container and center the ad
-    [self.nativeAdContainerView addConstraint: [NSLayoutConstraint constraintWithItem: nativeAdView
-                                                                            attribute: NSLayoutAttributeWidth
-                                                                            relatedBy: NSLayoutRelationEqual
-                                                                               toItem: self.nativeAdContainerView
-                                                                            attribute: NSLayoutAttributeWidth
-                                                                           multiplier: 1
-                                                                             constant: 0]];
-    [self.nativeAdContainerView addConstraint: [NSLayoutConstraint constraintWithItem: nativeAdView
-                                                                            attribute: NSLayoutAttributeHeight
-                                                                            relatedBy: NSLayoutRelationEqual
-                                                                               toItem: self.nativeAdContainerView
-                                                                            attribute: NSLayoutAttributeHeight
-                                                                           multiplier: 1
-                                                                             constant: 0]];
-    [self.nativeAdContainerView addConstraint: [NSLayoutConstraint constraintWithItem: nativeAdView
-                                                                            attribute: NSLayoutAttributeCenterX
-                                                                            relatedBy: NSLayoutRelationEqual
-                                                                               toItem: self.nativeAdContainerView
-                                                                            attribute: NSLayoutAttributeCenterX
-                                                                           multiplier: 1
-                                                                             constant: 0]];
-    [self.nativeAdContainerView addConstraint: [NSLayoutConstraint constraintWithItem: nativeAdView
-                                                                            attribute: NSLayoutAttributeCenterY
-                                                                            relatedBy: NSLayoutRelationEqual
-                                                                               toItem: self.nativeAdContainerView
-                                                                            attribute: NSLayoutAttributeCenterY
-                                                                           multiplier: 1
-                                                                             constant: 0]];
-
 
     [self sendEventWithName: @"OnNativeAdViewAdLoadedEvent" ad: ad];
 }
