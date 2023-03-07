@@ -8,6 +8,7 @@ export 'package:applovin_max/src/ad_classes.dart';
 export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
+export 'package:applovin_max/src/max_native_ad_view.dart';
 export 'package:applovin_max/src/targeting_data.dart';
 
 /// Represents the AppLovin SDK.
