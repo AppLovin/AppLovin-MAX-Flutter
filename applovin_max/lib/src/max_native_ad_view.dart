@@ -77,6 +77,7 @@ class _MaxAdViewState extends State<MaxNativeAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_template": widget.adTemplate.value,
+              "ad_format": AdFormat.native.value,
               "customData": widget.customData,
               "placement": widget.placement
             },
@@ -96,6 +97,7 @@ class _MaxAdViewState extends State<MaxNativeAdView> {
             creationParams: <String, dynamic>{
               "ad_unit_id": widget.adUnitId,
               "ad_template": widget.adTemplate.value,
+              "ad_format": AdFormat.native.value,
               "customData": widget.customData,
               "placement": widget.placement
             },

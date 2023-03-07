@@ -46,6 +46,8 @@ public class AppLovinMAXNativeAdView extends MaxNativeAdListener
         String uniqueChannelName = "applovin_max/adview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
         nativeAdLoader = new MaxNativeAdLoader(adUnitId, sdk, context);
+        nativeAdLoader.setNativeAdListener(this);
+        nativeAdLoader.setRevenueListener(this);
         nativeAdLoader.setPlacement(placement);
         nativeAdLoader.setCustomData(customData);
 
