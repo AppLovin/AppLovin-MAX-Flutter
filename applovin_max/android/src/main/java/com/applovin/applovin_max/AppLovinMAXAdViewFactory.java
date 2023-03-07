@@ -53,26 +53,26 @@ public class AppLovinMAXAdViewFactory
             adFormat = MaxAdFormat.NATIVE;
         }
         else {
-            AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
+            adFormat = AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
         }
 
+        // Optional params
+        boolean isAutoRefreshEnabled =
+            Boolean.TRUE.equals(params.get("is_auto_refresh_enabled")); // Defaults to true
+        String placement =
+            params.containsKey("placement") ? (String) params.get("placement") : null;
+        String customData =
+            params.containsKey("customData") ? (String) params.get("customData") : null;
 
         if ( adFormat == MaxAdFormat.NATIVE ) {
             AppLovinMAX.d("Creating MaxNativeAdView widget with Ad Unit ID: " + adUnitId);
             String adTemplateStr = (String) params.get( "ad_template" );
 
             String adTemplate = "medium".equals( adTemplateStr ) ? "medium_template_1" : "small_template_1";
-            return new AppLovinMAXNativeAdView( viewId, adUnitId, adTemplate, messenger, sdk, context );
+            return new AppLovinMAXNativeAdView( viewId, adUnitId, adTemplate,
+                placement, customData, messenger, sdk, context );
         } else {
             AppLovinMAX.d("Creating MaxAdView widget with Ad Unit ID: " + adUnitId);
-
-            // Optional params
-            boolean isAutoRefreshEnabled =
-                Boolean.TRUE.equals(params.get("is_auto_refresh_enabled")); // Defaults to true
-            String placement =
-                params.containsKey("placement") ? (String) params.get("placement") : null;
-            String customData =
-                params.containsKey("customData") ? (String) params.get("customData") : null;
 
             return new AppLovinMAXAdView(viewId, adUnitId, adFormat, isAutoRefreshEnabled,
                 placement, customData, messenger, sdk, context);

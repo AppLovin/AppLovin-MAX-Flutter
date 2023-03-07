@@ -36,7 +36,6 @@ public class AppLovinMAXNativeAdView extends MaxNativeAdListener
 
     public AppLovinMAXNativeAdView(final int viewId,
                              final String adUnitId,
-                             final boolean isAutoRefreshEnabled,
                              final String adTemplate,
                              @Nullable final String placement,
                              @Nullable final String customData,
