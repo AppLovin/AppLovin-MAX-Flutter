@@ -8,6 +8,7 @@
 @property (nonatomic, strong) MANativeAdLoader *nativeAdLoader;
 @property (nonatomic, strong) MAAd *nativeAd;
 @property (nonatomic, strong) UIView *nativeAdView;
+@property (nonatomic, strong) UIView *_view;
 @end
 
 @implementation AppLovinMAXNativeAdView
@@ -23,8 +24,9 @@
     self = [super init];
     if ( self )
     {
+
         __weak typeof(self) weakSelf = self;
-        
+        self._view = [[UIView alloc] initWithFrame: frame];
         NSString *uniqueChannelName = [NSString stringWithFormat: @"applovin_max/adview_%lld", viewId];
         self.channel = [FlutterMethodChannel methodChannelWithName: uniqueChannelName binaryMessenger: messenger];
         [self.channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
@@ -55,7 +57,7 @@
 
 - (UIView *)view
 {
-    return self.nativeAdView;
+    return self._view;
 }
 
 - (void)dealloc
@@ -81,8 +83,14 @@
     // Save ad for cleanup
     self.nativeAd = ad;
 
+    if ( self.nativeAdView )
+    {
+        [self.nativeAdView removeFromSuperview];
+    }
+    
+    // Add ad view to view
     self.nativeAdView = nativeAdView;
-
+    [self._view addSubview: nativeAdView];
     [self sendEventWithName: @"OnNativeAdViewAdLoadedEvent" ad: ad];
 }
 
