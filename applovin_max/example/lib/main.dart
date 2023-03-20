@@ -19,12 +19,13 @@ class MyApp extends StatefulWidget {
 }
 
 // Create constants
-const String _sdkKey = "YOUR_SDK_KEY";
+const String _sdkKey = "s";
 
-final String _interstitialAdUnitId = Platform.isAndroid ? "ANDROID_INTER_AD_UNIT_ID" : "IOS_INTER_AD_UNIT_ID";
+final String _interstitialAdUnitId = Platform.isAndroid ? "s" : "IOS_INTER_AD_UNIT_ID";
 final String _rewardedAdUnitId = Platform.isAndroid ? "ANDROID_REWARDED_AD_UNIT_ID" : "IOS_REWARDED_AD_UNIT_ID";
 final String _bannerAdUnitId = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "IOS_BANNER_AD_UNIT_ID";
 final String _mrecAdUnitId = Platform.isAndroid ? "ANDROID_MREC_AD_UNIT_ID" : "IOS_MREC_AD_UNIT_ID";
+final String _nativeAdUnitId = Platform.isAndroid ? "s" : "s";
 
 // Create states
 var _isInitialized = false;
@@ -38,6 +39,7 @@ var _isWidgetBannerShowing = false;
 var _isProgrammaticMRecCreated = false;
 var _isProgrammaticMRecShowing = false;
 var _isWidgetMRecShowing = false;
+var _isWidgetNativeShowing = false;
 
 var _statusText = "";
 
@@ -64,7 +66,7 @@ class _MyAppState extends State<MyApp> {
 
   void attachAdListeners() {
     /// Interstitial Ad Listeners
-    AppLovinMAX.setInterstitialListener(InterstitialListener(
+    AppLovinMAX.setAppOpenAdListener(AppOpenAdListener(
       onAdLoadedCallback: (ad) {
         _interstitialLoadState = AdLoadState.loaded;
 
@@ -85,7 +87,7 @@ class _MyAppState extends State<MyApp> {
         logStatus('Interstitial ad failed to load with code ${error.code} - retrying in ${retryDelay}s');
 
         Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
-          AppLovinMAX.loadInterstitial(_interstitialAdUnitId);
+          AppLovinMAX.loadAppOpenAd(_interstitialAdUnitId);
         });
       },
       onAdDisplayedCallback: (ad) {
@@ -212,6 +214,10 @@ class _MyAppState extends State<MyApp> {
     return _isWidgetMRecShowing ? 'Hide Widget MREC' : 'Show Widget MREC';
   }
 
+  String getWidgetNativeButtonTitle() {
+    return _isWidgetNativeShowing ? 'Hide Widget Native' : 'Show Widget Native';
+  }
+
   void logStatus(String status) {
     /// ignore: avoid_print
     print(status);
@@ -248,13 +254,13 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: (_isInitialized && _interstitialLoadState != AdLoadState.loading)
                     ? () async {
-                        bool isReady = (await AppLovinMAX.isInterstitialReady(_interstitialAdUnitId))!;
+                        bool isReady = (await AppLovinMAX.isAppOpenAdReady(_interstitialAdUnitId))!;
                         if (isReady) {
-                          AppLovinMAX.showInterstitial(_interstitialAdUnitId);
+                          AppLovinMAX.showAppOpenAd(_interstitialAdUnitId);
                         } else {
                           logStatus('Loading interstitial ad...');
                           _interstitialLoadState = AdLoadState.loading;
-                          AppLovinMAX.loadInterstitial(_interstitialAdUnitId);
+                          AppLovinMAX.loadAppOpenAd(_interstitialAdUnitId);
                         }
                       }
                     : null,
@@ -355,6 +361,31 @@ class _MyAppState extends State<MyApp> {
                   )
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isWidgetNativeShowing)
+                        ? () async {
+                      setState(() {
+                        _isWidgetNativeShowing = !_isWidgetNativeShowing;
+                      });
+                    }
+                        : null,
+                    child: Text(getWidgetNativeButtonTitle()),
+                  ),
+                  ElevatedButton(
+                    onPressed: (_isInitialized && !_isWidgetNativeShowing)
+                        ? () async {
+                      setState(() {
+                        _isWidgetNativeShowing = !_isWidgetNativeShowing;
+                      });
+                    }
+                        : null,
+                    child: Text(getWidgetNativeButtonTitle()),
+                  )
+                ],
+              ),
               if (_isWidgetBannerShowing)
                 MaxAdView(
                     adUnitId: _bannerAdUnitId,
@@ -388,6 +419,19 @@ class _MyAppState extends State<MyApp> {
                       logStatus('MREC widget ad collapsed');
                     }, onAdRevenuePaidCallback: (ad) {
                       logStatus('MREC widget ad revenue paid: ${ad.revenue}');
+                    })),
+              if (_isWidgetNativeShowing)
+                MaxNativeAdView(
+                    adUnitId: _nativeAdUnitId,
+                    adTemplate: AdTemplate.medium,
+                    listener: NativeAdViewAdListener(onAdLoadedCallback: (ad) {
+                      logStatus('Native widget ad loaded from ${ad.networkName}');
+                    }, onAdLoadFailedCallback: (adUnitId, error) {
+                      logStatus('Native widget ad failed to load with error code ${error.code} and message: ${error.message}');
+                    }, onAdClickedCallback: (ad) {
+                      logStatus('Native widget ad clicked');
+                    }, onAdRevenuePaidCallback: (ad) {
+                      logStatus('Native widget ad revenue paid: ${ad.revenue}');
                     })),
             ],
           )),
