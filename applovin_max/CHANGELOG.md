@@ -1,6 +1,6 @@
 ## Versions
 
-## 2.4.5
+## 2.4.6
 * Depends on Android SDK v11.8.2 and iOS SDK v11.8.2.
 ## 2.4.4
 * Fix iOS widget banners/MRECs crash when not passing in placement or custom data.
