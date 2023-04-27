@@ -744,17 +744,22 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    [self sendErrorEventWithName: name forAdUnitIdentifier: adUnitIdentifier withError: error];
+    [self sendErrorEventWithName: name
+             forAdUnitIdentifier: adUnitIdentifier
+                       withError: error
+                         channel: ALSharedChannel];
 }
 
-- (void)sendErrorEventWithName:(NSString *)name forAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
+- (void)sendErrorEventWithName:(NSString *)name
+           forAdUnitIdentifier:(NSString *)adUnitIdentifier
+                     withError:(MAError *)error
+                       channel:(FlutterMethodChannel *)channel
 {
     NSDictionary *body = @{@"adUnitId": adUnitIdentifier,
                            @"errorCode" : @(error.code),
                            @"errorMessage" : error.message,
                            @"waterfall": [self createAdWaterfallInfo: error.waterfall]};
-    
-    [self sendEventWithName: name body: body];
+    [self sendEventWithName: name body: body channel: channel];
 }
 
 - (void)didClickAd:(MAAd *)ad

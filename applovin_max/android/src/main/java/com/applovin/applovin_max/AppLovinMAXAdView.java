@@ -116,7 +116,7 @@ public class AppLovinMAXAdView
     @Override
     public void onAdLoadFailed(final String adUnitId, final MaxError error)
     {
-        AppLovinMAX.getInstance().fireErrorCallback( "OnAdViewAdLoadFailedEvent", adUnitId, error );
+        AppLovinMAX.getInstance().fireErrorCallback( "OnAdViewAdLoadFailedEvent", adUnitId, error, channel );
     }
 
     @Override

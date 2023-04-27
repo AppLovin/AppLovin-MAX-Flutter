@@ -794,10 +794,10 @@ public class AppLovinMAX
             return;
         }
 
-        AppLovinMAX.getInstance().fireErrorCallback( name, adUnitId, error );
+        fireErrorCallback( name, adUnitId, error, sharedChannel );
     }
 
-    public void fireErrorCallback(final String name, final String adUnitId, final MaxError error)
+    public void fireErrorCallback(final String name, final String adUnitId, final MaxError error, final MethodChannel channel)
     {
         try
         {
@@ -806,7 +806,7 @@ public class AppLovinMAX
             params.put( "errorCode", error.getCode() );
             params.put( "errorMessage", error.getMessage() );
             params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
-            fireCallback( name, params );
+            fireCallback( name, params, channel );
         }
         catch ( Throwable ignored ) { }
     }
