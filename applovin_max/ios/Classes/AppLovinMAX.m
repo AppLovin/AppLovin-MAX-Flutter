@@ -1401,7 +1401,7 @@ static FlutterMethodChannel *ALSharedChannel;
     }
 }
 
-- (NSDictionary<NSString *, NSObject *> *)adInfoForAd:(MAAd *)ad
+- (NSDictionary<NSString *, id> *)adInfoForAd:(MAAd *)ad
 {
     // NOTE: Empty strings might get co-erced into [NSNull null] through Flutter channel and cause issues
     return @{@"adUnitId" : ad.adUnitIdentifier,
@@ -1413,15 +1413,15 @@ static FlutterMethodChannel *ALSharedChannel;
              @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
 }
 
-- (NSDictionary<NSString *, NSObject *> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
+- (NSDictionary<NSString *, id> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
 {
-    NSMutableDictionary<NSString *, NSObject *> *waterfallInfoDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString *, id> *waterfallInfoDict = [NSMutableDictionary dictionary];
     if ( !waterfallInfo ) return waterfallInfoDict;
     
     waterfallInfoDict[@"name"] = waterfallInfo.name;
     waterfallInfoDict[@"testName"] = waterfallInfo.testName;
     
-    NSMutableArray<NSDictionary<NSString *, NSObject *> *> *networkResponsesArray = [NSMutableArray arrayWithCapacity: waterfallInfo.networkResponses.count];
+    NSMutableArray<NSDictionary<NSString *, id> *> *networkResponsesArray = [NSMutableArray arrayWithCapacity: waterfallInfo.networkResponses.count];
     for ( MANetworkResponseInfo *response in  waterfallInfo.networkResponses )
     {
         [networkResponsesArray addObject: [self createNetworkResponseInfo: response]];
@@ -1435,16 +1435,16 @@ static FlutterMethodChannel *ALSharedChannel;
     return waterfallInfoDict;
 }
 
-- (NSDictionary<NSString *, NSObject *> *)createNetworkResponseInfo:(MANetworkResponseInfo *)response
+- (NSDictionary<NSString *, id> *)createNetworkResponseInfo:(MANetworkResponseInfo *)response
 {
-    NSMutableDictionary<NSString *, NSObject *> *networkResponseDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary<NSString *, id> *networkResponseDict = [NSMutableDictionary dictionary];
     
     networkResponseDict[@"adLoadState"] = @(response.adLoadState);
     
     MAMediatedNetworkInfo *mediatedNetworkInfo = response.mediatedNetwork;
     if ( mediatedNetworkInfo )
     {
-        NSMutableDictionary <NSString *, NSObject *> *networkInfoObject = [NSMutableDictionary dictionary];
+        NSMutableDictionary <NSString *, id> *networkInfoObject = [NSMutableDictionary dictionary];
         networkInfoObject[@"name"] = mediatedNetworkInfo.name;
         networkInfoObject[@"adapterClassName"] = mediatedNetworkInfo.adapterClassName;
         networkInfoObject[@"adapterVersion"] = mediatedNetworkInfo.adapterVersion;
@@ -1458,7 +1458,7 @@ static FlutterMethodChannel *ALSharedChannel;
     MAError *error = response.error;
     if ( error )
     {
-        NSMutableDictionary<NSString *, NSObject *> *errorObject = [NSMutableDictionary dictionary];
+        NSMutableDictionary<NSString *, id> *errorObject = [NSMutableDictionary dictionary];
         errorObject[@"message"] = error.message;
         errorObject[@"code"] = @(error.code);
         
@@ -1523,12 +1523,12 @@ static FlutterMethodChannel *ALSharedChannel;
     [self sendEventWithName: name body: [self adInfoForAd: ad] channel: channel];
 }
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSObject *> *)body
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body
 {
     [self sendEventWithName: name body: body channel: ALSharedChannel];
 }
 
-- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, NSObject *> *)body channel:(FlutterMethodChannel *)channel
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body channel:(FlutterMethodChannel *)channel
 {
     [channel invokeMethod: name arguments: body];
 }
