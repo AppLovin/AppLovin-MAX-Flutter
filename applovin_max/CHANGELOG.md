@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Depends on Android SDK v11.10.1 and iOS SDK v11.10.1.
 ## 2.5.0
 * Depends on Android SDK v11.9.0 and iOS SDK v11.9.0.
 * Fix ad load failure callbacks not firing for widget banners/MRECs. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/62.
