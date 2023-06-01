@@ -69,6 +69,22 @@ class AdViewAdListener extends AdListener {
         );
 }
 
+/// Defines an NativeAdView ad listener to be notified about native ad view events.
+class NativeAdViewAdListener extends AdListener {
+  /// @nodoc
+  const NativeAdViewAdListener({
+    required Function(MaxAd ad) onAdLoadedCallback,
+    required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
+    required Function(MaxAd ad) onAdClickedCallback,
+    Function(MaxAd ad)? onAdRevenuePaidCallback,
+  }) : super(
+          onAdLoadedCallback: onAdLoadedCallback,
+          onAdLoadFailedCallback: onAdLoadFailedCallback,
+          onAdClickedCallback: onAdClickedCallback,
+          onAdRevenuePaidCallback: onAdRevenuePaidCallback,
+        );
+}
+
 /// Defines an interstitial ad listener.
 class InterstitialListener extends FullscreenAdListener {
   /// @nodoc
