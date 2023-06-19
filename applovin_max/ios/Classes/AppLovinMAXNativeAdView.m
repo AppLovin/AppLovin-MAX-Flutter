@@ -44,8 +44,6 @@
 
 @implementation AppLovinMAXNativeAdView
 
-typedef void (^AddComponent) ( CGRect rect );
-
 - (instancetype)initWithFrame:(CGRect)frame
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
@@ -64,37 +62,67 @@ typedef void (^AddComponent) ( CGRect rect );
         NSString *uniqueChannelName = [NSString stringWithFormat: @"applovin_max/nativeadview_%lld", viewId];
         self.channel = [FlutterMethodChannel methodChannelWithName: uniqueChannelName binaryMessenger: messenger];
         
-        NSDictionary<NSString *, AddComponent> *componentCommands = @{
-            @"addTitleView":        ^( CGRect rect ) { [ self addTitleView: rect ]; },
-            @"addAdvertiserView":   ^( CGRect rect ) { [ self addAdvertiserView: rect ]; },
-            @"addBodyView":         ^( CGRect rect ) { [ self addBodyView: rect ]; },
-            @"addCallToActionView": ^( CGRect rect ) { [ self addCallToActionView: rect ]; },
-            @"addIconView":         ^( CGRect rect ) { [ self addIconView: rect ]; },
-            @"addOptionsView":      ^( CGRect rect ) { [ self addOptionsView: rect ]; },
-            @"addMediaView":        ^( CGRect rect ) { [ self addMediaView: rect ]; },
-        };
-        
         __weak typeof(self) weakSelf = self;
         [self.channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-            AddComponent addComponent = [componentCommands objectForKey: call.method];
-            if ( addComponent )
+            if ( [@"addTitleView" isEqualToString: call.method] )
             {
-                int x = ((NSNumber *)call.arguments[@"x"]).intValue;
-                int y = ((NSNumber *)call.arguments[@"y"]).intValue;
-                int width = ((NSNumber *)call.arguments[@"width"]).intValue;
-                int height = ((NSNumber *)call.arguments[@"height"]).intValue;
-                CGRect rect = CGRectMake(x, y, width, height);
-                addComponent(rect);
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addTitleView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addAdvertiserView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addAdvertiserView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addBodyView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addBodyView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addCallToActionView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addCallToActionView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addIconView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addIconView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addOptionsView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addOptionsView: rect];
+                
+                result(nil);
+            }
+            else if ( [@"addMediaView" isEqualToString: call.method] )
+            {
+                CGRect rect = [weakSelf getRect: call];
+                [weakSelf addMediaView: rect];
+                
                 result(nil);
             }
             else if ( [@"completeViewAddition" isEqualToString: call.method] )
             {
                 [weakSelf completeViewAddition];
+                
                 result(nil);
             }
             else if ( [@"load" isEqualToString: call.method] )
             {
                 [weakSelf loadAd];
+                
                 result(nil);
             }
             else
@@ -123,27 +151,27 @@ typedef void (^AddComponent) ( CGRect rect );
     {
         [self.titleView removeFromSuperview];
     }
-
+    
     if ( self.advertiserView )
     {
         [self.advertiserView removeFromSuperview];
     }
-
+    
     if ( self.bodyView )
     {
         [self.bodyView removeFromSuperview];
     }
-
+    
     if ( self.callToActionView )
     {
         [self.callToActionView removeFromSuperview];
     }
-
+    
     if ( self.iconView )
     {
         [self.iconView removeFromSuperview];
     }
-
+    
     if ( self.optionsViewContainer )
     {
         [self.optionsViewContainer removeFromSuperview];
@@ -153,9 +181,18 @@ typedef void (^AddComponent) ( CGRect rect );
     {
         [self.mediaViewContainer removeFromSuperview];
     }
-
+    
     [self.channel setMethodCallHandler: nil];
     self.channel = nil;
+}
+
+- (CGRect)getRect:(FlutterMethodCall *)call
+{
+    int x = ((NSNumber *)call.arguments[@"x"]).intValue;
+    int y = ((NSNumber *)call.arguments[@"y"]).intValue;
+    int width = ((NSNumber *)call.arguments[@"width"]).intValue;
+    int height = ((NSNumber *)call.arguments[@"height"]).intValue;
+    return CGRectMake(x, y, width, height);
 }
 
 #pragma mark - Ad Loader

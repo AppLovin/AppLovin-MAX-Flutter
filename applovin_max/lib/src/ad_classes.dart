@@ -81,7 +81,7 @@ class MaxNativeAd {
   /// Whether or not the media view is available.
   final bool isMediaViewAvailable;
 
-  /// @no doc
+  /// @nodoc
   MaxNativeAd(
       {this.title,
       this.advertiser,
@@ -93,7 +93,7 @@ class MaxNativeAd {
       this.isMediaViewAvailable = false,
       this.isOptionsViewAvailable = false});
 
-  /// @no doc
+  /// @nodoc
   MaxNativeAd.fromJson(Map<String, dynamic> json)
       : title = json['title'],
         advertiser = json['advertiser'],

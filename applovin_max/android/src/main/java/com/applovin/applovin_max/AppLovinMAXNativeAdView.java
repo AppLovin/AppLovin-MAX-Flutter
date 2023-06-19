@@ -23,9 +23,7 @@ import com.applovin.sdk.AppLovinSdk;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,7 +36,7 @@ import io.flutter.plugin.platform.PlatformView;
 import io.flutter.util.HandlerCompat;
 
 public class AppLovinMAXNativeAdView
-        implements PlatformView, MethodChannel.MethodCallHandler, MaxAdRevenueListener
+        implements PlatformView, MaxAdRevenueListener
 {
     private static final int TITLE_LABEL_TAG          = 1;
     private static final int MEDIA_VIEW_CONTAINER_TAG = 2;
@@ -59,11 +57,11 @@ public class AppLovinMAXNativeAdView
     private       MaxNativeAd       nativeAd;
     private final AtomicBoolean     isLoading = new AtomicBoolean(); // Guard against repeated ad loads
 
-    private String adUnitId;
+    private final String adUnitId;
     @Nullable
-    private String placement;
+    private final String placement;
     @Nullable
-    private String customData;
+    private final String customData;
 
     private final FrameLayout nativeAdView;
     @Nullable
@@ -83,13 +81,6 @@ public class AppLovinMAXNativeAdView
 
     private final List<View> clickableViews = new ArrayList<>();
 
-    private interface AddComponent
-    {
-        void add(Rect rect);
-    }
-
-    private final Map<String, AddComponent> componentCommands = new HashMap<>();
-
     public AppLovinMAXNativeAdView(final int viewId,
                                    final String adUnitId,
                                    @Nullable final String placement,
@@ -104,17 +95,80 @@ public class AppLovinMAXNativeAdView
         this.sdk = sdk;
         this.context = context;
 
-        componentCommands.put( "addTitleView", this::addTitleView );
-        componentCommands.put( "addAdvertiserView", this::addAdvertiserView );
-        componentCommands.put( "addBodyView", this::addBodyView );
-        componentCommands.put( "addCallToActionView", this::addCallToActionView );
-        componentCommands.put( "addIconView", this::addIconView );
-        componentCommands.put( "addOptionsView", this::addOptionsView );
-        componentCommands.put( "addMediaView", this::addMediaView );
-
         String uniqueChannelName = "applovin_max/nativeadview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
-        channel.setMethodCallHandler( this );
+        channel.setMethodCallHandler( new MethodChannel.MethodCallHandler()
+        {
+            @Override
+            public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result)
+            {
+                if ( "addTitleView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addTitleView( rect );
+
+                    result.success( null );
+                }
+                if ( "addAdvertiserView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addAdvertiserView( rect );
+
+                    result.success( null );
+                }
+                if ( "addBodyView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addBodyView( rect );
+
+                    result.success( null );
+                }
+                if ( "addCallToActionView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addCallToActionView( rect );
+
+                    result.success( null );
+                }
+                if ( "addIconView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addIconView( rect );
+
+                    result.success( null );
+                }
+                if ( "addOptionsView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addOptionsView( rect );
+
+                    result.success( null );
+                }
+                if ( "addMediaView".equals( call.method ) )
+                {
+                    Rect rect = getRect( call );
+                    addMediaView( rect );
+
+                    result.success( null );
+                }
+                else if ( "completeViewAddition".equals( call.method ) )
+                {
+                    completeViewAddition();
+
+                    result.success( null );
+                }
+                else if ( "load".equals( call.method ) )
+                {
+                    loadAd();
+
+                    result.success( null );
+                }
+                else
+                {
+                    result.notImplemented();
+                }
+            }
+        } );
 
         nativeAdView = new FrameLayout( context );
 
@@ -133,36 +187,6 @@ public class AppLovinMAXNativeAdView
 
     @Override
     public void onFlutterViewDetached() { }
-
-    @Override
-    public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result)
-    {
-        AddComponent addComponent = componentCommands.get( call.method );
-        if ( addComponent != null )
-        {
-            int x = call.argument( "x" );
-            int y = call.argument( "y" );
-            int width = call.argument( "width" );
-            int height = call.argument( "height" );
-            Rect rect = new Rect( x, y, x + width, y + height );
-            addComponent.add( rect );
-            result.success( null );
-        }
-        else if ( "completeViewAddition".equals( call.method ) )
-        {
-            completeViewAddition();
-            result.success( null );
-        }
-        else if ( "load".equals( call.method ) )
-        {
-            loadAd();
-            result.success( null );
-        }
-        else
-        {
-            result.notImplemented();
-        }
-    }
 
     @Override
     public void dispose()
@@ -203,6 +227,15 @@ public class AppLovinMAXNativeAdView
         {
             channel.setMethodCallHandler( null );
         }
+    }
+
+    Rect getRect(MethodCall call)
+    {
+        int x = call.argument( "x" );
+        int y = call.argument( "y" );
+        int width = call.argument( "width" );
+        int height = call.argument( "height" );
+        return new Rect( x, y, x + width, y + height );
     }
 
     // Ad Loader

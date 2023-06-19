@@ -75,7 +75,7 @@ class MaxNativeAdView extends StatefulWidget {
   /// The [child] contained by the MaxNativeAdView container.
   final Widget child;
 
-  /// @no doc
+  /// @nodoc
   @override
   State<MaxNativeAdView> createState() => _MaxNativeAdViewState();
 }
@@ -239,7 +239,8 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
 /// Represents the title text of a native ad.
 class MaxNativeAdTitleView extends StatelessWidget {
-  /// Creates [Text] for the title text.
+  /// Creates [Text] for the title text.  The platform native ad loader
+  /// provides a title text.
   const MaxNativeAdTitleView({
     super.key,
     this.style,
@@ -293,7 +294,8 @@ class MaxNativeAdTitleView extends StatelessWidget {
 
 /// Represents the advertiser text of a native ad.
 class MaxNativeAdAdvertiserView extends StatelessWidget {
-  /// Creates [Text] for the advertiser text.
+  /// Creates [Text] for the advertiser text.  The platform native ad loader
+  /// provides an advertiser text.
   const MaxNativeAdAdvertiserView({
     super.key,
     this.style,
@@ -347,7 +349,8 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
 
 /// Represents the body text of a native ad.
 class MaxNativeAdBodyView extends StatelessWidget {
-  /// Creates [Text] for the body text.
+  /// Creates [Text] for the body text.  The platform native ad loader provides
+  /// a body text.
   const MaxNativeAdBodyView({
     super.key,
     this.style,
@@ -401,7 +404,8 @@ class MaxNativeAdBodyView extends StatelessWidget {
 
 /// Represents the CTA button text of a native ad.
 class MaxNativeAdCallToActionView extends StatelessWidget {
-  /// Creates [ElevatedButton] for the CTA button text.
+  /// Creates [ElevatedButton] for the CTA button text.  The platform native ad
+  /// loader provides a CTA button text.
   const MaxNativeAdCallToActionView({
     super.key,
     this.style,
@@ -436,7 +440,8 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
 
 /// Represents the icon image view of a native ad.
 class MaxNativeAdIconView extends StatelessWidget {
-  /// Creates an icon view.
+  /// Creates [Container] for the icon view.  The platform native ad loader
+  /// overlays the container with the platform view that contains an icon image.
   const MaxNativeAdIconView({
     super.key,
     this.width = double.infinity,
@@ -473,7 +478,9 @@ class MaxNativeAdIconView extends StatelessWidget {
 
 /// Represents the options view of a native ad.
 class MaxNativeAdOptionsView extends StatelessWidget {
-  /// Creates an options view.
+  /// Creates [Container] for the options view.  The platform native ad loader
+  /// overlays the container with the platform view that contains an options
+  /// view.
   const MaxNativeAdOptionsView({
     super.key,
     this.width = double.infinity,
@@ -510,7 +517,10 @@ class MaxNativeAdOptionsView extends StatelessWidget {
 
 /// Represents the ad media view of a native ad.
 class MaxNativeAdMediaView extends StatelessWidget {
-  /// Creates a media view.
+  /// Creates [Container] for the media view.  The platform native ad loader
+  /// overlays the container with the platform view that contains a media view.
+  /// The aspect ratio for the media view needs to be adjusted with
+  /// [mediaContentAspectRatio] of [MaxNativeAd].
   const MaxNativeAdMediaView({
     super.key,
     this.width = double.infinity,
@@ -593,7 +603,9 @@ class _StarRating extends StatelessWidget {
 
 /// Represents the star rating view of a native ad.
 class MaxNativeAdStarRatingView extends StatelessWidget {
-  /// Creates a star rating view.
+  /// Creates [Container] with an internal star rating widget.  The platform
+  /// native ad loader provides a star rating.  If not available, the container
+  /// will be empty.
   const MaxNativeAdStarRatingView({
     super.key,
     this.width,
