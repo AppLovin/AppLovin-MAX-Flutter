@@ -95,7 +95,7 @@ class NativeAdViewState extends State<NativeAdView> {
                               MaxNativeAdTitleView(
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                 maxLines: 1,
-                                overflow: TextOverflow.fade,
+                                overflow: TextOverflow.visible,
                               ),
                               MaxNativeAdAdvertiserView(
                                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10),
@@ -120,9 +120,8 @@ class NativeAdViewState extends State<NativeAdView> {
                         Flexible(
                           child: MaxNativeAdBodyView(
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

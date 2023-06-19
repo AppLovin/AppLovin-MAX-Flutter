@@ -88,7 +88,7 @@ public class AppLovinMAXNativeAdView
         void add(Rect rect);
     }
 
-    private Map<String, AddComponent> componentCommands = new HashMap();
+    private final Map<String, AddComponent> componentCommands = new HashMap<>();
 
     public AppLovinMAXNativeAdView(final int viewId,
                                    final String adUnitId,
@@ -104,7 +104,13 @@ public class AppLovinMAXNativeAdView
         this.sdk = sdk;
         this.context = context;
 
-        setupComponentCommands();
+        componentCommands.put( "addTitleView", this::addTitleView );
+        componentCommands.put( "addAdvertiserView", this::addAdvertiserView );
+        componentCommands.put( "addBodyView", this::addBodyView );
+        componentCommands.put( "addCallToActionView", this::addCallToActionView );
+        componentCommands.put( "addIconView", this::addIconView );
+        componentCommands.put( "addOptionsView", this::addOptionsView );
+        componentCommands.put( "addMediaView", this::addMediaView );
 
         String uniqueChannelName = "applovin_max/nativeadview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
@@ -238,7 +244,10 @@ public class AppLovinMAXNativeAdView
                 }
             }
 
-            adLoader.destroy( ad );
+            if ( adLoader != null )
+            {
+                adLoader.destroy( ad );
+            }
 
             nativeAd = null;
             ad = null;
@@ -307,38 +316,6 @@ public class AppLovinMAXNativeAdView
     }
 
     // Native Ad Components
-
-    private void setupComponentCommands()
-    {
-        componentCommands.put( "addTitleView", new AddComponent()
-        {
-            public void add(Rect rect) { addTitleView( rect ); }
-        } );
-        componentCommands.put( "addAdvertiserView", new AddComponent()
-        {
-            public void add(Rect rect) { addAdvertiserView( rect ); }
-        } );
-        componentCommands.put( "addBodyView", new AddComponent()
-        {
-            public void add(Rect rect) { addBodyView( rect ); }
-        } );
-        componentCommands.put( "addCallToActionView", new AddComponent()
-        {
-            public void add(Rect rect) { addCallToActionView( rect ); }
-        } );
-        componentCommands.put( "addIconView", new AddComponent()
-        {
-            public void add(Rect rect) { addIconView( rect ); }
-        } );
-        componentCommands.put( "addOptionsView", new AddComponent()
-        {
-            public void add(Rect rect) { addOptionsView( rect ); }
-        } );
-        componentCommands.put( "addMediaView", new AddComponent()
-        {
-            public void add(Rect rect) { addMediaView( rect ); }
-        } );
-    }
 
     private void addTitleView(final Rect rect)
     {
@@ -430,9 +407,7 @@ public class AppLovinMAXNativeAdView
                     InputStream in = new java.net.URL( icon.getUri().toString() ).openStream();
                     Bitmap bitmap = BitmapFactory.decodeStream( in );
 
-                    HandlerCompat.createAsyncHandler( Looper.getMainLooper() ).post( () -> {
-                        iconView.setImageBitmap( bitmap );
-                    } );
+                    HandlerCompat.createAsyncHandler( Looper.getMainLooper() ).post( () -> iconView.setImageBitmap( bitmap ) );
                 }
                 catch ( Exception e )
                 {

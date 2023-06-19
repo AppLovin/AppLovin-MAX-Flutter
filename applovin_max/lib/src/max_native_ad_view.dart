@@ -3,16 +3,42 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Controls a native ad widget
+// An inherited widget for [MaxNativeAdView] to propagate information down the tree.
+class _NativeAdViewScope extends InheritedWidget {
+  const _NativeAdViewScope({
+    required _MaxNativeAdViewState nativeAdViewState,
+    required super.child,
+  }) : _scope = nativeAdViewState;
+
+  final _MaxNativeAdViewState _scope;
+
+  static _MaxNativeAdViewState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<_NativeAdViewScope>()!._scope;
+  }
+
+  @override
+  bool updateShouldNotify(_NativeAdViewScope oldWidget) {
+    return _scope._nativeAd?.title == oldWidget._scope._nativeAd?.title ||
+        _scope._nativeAd?.advertiser == oldWidget._scope._nativeAd?.advertiser ||
+        _scope._nativeAd?.body == oldWidget._scope._nativeAd?.body ||
+        _scope._nativeAd?.callToAction == oldWidget._scope._nativeAd?.callToAction ||
+        _scope._nativeAd?.starRating == oldWidget._scope._nativeAd?.starRating;
+  }
+}
+
+/// Controls [MaxNativeAdView].
 class MaxNativeAdViewController extends ChangeNotifier {
-  /// Loads a native ad
+  /// Loads a native ad.
   void load() {
     notifyListeners();
   }
 }
 
-/// Represents a native ad widget
+/// Represents a native ad.
 class MaxNativeAdView extends StatefulWidget {
+  /// Creates a native ad view with the native ad components.  The user needs to
+  /// lay out a native ad view with the native ad components using the standard
+  /// Flutter widgets.
   const MaxNativeAdView({
     Key? key,
     required this.adUnitId,
@@ -57,12 +83,16 @@ class MaxNativeAdView extends StatefulWidget {
 class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   final GlobalKey _nativeAdViewKey = GlobalKey();
 
-  /// Unique [MethodChannel] to this [MaxNativeAdView] instance.
+  // The number of device pixels for each logical pixel.
+  late final double _devicePixelRatio;
+
+  // Unique [MethodChannel] to this [MaxNativeAdView] instance.
   MethodChannel? _methodChannel;
 
-  /// An instance of [MaxNativeAd]
+  // An instance of [MaxNativeAd]
   MaxNativeAd? _nativeAd;
 
+  // Keys for native ad components
   GlobalKey? _titleViewKey;
   GlobalKey? _advertiserViewKey;
   GlobalKey? _bodyViewKey;
@@ -71,9 +101,6 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   GlobalKey? _optionsViewKey;
   GlobalKey? _starRatingViewKey;
   GlobalKey? _mediaViewKey;
-
-  /// The number of device pixels for each logical pixel.
-  late double devicePixelRatio;
 
   @override
   void initState() {
@@ -88,7 +115,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     super.didChangeDependencies();
     if (defaultTargetPlatform == TargetPlatform.android) {
       MediaQueryData queryData = MediaQuery.of(context);
-      devicePixelRatio = queryData.devicePixelRatio;
+      _devicePixelRatio = queryData.devicePixelRatio;
     }
   }
 
@@ -96,7 +123,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       return _NativeAdViewScope(
-          data: this,
+          nativeAdViewState: this,
           child: SizedBox(
             key: _nativeAdViewKey,
             width: widget.width,
@@ -115,7 +142,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
           ));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _NativeAdViewScope(
-          data: this,
+          nativeAdViewState: this,
           child: SizedBox(
             key: _nativeAdViewKey,
             width: widget.width,
@@ -178,10 +205,10 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     Rect rect = _getViewSize(key, _nativeAdViewKey);
     if (defaultTargetPlatform == TargetPlatform.android) {
       _methodChannel!.invokeMethod(method, <String, dynamic>{
-        'x': (rect.left * devicePixelRatio).round(),
-        'y': (rect.top * devicePixelRatio).round(),
-        'width': (rect.width * devicePixelRatio).round(),
-        'height': (rect.height * devicePixelRatio).round(),
+        'x': (rect.left * _devicePixelRatio).round(),
+        'y': (rect.top * _devicePixelRatio).round(),
+        'width': (rect.width * _devicePixelRatio).round(),
+        'height': (rect.height * _devicePixelRatio).round(),
       });
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       _methodChannel!.invokeMethod(method, <String, dynamic>{
@@ -210,28 +237,33 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   }
 }
 
+/// Represents the title text of a native ad.
 class MaxNativeAdTitleView extends StatelessWidget {
+  /// Creates [Text] for the title text.
   const MaxNativeAdTitleView({
     super.key,
     this.style,
-    this.strutStyle,
     this.textAlign,
-    this.textDirection,
-    this.locale,
     this.softWrap,
     this.overflow,
-    this.textScaleFactor,
     this.maxLines,
   });
 
+  /// The text style to apply.
   final TextStyle? style;
-  final StrutStyle? strutStyle;
+
+  /// How each line of text in the Text widget should be aligned horizontally.
   final TextAlign? textAlign;
-  final TextDirection? textDirection;
-  final Locale? locale;
+
+  /// Whether the text should break at soft line breaks.
   final bool? softWrap;
+
+  /// How visual overflow should be handled.
   final TextOverflow? overflow;
-  final double? textScaleFactor;
+
+  /// An optional maximum number of lines for the text to span, wrapping if necessary.
+  /// If the text exceeds the given number of lines, it will be truncated according
+  /// to [overflow].
   final int? maxLines;
 
   @override
@@ -249,13 +281,9 @@ class MaxNativeAdTitleView extends StatelessWidget {
           _NativeAdViewScope.of(context)._nativeAd?.title ?? '',
           key: _NativeAdViewScope.of(context)._titleViewKey,
           style: style,
-          strutStyle: strutStyle,
           textAlign: textAlign,
-          textDirection: textDirection,
-          locale: locale,
           softWrap: softWrap,
           overflow: overflow,
-          textScaleFactor: textScaleFactor,
           maxLines: maxLines,
         ),
       ),
@@ -263,28 +291,33 @@ class MaxNativeAdTitleView extends StatelessWidget {
   }
 }
 
+/// Represents the advertiser text of a native ad.
 class MaxNativeAdAdvertiserView extends StatelessWidget {
+  /// Creates [Text] for the advertiser text.
   const MaxNativeAdAdvertiserView({
     super.key,
     this.style,
-    this.strutStyle,
     this.textAlign,
-    this.textDirection,
-    this.locale,
     this.softWrap,
     this.overflow,
-    this.textScaleFactor,
     this.maxLines,
   });
 
+  /// The text style to apply.
   final TextStyle? style;
-  final StrutStyle? strutStyle;
+
+  /// How each line of text in the Text widget should be aligned horizontally.
   final TextAlign? textAlign;
-  final TextDirection? textDirection;
-  final Locale? locale;
+
+  /// Whether the text should break at soft line breaks.
   final bool? softWrap;
+
+  /// How visual overflow should be handled.
   final TextOverflow? overflow;
-  final double? textScaleFactor;
+
+  /// An optional maximum number of lines for the text to span, wrapping if necessary.
+  /// If the text exceeds the given number of lines, it will be truncated according
+  /// to [overflow].
   final int? maxLines;
 
   @override
@@ -302,13 +335,9 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
           _NativeAdViewScope.of(context)._nativeAd?.advertiser ?? '',
           key: _NativeAdViewScope.of(context)._advertiserViewKey,
           style: style,
-          strutStyle: strutStyle,
           textAlign: textAlign,
-          textDirection: textDirection,
-          locale: locale,
           softWrap: softWrap,
           overflow: overflow,
-          textScaleFactor: textScaleFactor,
           maxLines: maxLines,
         ),
       ),
@@ -316,28 +345,33 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
   }
 }
 
+/// Represents the body text of a native ad.
 class MaxNativeAdBodyView extends StatelessWidget {
+  /// Creates [Text] for the body text.
   const MaxNativeAdBodyView({
     super.key,
     this.style,
-    this.strutStyle,
     this.textAlign,
-    this.textDirection,
-    this.locale,
     this.softWrap,
     this.overflow,
-    this.textScaleFactor,
     this.maxLines,
   });
 
+  /// The text style to apply.
   final TextStyle? style;
-  final StrutStyle? strutStyle;
+
+  /// How each line of text in the Text widget should be aligned horizontally.
   final TextAlign? textAlign;
-  final TextDirection? textDirection;
-  final Locale? locale;
+
+  /// Whether the text should break at soft line breaks.
   final bool? softWrap;
+
+  /// How visual overflow should be handled.
   final TextOverflow? overflow;
-  final double? textScaleFactor;
+
+  /// An optional maximum number of lines for the text to span, wrapping if necessary.
+  /// If the text exceeds the given number of lines, it will be truncated according
+  /// to [overflow].
   final int? maxLines;
 
   @override
@@ -355,13 +389,9 @@ class MaxNativeAdBodyView extends StatelessWidget {
           _NativeAdViewScope.of(context)._nativeAd?.body ?? '',
           key: _NativeAdViewScope.of(context)._bodyViewKey,
           style: style,
-          strutStyle: strutStyle,
           textAlign: textAlign,
-          textDirection: textDirection,
-          locale: locale,
           softWrap: softWrap,
           overflow: overflow,
-          textScaleFactor: textScaleFactor,
           maxLines: maxLines,
         ),
       ),
@@ -369,12 +399,15 @@ class MaxNativeAdBodyView extends StatelessWidget {
   }
 }
 
+/// Represents the CTA button text of a native ad.
 class MaxNativeAdCallToActionView extends StatelessWidget {
+  /// Creates [ElevatedButton] for the CTA button text.
   const MaxNativeAdCallToActionView({
     super.key,
     this.style,
   });
 
+  /// The button style to apply.
   final ButtonStyle? style;
 
   @override
@@ -401,14 +434,19 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
   }
 }
 
+/// Represents the icon image view of a native ad.
 class MaxNativeAdIconView extends StatelessWidget {
+  /// Creates an icon view.
   const MaxNativeAdIconView({
     super.key,
     this.width = double.infinity,
     this.height = double.infinity,
   });
 
+  /// If non-null, requires the child to have exactly this width.
   final double? width;
+
+  /// If non-null, requires the child to have exactly this height.
   final double? height;
 
   @override
@@ -433,14 +471,19 @@ class MaxNativeAdIconView extends StatelessWidget {
   }
 }
 
+/// Represents the options view of a native ad.
 class MaxNativeAdOptionsView extends StatelessWidget {
+  /// Creates an options view.
   const MaxNativeAdOptionsView({
     super.key,
     this.width = double.infinity,
     this.height = double.infinity,
   });
 
+  /// If non-null, requires the child to have exactly this width.
   final double? width;
+
+  /// If non-null, requires the child to have exactly this height.
   final double? height;
 
   @override
@@ -465,14 +508,19 @@ class MaxNativeAdOptionsView extends StatelessWidget {
   }
 }
 
+/// Represents the ad media view of a native ad.
 class MaxNativeAdMediaView extends StatelessWidget {
+  /// Creates a media view.
   const MaxNativeAdMediaView({
     super.key,
     this.width = double.infinity,
     this.height = double.infinity,
   });
 
+  /// If non-null, requires the child to have exactly this width.
   final double? width;
+
+  /// If non-null, requires the child to have exactly this height.
   final double? height;
 
   @override
@@ -543,7 +591,9 @@ class _StarRating extends StatelessWidget {
   }
 }
 
+/// Represents the star rating view of a native ad.
 class MaxNativeAdStarRatingView extends StatelessWidget {
+  /// Creates a star rating view.
   const MaxNativeAdStarRatingView({
     super.key,
     this.width,
@@ -552,10 +602,16 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
     this.color,
   });
 
+  /// If non-null, requires the child to have exactly this width.
   final double? width;
+
+  /// If non-null, requires the child to have exactly this height.
   final double? height;
 
+  /// The color of each star.  The default value is 0xffffe234.
   final Color? color;
+
+  /// The size of each star.  The default value is 8.0.
   final double? size;
 
   @override
@@ -563,6 +619,7 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
     _NativeAdViewScope.of(context)._starRatingViewKey = _NativeAdViewScope.of(context)._starRatingViewKey ?? GlobalKey();
     return Container(
         key: _NativeAdViewScope.of(context)._starRatingViewKey,
+        // minimum size
         constraints: BoxConstraints(
           minHeight: size ?? _StarRating.kStarSize,
           minWidth: (size ?? _StarRating.kStarSize) * _StarRating.kStarCount,
@@ -577,20 +634,4 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
               )
             : null);
   }
-}
-
-class _NativeAdViewScope extends InheritedWidget {
-  const _NativeAdViewScope({
-    required this.data,
-    required super.child,
-  });
-
-  final _MaxNativeAdViewState data;
-
-  static _MaxNativeAdViewState of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_NativeAdViewScope>()!.data;
-  }
-
-  @override
-  bool updateShouldNotify(_NativeAdViewScope oldWidget) => true;
 }
