@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.applovin.impl.mediation.MaxErrorImpl;
+import com.applovin.impl.sdk.utils.Utils;
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxError;
@@ -313,7 +314,8 @@ public class AppLovinMAXNativeAdView
             maybeDestroyCurrentAd();
 
             AppLovinMAXNativeAdView.this.ad = ad;
-            nativeAd = ad.getNativeAd();
+
+            AppLovinMAXNativeAdView.this.nativeAd = ad.getNativeAd();
 
             sendEvent( "OnNativeAdViewAdLoadedEvent", ad );
 
@@ -433,21 +435,7 @@ public class AppLovinMAXNativeAdView
 
         if ( icon.getUri() != null )
         {
-            // FIXME: do we have an utility for this???
-            Runnable download = () -> {
-                try
-                {
-                    InputStream in = new java.net.URL( icon.getUri().toString() ).openStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream( in );
-
-                    HandlerCompat.createAsyncHandler( Looper.getMainLooper() ).post( () -> iconView.setImageBitmap( bitmap ) );
-                }
-                catch ( Exception e )
-                {
-                }
-            };
-
-            Executors.newSingleThreadExecutor().execute( download );
+            Utils.setImageUrl(icon.getUri().toString(), iconView, sdk.coreSdk);
         }
         else if ( icon.getDrawable() != null )
         {
