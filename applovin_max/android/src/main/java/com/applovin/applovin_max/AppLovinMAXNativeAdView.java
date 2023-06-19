@@ -1,10 +1,7 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -22,10 +19,8 @@ import com.applovin.mediation.nativeAds.MaxNativeAdLoader;
 import com.applovin.mediation.nativeAds.MaxNativeAdView;
 import com.applovin.sdk.AppLovinSdk;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
@@ -34,7 +29,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
-import io.flutter.util.HandlerCompat;
 
 public class AppLovinMAXNativeAdView
         implements PlatformView, MaxAdRevenueListener
@@ -435,7 +429,7 @@ public class AppLovinMAXNativeAdView
 
         if ( icon.getUri() != null )
         {
-            Utils.setImageUrl(icon.getUri().toString(), iconView, sdk.coreSdk);
+            Utils.setImageUrl( icon.getUri().toString(), iconView, sdk.coreSdk );
         }
         else if ( icon.getDrawable() != null )
         {
