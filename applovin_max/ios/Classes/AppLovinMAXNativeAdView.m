@@ -135,6 +135,7 @@
         
         [self loadAd];
     }
+
     return self;
 }
 
@@ -449,6 +450,8 @@
 
 -(void)completeViewAddition
 {
+    if ( !self.adLoader ) return;
+
     [self.adLoader registerClickableViews: self.clickableViews withContainer: self.nativeAdView forAd: self.ad];
     [self.adLoader handleNativeAdViewRenderedForAd: self.ad];
 }

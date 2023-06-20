@@ -216,6 +216,7 @@ public class AppLovinMAXNativeAdView
         if ( adLoader != null )
         {
             adLoader.destroy();
+            adLoader = null;
         }
 
         if ( channel != null )
@@ -272,10 +273,7 @@ public class AppLovinMAXNativeAdView
                 }
             }
 
-            if ( adLoader != null )
-            {
-                adLoader.destroy( ad );
-            }
+            adLoader.destroy( ad );
 
             nativeAd = null;
             ad = null;
@@ -488,11 +486,10 @@ public class AppLovinMAXNativeAdView
 
     private void completeViewAddition()
     {
-        if ( adLoader != null )
-        {
-            adLoader.a( clickableViews, nativeAdView, ad );
-            adLoader.b( ad );
-        }
+        if ( adLoader == null ) return;
+
+        adLoader.a( clickableViews, nativeAdView, ad );
+        adLoader.b( ad );
     }
 
     private void updateViewLayout(ViewGroup parent, View view, Rect rect)
