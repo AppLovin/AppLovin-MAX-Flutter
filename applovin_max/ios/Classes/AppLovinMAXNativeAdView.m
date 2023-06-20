@@ -422,7 +422,10 @@
         [self.nativeAdView addSubview: self.optionsViewContainer];
     }
     
-    [self.optionsViewContainer addSubview: self.nativeAd.optionsView];
+    if ( !self.nativeAd.optionsView.superview )
+    {
+        [self.optionsViewContainer addSubview: self.nativeAd.optionsView];
+    }
     
     self.optionsViewContainer.frame = frame;
     
@@ -432,7 +435,7 @@
 
 -(void)addMediaView:(CGRect)frame
 {
-    if (  !self.nativeAd.mediaView ) return;
+    if ( !self.nativeAd.mediaView ) return;
     
     if ( !self.mediaViewContainer )
     {
@@ -441,7 +444,10 @@
         [self.nativeAdView addSubview: self.mediaViewContainer];
     }
     
-    [self.mediaViewContainer addSubview: self.nativeAd.mediaView];
+    if ( !self.nativeAd.mediaView.superview )
+    {
+        [self.mediaViewContainer addSubview: self.nativeAd.mediaView];
+    }
     
     self.mediaViewContainer.frame = frame;
     
