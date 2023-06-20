@@ -47,9 +47,7 @@ public class AppLovinMAXNativeAdView
     @Nullable
     private       MaxNativeAdLoader adLoader;
     @Nullable
-    private       MaxAd             ad;
-    @Nullable
-    private       MaxNativeAd       nativeAd;
+    private       MaxAd             nativeAd; // TODO: Maybe re-name to `ad`? Then for parity, we'd have to do the same in RN as well.
     private final AtomicBoolean     isLoading = new AtomicBoolean(); // Guard against repeated ad loads
 
     private final String adUnitId;
@@ -92,76 +90,73 @@ public class AppLovinMAXNativeAdView
 
         String uniqueChannelName = "applovin_max/nativeadview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
-        channel.setMethodCallHandler( new MethodChannel.MethodCallHandler()
-        {
-            @Override
-            public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result)
+        channel.setMethodCallHandler( (call, result) -> {
+
+            if ( "addTitleView".equals( call.method ) )
             {
-                if ( "addTitleView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addTitleView( rect );
+                Rect rect = getRect( call );
+                addTitleView( rect );
 
-                    result.success( null );
-                }
-                if ( "addAdvertiserView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addAdvertiserView( rect );
+                result.success( null );
+            }
+            else if ( "addAdvertiserView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addAdvertiserView( rect );
 
-                    result.success( null );
-                }
-                if ( "addBodyView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addBodyView( rect );
+                result.success( null );
+            }
+            else if ( "addBodyView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addBodyView( rect );
 
-                    result.success( null );
-                }
-                if ( "addCallToActionView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addCallToActionView( rect );
+                result.success( null );
+            }
+            else if ( "addCallToActionView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addCallToActionView( rect );
 
-                    result.success( null );
-                }
-                if ( "addIconView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addIconView( rect );
+                result.success( null );
+            }
+            else if ( "addIconView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addIconView( rect );
 
-                    result.success( null );
-                }
-                if ( "addOptionsView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addOptionsView( rect );
+                result.success( null );
+            }
+            else if ( "addOptionsView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addOptionsView( rect );
 
-                    result.success( null );
-                }
-                if ( "addMediaView".equals( call.method ) )
-                {
-                    Rect rect = getRect( call );
-                    addMediaView( rect );
+                result.success( null );
+            }
+            else if ( "addMediaView".equals( call.method ) )
+            {
+                Rect rect = getRect( call );
+                addMediaView( rect );
 
-                    result.success( null );
-                }
-                else if ( "completeViewAddition".equals( call.method ) )
-                {
-                    completeViewAddition();
+                result.success( null );
+            }
+            // TODO: nit - rename to "renderAd" which is a bit more descriptive since we're registering clickable views and rendering the ad
+            else if ( "completeViewAddition".equals( call.method ) )
+            {
+                completeViewAddition();
 
-                    result.success( null );
-                }
-                else if ( "load".equals( call.method ) )
-                {
-                    loadAd();
+                result.success( null );
+            }
+            else if ( "load".equals( call.method ) )
+            {
+                loadAd();
 
-                    result.success( null );
-                }
-                else
-                {
-                    result.notImplemented();
-                }
+                result.success( null );
+            }
+            else
+            {
+                result.notImplemented();
             }
         } );
 
@@ -169,6 +164,8 @@ public class AppLovinMAXNativeAdView
 
         loadAd();
     }
+
+    /// Flutter Lifecycle Methods
 
     @Nullable
     @Override
@@ -225,17 +222,6 @@ public class AppLovinMAXNativeAdView
         }
     }
 
-    Rect getRect(MethodCall call)
-    {
-        int x = call.argument( "x" );
-        int y = call.argument( "y" );
-        int width = call.argument( "width" );
-        int height = call.argument( "height" );
-        return new Rect( x, y, x + width, y + height );
-    }
-
-    // Ad Loader
-
     private void loadAd()
     {
         if ( isLoading.compareAndSet( false, true ) )
@@ -254,35 +240,15 @@ public class AppLovinMAXNativeAdView
 
             adLoader.loadAd();
         }
-    }
-
-    private void maybeDestroyCurrentAd()
-    {
-        if ( ad != null )
+        else
         {
-            if ( nativeAd != null )
-            {
-                if ( mediaViewContainer != null )
-                {
-                    mediaViewContainer.removeAllViews();
-                }
-
-                if ( optionsViewContainer != null )
-                {
-                    optionsViewContainer.removeAllViews();
-                }
-            }
-
-            adLoader.destroy( ad );
-
-            nativeAd = null;
-            ad = null;
+            AppLovinMAX.e( "Ignoring request to load native ad for Ad Unit ID " + adUnitId + ", another ad load in progress" );
         }
     }
 
-    // Ad Loader Listener
+    /// Ad Loader Listener
 
-    class NativeAdListener
+    private class NativeAdListener
             extends MaxNativeAdListener
     {
         @Override
@@ -305,12 +271,11 @@ public class AppLovinMAXNativeAdView
 
             maybeDestroyCurrentAd();
 
-            AppLovinMAXNativeAdView.this.ad = ad;
-
-            AppLovinMAXNativeAdView.this.nativeAd = ad.getNativeAd();
+            nativeAd = ad;
 
             sendEvent( "OnNativeAdViewAdLoadedEvent", ad );
 
+            // TODO: Investigate parity with RN is possible re: slight delay vs more deterministic approach in Flutter (preferable)
             isLoading.set( false );
         }
 
@@ -331,22 +296,20 @@ public class AppLovinMAXNativeAdView
         }
     }
 
+    /// Ad Revenue Listener
+
     @Override
     public void onAdRevenuePaid(final MaxAd ad)
     {
         sendEvent( "OnNativeAdViewAdRevenuePaidEvent", ad );
     }
 
-    private void sendEvent(final String event, final MaxAd ad)
-    {
-        AppLovinMAX.getInstance().fireCallback( event, ad, channel );
-    }
-
-    // Native Ad Components
+    /// Native Ad Component Methods
 
     private void addTitleView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getTitle() == null ) return;
+        // TODO: RN doesn't have `nativeAd == null` check, is it necessary here?
+        if ( nativeAd == null || nativeAd.getNativeAd().getTitle() == null ) return;
 
         if ( titleView == null )
         {
@@ -362,7 +325,7 @@ public class AppLovinMAXNativeAdView
 
     private void addAdvertiserView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getAdvertiser() == null ) return;
+        if ( nativeAd == null || nativeAd.getNativeAd().getAdvertiser() == null ) return;
 
         if ( advertiserView == null )
         {
@@ -378,7 +341,7 @@ public class AppLovinMAXNativeAdView
 
     private void addBodyView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getBody() == null ) return;
+        if ( nativeAd == null || nativeAd.getNativeAd().getBody() == null ) return;
 
         if ( bodyView == null )
         {
@@ -394,7 +357,7 @@ public class AppLovinMAXNativeAdView
 
     private void addCallToActionView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getCallToAction() == null ) return;
+        if ( nativeAd == null || nativeAd.getNativeAd().getCallToAction() == null ) return;
 
         if ( callToActionView == null )
         {
@@ -410,8 +373,10 @@ public class AppLovinMAXNativeAdView
 
     private void addIconView(final Rect rect)
     {
-        MaxNativeAd.MaxNativeAdImage icon = nativeAd != null ? nativeAd.getIcon() : null;
+        if ( nativeAd == null ) return;
 
+        // TODO: On a new ad load, even if it does not have an app icon, we should clear out the icon set by the previous ad
+        MaxNativeAd.MaxNativeAdImage icon = nativeAd.getNativeAd().getIcon();
         if ( icon == null ) return;
 
         if ( iconView == null )
@@ -427,6 +392,7 @@ public class AppLovinMAXNativeAdView
 
         if ( icon.getUri() != null )
         {
+            // TODO: `Utils` is a private AppLovin SDK call, and also `getUri` will always returned a cached image so you can set directly
             Utils.setImageUrl( icon.getUri().toString(), iconView, sdk.coreSdk );
         }
         else if ( icon.getDrawable() != null )
@@ -437,16 +403,18 @@ public class AppLovinMAXNativeAdView
 
     private void addOptionsView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getOptionsView() == null ) return;
+        if ( nativeAd == null ) return;
+
+        View optionsView = nativeAd.getNativeAd().getOptionsView();
+        if ( optionsView == null ) return;
 
         if ( optionsViewContainer == null )
         {
             optionsViewContainer = new FrameLayout( context );
+            // TODO: What is `setId()` for? `View.generateViewId()` is supposed on API17+ but we technically support API16+, we can bump it to min API 17 but I want to understand this functionality more
             optionsViewContainer.setId( View.generateViewId() );
             nativeAdView.addView( optionsViewContainer );
         }
-
-        View optionsView = nativeAd.getOptionsView();
 
         if ( optionsView.getParent() == null )
         {
@@ -461,17 +429,19 @@ public class AppLovinMAXNativeAdView
 
     private void addMediaView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getMediaView() == null ) return;
+        if ( nativeAd == null ) return;
+
+        View mediaView = nativeAd.getNativeAd().getMediaView();
+        if ( mediaView == null ) return;
 
         if ( mediaViewContainer == null )
         {
             mediaViewContainer = new FrameLayout( context );
+            // TODO: What is `setId()` for? `View.generateViewId()` is supposed on API17+ but we technically support API16+, we can bump it to min API 17 but I want to understand this functionality more
             mediaViewContainer.setId( View.generateViewId() );
             mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
             nativeAdView.addView( mediaViewContainer );
         }
-
-        View mediaView = nativeAd.getMediaView();
 
         if ( mediaView.getParent() == null )
         {
@@ -488,15 +458,54 @@ public class AppLovinMAXNativeAdView
     {
         if ( adLoader == null ) return;
 
-        adLoader.a( clickableViews, nativeAdView, ad );
-        adLoader.b( ad );
+        adLoader.a( clickableViews, nativeAdView, nativeAd );
+        adLoader.b( nativeAd );
     }
 
-    private void updateViewLayout(ViewGroup parent, View view, Rect rect)
+    private void updateViewLayout(final ViewGroup parent, final View view, final Rect rect)
     {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams( rect.width(), rect.height() );
         params.leftMargin = rect.left;
         params.topMargin = rect.top;
         parent.updateViewLayout( view, params );
+    }
+
+    private Rect getRect(final MethodCall call)
+    {
+        int x = call.argument( "x" );
+        int y = call.argument( "y" );
+        int width = call.argument( "width" );
+        int height = call.argument( "height" );
+        return new Rect( x, y, x + width, y + height );
+    }
+
+    /// Utility Methods
+
+    private void sendEvent(final String event, final MaxAd ad)
+    {
+        // TODO: Do not re-use `getAdInfo` from `AppLovinMAX` since that is used for non-native ads - should we do what we do on RN `sendAdLoadedReactNativeEventForAd()`? Right now there's no parity.
+        AppLovinMAX.getInstance().fireCallback( event, ad, channel );
+    }
+
+    private void maybeDestroyCurrentAd()
+    {
+        if ( nativeAd != null )
+        {
+            if ( mediaViewContainer != null )
+            {
+                mediaViewContainer.removeAllViews();
+            }
+
+            if ( optionsViewContainer != null )
+            {
+                optionsViewContainer.removeAllViews();
+            }
+
+            adLoader.destroy( nativeAd );
+
+            nativeAd = null;
+        }
+
+        clickableViews.clear();
     }
 }

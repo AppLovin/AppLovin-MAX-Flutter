@@ -78,6 +78,8 @@ public class AppLovinMAXAdView
         }
     }
 
+    /// Flutter Lifecycle Methods
+
     @Nullable
     @Override
     public View getView()
