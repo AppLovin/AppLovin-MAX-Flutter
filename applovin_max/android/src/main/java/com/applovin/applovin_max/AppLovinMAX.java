@@ -116,7 +116,7 @@ public class AppLovinMAX
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding)
+    public void onAttachedToEngine(@NonNull final FlutterPluginBinding binding)
     {
         // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
         // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
@@ -136,11 +136,10 @@ public class AppLovinMAX
 
         AppLovinMAXNativeAdViewFactory nativeAdViewFactory = new AppLovinMAXNativeAdViewFactory( binding.getBinaryMessenger() );
         binding.getPlatformViewRegistry().registerViewFactory( "applovin_max/nativeadview", nativeAdViewFactory );
-
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding)
+    public void onDetachedFromEngine(@NonNull final FlutterPluginBinding binding)
     {
         sharedChannel.setMethodCallHandler( null );
     }
