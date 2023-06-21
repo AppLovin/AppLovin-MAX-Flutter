@@ -136,8 +136,9 @@ class AppLovinMAX {
 
   /// @nodoc
   static MaxAd createAd(String adUnitId, dynamic arguments) {
-    Map<String, dynamic> json = Map<String, dynamic>.from(arguments["nativeAd"]);
-    MaxNativeAd? nativeAd = json.isEmpty ? null :  MaxNativeAd.fromJson(json);
+    var rawNativeAd = arguments["nativeAd"];
+    var jsonNativeAd = (rawNativeAd != null) ?  Map<String, dynamic>.from(rawNativeAd) : null;
+    var nativeAd = (jsonNativeAd != null) ? MaxNativeAd.fromJson(jsonNativeAd) : null;
 
     return MaxAd(
       adUnitId,

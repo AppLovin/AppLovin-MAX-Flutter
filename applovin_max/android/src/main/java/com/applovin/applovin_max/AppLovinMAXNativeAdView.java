@@ -1,14 +1,15 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.applovin.impl.mediation.MaxErrorImpl;
-import com.applovin.impl.sdk.utils.Utils;
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxError;
@@ -19,8 +20,13 @@ import com.applovin.mediation.nativeAds.MaxNativeAdLoader;
 import com.applovin.mediation.nativeAds.MaxNativeAdView;
 import com.applovin.sdk.AppLovinSdk;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
@@ -29,6 +35,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.util.HandlerCompat;
 
 public class AppLovinMAXNativeAdView
         implements PlatformView, MaxAdRevenueListener
@@ -47,7 +54,7 @@ public class AppLovinMAXNativeAdView
     @Nullable
     private       MaxNativeAdLoader adLoader;
     @Nullable
-    private       MaxAd             nativeAd; // TODO: Maybe re-name to `ad`? Then for parity, we'd have to do the same in RN as well.
+    private       MaxAd             nativeAd;
     private final AtomicBoolean     isLoading = new AtomicBoolean(); // Guard against repeated ad loads
 
     private final String adUnitId;
@@ -141,10 +148,9 @@ public class AppLovinMAXNativeAdView
 
                 result.success( null );
             }
-            // TODO: nit - rename to "renderAd" which is a bit more descriptive since we're registering clickable views and rendering the ad
-            else if ( "completeViewAddition".equals( call.method ) )
+            else if ( "renderAd".equals( call.method ) )
             {
-                completeViewAddition();
+                renderAd();
 
                 result.success( null );
             }
@@ -263,8 +269,7 @@ public class AppLovinMAXNativeAdView
 
                 AppLovinMAX.e( "Native ad is of template type, failing ad load..." );
 
-                MaxErrorImpl error = new MaxErrorImpl( MaxErrorCode.AD_LOAD_FAILED, "Native ad is of template type" );
-                AppLovinMAX.getInstance().fireErrorCallback( "OnNativeAdViewAdLoadFailedEvent", adUnitId, error, channel );
+                sendErrorEvent( "OnNativeAdViewAdLoadFailedEvent", null );
 
                 return;
             }
@@ -273,10 +278,7 @@ public class AppLovinMAXNativeAdView
 
             nativeAd = ad;
 
-            sendEvent( "OnNativeAdViewAdLoadedEvent", ad );
-
-            // TODO: Investigate parity with RN is possible re: slight delay vs more deterministic approach in Flutter (preferable)
-            isLoading.set( false );
+            sendAdLoadedReactNativeEventForAd( ad.getNativeAd() );
         }
 
         @Override
@@ -286,7 +288,7 @@ public class AppLovinMAXNativeAdView
 
             AppLovinMAX.e( "Failed to load native ad for Ad Unit ID " + adUnitId + " with error: " + error );
 
-            AppLovinMAX.getInstance().fireErrorCallback( "OnNativeAdViewAdLoadFailedEvent", adUnitId, error, channel );
+            sendErrorEvent( "OnNativeAdViewAdLoadFailedEvent", error );
         }
 
         @Override
@@ -308,92 +310,104 @@ public class AppLovinMAXNativeAdView
 
     private void addTitleView(final Rect rect)
     {
-        // TODO: RN doesn't have `nativeAd == null` check, is it necessary here?
-        if ( nativeAd == null || nativeAd.getNativeAd().getTitle() == null ) return;
+        if ( nativeAd.getNativeAd().getTitle() == null ) return;
 
         if ( titleView == null )
         {
             titleView = new View( context );
             titleView.setTag( TITLE_LABEL_TAG );
             nativeAdView.addView( titleView );
-
-            clickableViews.add( titleView );
         }
+
+        clickableViews.add( titleView );
 
         updateViewLayout( nativeAdView, titleView, rect );
     }
 
     private void addAdvertiserView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getNativeAd().getAdvertiser() == null ) return;
+        if ( nativeAd.getNativeAd().getAdvertiser() == null ) return;
 
         if ( advertiserView == null )
         {
             advertiserView = new View( context );
             advertiserView.setTag( ADVERTISER_VIEW_TAG );
             nativeAdView.addView( advertiserView );
-
-            clickableViews.add( advertiserView );
         }
+
+        clickableViews.add( advertiserView );
 
         updateViewLayout( nativeAdView, advertiserView, rect );
     }
 
     private void addBodyView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getNativeAd().getBody() == null ) return;
+        if ( nativeAd.getNativeAd().getBody() == null ) return;
 
         if ( bodyView == null )
         {
             bodyView = new View( context );
             bodyView.setTag( BODY_VIEW_TAG );
             nativeAdView.addView( bodyView );
-
-            clickableViews.add( bodyView );
         }
+
+        clickableViews.add( bodyView );
 
         updateViewLayout( nativeAdView, bodyView, rect );
     }
 
     private void addCallToActionView(final Rect rect)
     {
-        if ( nativeAd == null || nativeAd.getNativeAd().getCallToAction() == null ) return;
+        if ( nativeAd.getNativeAd().getCallToAction() == null ) return;
 
         if ( callToActionView == null )
         {
             callToActionView = new View( context );
             callToActionView.setTag( CALL_TO_ACTION_VIEW_TAG );
             nativeAdView.addView( callToActionView );
-
-            clickableViews.add( callToActionView );
         }
+
+        clickableViews.add( callToActionView );
 
         updateViewLayout( nativeAdView, callToActionView, rect );
     }
 
     private void addIconView(final Rect rect)
     {
-        if ( nativeAd == null ) return;
-
-        // TODO: On a new ad load, even if it does not have an app icon, we should clear out the icon set by the previous ad
         MaxNativeAd.MaxNativeAdImage icon = nativeAd.getNativeAd().getIcon();
-        if ( icon == null ) return;
+
+        if ( icon == null )
+        {
+            if ( iconView != null ) iconView.setImageDrawable( null );
+            return;
+        }
 
         if ( iconView == null )
         {
             iconView = new ImageView( context );
             iconView.setTag( ICON_VIEW_TAG );
             nativeAdView.addView( iconView );
-
-            clickableViews.add( iconView );
         }
+
+        clickableViews.add( iconView );
 
         updateViewLayout( nativeAdView, iconView, rect );
 
         if ( icon.getUri() != null )
         {
-            // TODO: `Utils` is a private AppLovin SDK call, and also `getUri` will always returned a cached image so you can set directly
-            Utils.setImageUrl( icon.getUri().toString(), iconView, sdk.coreSdk );
+            Executors.newSingleThreadExecutor().execute( () -> {
+                try
+                {
+                    InputStream inputStream = new URL( icon.getUri().toString() ).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream( inputStream );
+
+                    HandlerCompat.createAsyncHandler( Looper.getMainLooper() ).post( () -> iconView.setImageBitmap( bitmap ) );
+                }
+                catch ( Exception e )
+                {
+                    AppLovinMAX.e( "Failed to load an icon image for Ad Unit ID " + adUnitId + " with error: " + e );
+                }
+            } );
         }
         else if ( icon.getDrawable() != null )
         {
@@ -454,12 +468,15 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, mediaViewContainer, rect );
     }
 
-    private void completeViewAddition()
+    private void renderAd()
     {
-        if ( adLoader == null ) return;
+        if ( adLoader != null )
+        {
+            adLoader.a( clickableViews, nativeAdView, nativeAd );
+            adLoader.b( nativeAd );
+        }
 
-        adLoader.a( clickableViews, nativeAdView, nativeAd );
-        adLoader.b( nativeAd );
+        isLoading.set( false );
     }
 
     private void updateViewLayout(final ViewGroup parent, final View view, final Rect rect)
@@ -483,8 +500,42 @@ public class AppLovinMAXNativeAdView
 
     private void sendEvent(final String event, final MaxAd ad)
     {
-        // TODO: Do not re-use `getAdInfo` from `AppLovinMAX` since that is used for non-native ads - should we do what we do on RN `sendAdLoadedReactNativeEventForAd()`? Right now there's no parity.
         AppLovinMAX.getInstance().fireCallback( event, ad, channel );
+    }
+
+    private void sendErrorEvent(final String event, final MaxError error)
+    {
+        AppLovinMAX.getInstance().fireErrorCallback( event, adUnitId, error, channel );
+    }
+
+    private void sendAdLoadedReactNativeEventForAd(final MaxNativeAd ad)
+    {
+        Map<String, Object> nativeAdInfo = new HashMap<>();
+
+        nativeAdInfo.put( "title", ad.getTitle() );
+        nativeAdInfo.put( "advertiser", ad.getAdvertiser() );
+        nativeAdInfo.put( "body", ad.getBody() );
+        nativeAdInfo.put( "callToAction", ad.getCallToAction() );
+
+        if ( ad.getStarRating() != null )
+        {
+            nativeAdInfo.put( "starRating", ad.getStarRating() );
+        }
+
+        // The aspect ratio can be 0.0f when it is not provided by the network.
+        if ( ad.getMediaContentAspectRatio() > 0 )
+        {
+            nativeAdInfo.put( "mediaContentAspectRatio", ad.getMediaContentAspectRatio() );
+        }
+
+        nativeAdInfo.put( "isIconImageAvailable", ( ad.getIcon() != null ) );
+        nativeAdInfo.put( "isOptionsViewAvailable", ( ad.getOptionsView() != null ) );
+        nativeAdInfo.put( "isMediaViewAvailable", ( ad.getMediaView() != null ) );
+
+        Map<String, Object> adInfo = AppLovinMAX.getInstance().getAdInfo( nativeAd );
+        adInfo.put( "nativeAd", nativeAdInfo );
+
+        AppLovinMAX.getInstance().fireCallback( "OnNativeAdViewAdLoadedEvent", adInfo, channel );
     }
 
     private void maybeDestroyCurrentAd()

@@ -21,8 +21,7 @@
 @property (nonatomic, strong) FlutterMethodChannel *channel;
 
 @property (nonatomic, strong, nullable) MANativeAdLoader *adLoader;
-@property (nonatomic, strong, nullable) MAAd *ad;
-@property (nonatomic, strong, nullable) MANativeAd *nativeAd;
+@property (nonatomic, strong, nullable) MAAd *nativeAd;
 @property (nonatomic, strong) ALAtomicBoolean *isLoading; // Guard against repeated ad loads
 
 @property (nonatomic, copy) NSString *adUnitId;
@@ -113,9 +112,9 @@
                 
                 result(nil);
             }
-            else if ( [@"completeViewAddition" isEqualToString: call.method] )
+            else if ( [@"renderAd" isEqualToString: call.method] )
             {
-                [weakSelf completeViewAddition];
+                [weakSelf renderAd];
                 
                 result(nil);
             }
@@ -135,7 +134,7 @@
         
         [self loadAd];
     }
-
+    
     return self;
 }
 
@@ -187,15 +186,6 @@
     self.channel = nil;
 }
 
-- (CGRect)getRect:(FlutterMethodCall *)call
-{
-    int x = ((NSNumber *)call.arguments[@"x"]).intValue;
-    int y = ((NSNumber *)call.arguments[@"y"]).intValue;
-    int width = ((NSNumber *)call.arguments[@"width"]).intValue;
-    int height = ((NSNumber *)call.arguments[@"height"]).intValue;
-    return CGRectMake(x, y, width, height);
-}
-
 #pragma mark - Ad Loader
 
 // Lazily loaded for when Ad Unit ID is available
@@ -230,29 +220,6 @@
     }
 }
 
-- (void)destroyCurrentAdIfNeeded
-{
-    if ( self.ad )
-    {
-        if ( self.nativeAd )
-        {
-            if ( self.nativeAd.mediaView )
-            {
-                [self.nativeAd.mediaView removeFromSuperview];
-            }
-            if ( self.nativeAd.optionsView )
-            {
-                [self.nativeAd.optionsView removeFromSuperview];
-            }
-        }
-        
-        [self.adLoader destroyAd: self.ad];
-        
-        self.nativeAd = nil;
-        self.ad = nil;
-    }
-}
-
 #pragma mark - Ad Loader Delegate
 
 - (void)didLoadNativeAd:(nullable MANativeAdView *)nativeAdView forAd:(MAAd *)ad
@@ -273,13 +240,9 @@
     
     [self destroyCurrentAdIfNeeded];
     
-    self.ad = ad;
+    self.nativeAd = ad;
     
-    self.nativeAd = ad.nativeAd;
-    
-    [self sendEventWithName: @"OnNativeAdViewAdLoadedEvent" ad: ad];
-    
-    [self.isLoading set: NO];
+    [self sendAdLoadedReactNativeEventForAd: ad.nativeAd];
 }
 
 - (void)didFailToLoadNativeAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
@@ -301,6 +264,172 @@
     [self sendEventWithName: @"OnNativeAdViewAdRevenuePaidEvent" ad: ad];
 }
 
+#pragma mark - Native Ad Components
+
+-(void)addTitleView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.title ) return;
+    
+    if ( !self.titleView )
+    {
+        self.titleView = [[UIView alloc] init];
+        self.titleView.tag = TITLE_LABEL_TAG;
+        [self.nativeAdView addSubview: self.titleView];
+    }
+        
+    [self.clickableViews addObject: self.titleView];
+
+    self.titleView.frame = frame;
+}
+
+-(void)addAdvertiserView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.advertiser ) return;
+    
+    if ( !self.advertiserView )
+    {
+        self.advertiserView = [[UIView alloc] init];
+        self.advertiserView.tag = ADVERTISER_VIEW_TAG;
+        [self.nativeAdView addSubview: self.advertiserView];
+    }
+        
+    [self.clickableViews addObject: self.advertiserView];
+    
+    self.advertiserView.frame = frame;
+}
+
+-(void)addBodyView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.body ) return;
+    
+    if ( !self.bodyView )
+    {
+        self.bodyView = [[UIView alloc] init];
+        self.bodyView.tag = BODY_VIEW_TAG;
+        [self.nativeAdView addSubview: self.bodyView];
+    }
+        
+    [self.clickableViews addObject: self.bodyView];
+
+    self.bodyView.frame = frame;
+}
+
+-(void)addCallToActionView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.callToAction ) return;
+    
+    if ( !self.callToActionView )
+    {
+        self.callToActionView = [[UIView alloc] init];
+        self.callToActionView.tag = CALL_TO_ACTION_VIEW_TAG;
+        [self.nativeAdView addSubview: self.callToActionView];
+    }
+        
+    [self.clickableViews addObject: self.callToActionView];
+
+    self.callToActionView.frame = frame;
+}
+
+-(void)addIconView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.icon )
+    {
+        if ( self.iconView ) self.iconView.image = nil;
+        return;
+    }
+
+    if ( !self.iconView )
+    {
+        self.iconView = [[UIImageView alloc] init];
+        self.iconView.tag = ICON_VIEW_TAG;
+        self.iconView.userInteractionEnabled = YES;
+        [self.nativeAdView addSubview: self.iconView];
+    }
+        
+    [self.clickableViews addObject: self.iconView];
+
+    self.iconView.frame = frame;
+    
+    if ( self.nativeAd.nativeAd.icon.URL )
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            NSData *imageData = [NSData dataWithContentsOfURL: self.nativeAd.nativeAd.icon.URL];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.iconView.image = [UIImage imageWithData:imageData];
+            });
+        });
+    }
+    else if ( self.nativeAd.nativeAd.icon.image )
+    {
+        self.iconView.image = self.nativeAd.nativeAd.icon.image;
+    }
+}
+
+-(void)addOptionsView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.optionsView ) return;
+    
+    if ( !self.optionsViewContainer )
+    {
+        self.optionsViewContainer = [[UIView alloc] init];
+        [self.nativeAdView addSubview: self.optionsViewContainer];
+    }
+    
+    if ( !self.nativeAd.nativeAd.optionsView.superview )
+    {
+        [self.optionsViewContainer addSubview: self.nativeAd.nativeAd.optionsView];
+    }
+    
+    self.optionsViewContainer.frame = frame;
+    
+    self.nativeAd.nativeAd.optionsView.frame = CGRectOffset(frame, -frame.origin.x, -frame.origin.y);
+    
+}
+
+-(void)addMediaView:(CGRect)frame
+{
+    if ( !self.nativeAd.nativeAd.mediaView ) return;
+    
+    if ( !self.mediaViewContainer )
+    {
+        self.mediaViewContainer = [[UIView alloc] init];
+        self.mediaViewContainer.tag = MEDIA_VIEW_CONTAINER_TAG;
+        [self.nativeAdView addSubview: self.mediaViewContainer];
+    }
+
+    if ( !self.nativeAd.nativeAd.mediaView.superview )
+    {
+        [self.mediaViewContainer addSubview: self.nativeAd.nativeAd.mediaView];
+    }
+    
+    self.mediaViewContainer.frame = frame;
+    
+    self.nativeAd.nativeAd.mediaView.frame = CGRectOffset(frame, -frame.origin.x, -frame.origin.y);
+}
+
+-(void)renderAd
+{
+    if ( self.adLoader )
+    {
+        [self.adLoader registerClickableViews: self.clickableViews withContainer: self.nativeAdView forAd: self.nativeAd];
+        [self.adLoader handleNativeAdViewRenderedForAd: self.nativeAd];
+    }
+
+    [self.isLoading set: NO];
+}
+
+- (CGRect)getRect:(FlutterMethodCall *)call
+{
+    int x = ((NSNumber *)call.arguments[@"x"]).intValue;
+    int y = ((NSNumber *)call.arguments[@"y"]).intValue;
+    int width = ((NSNumber *)call.arguments[@"width"]).intValue;
+    int height = ((NSNumber *)call.arguments[@"height"]).intValue;
+    return CGRectMake(x, y, width, height);
+}
+
+#pragma mark - Utility Methods
+
 - (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad
 {
     [[AppLovinMAX shared] sendEventWithName: name ad: ad channel: self.channel];
@@ -314,152 +443,53 @@
                                          channel: self.channel];
 }
 
-#pragma mark - Native Ad Components
-
--(void)addTitleView:(CGRect)frame
+- (void)sendAdLoadedReactNativeEventForAd:(MANativeAd *)ad
 {
-    if ( !self.nativeAd.title ) return;
+    NSMutableDictionary<NSString *, id> *nativeAdInfo = [NSMutableDictionary dictionaryWithCapacity: 10];
+    nativeAdInfo[@"title"] = ad.title;
+    nativeAdInfo[@"advertiser"] = ad.advertiser;
+    nativeAdInfo[@"body"] = ad.body;
+    nativeAdInfo[@"callToAction"] = ad.callToAction;
+    nativeAdInfo[@"starRating"] = ad.starRating;
     
-    if ( !self.titleView )
+    // The aspect ratio can be 0.0f when it is not provided by the network.
+    if ( ad.mediaContentAspectRatio > 0 )
     {
-        self.titleView = [[UIView alloc] init];
-        self.titleView.tag = TITLE_LABEL_TAG;
-        [self.nativeAdView addSubview: self.titleView];
+        nativeAdInfo[@"mediaContentAspectRatio"] = @(ad.mediaContentAspectRatio);
+    }
+    
+    nativeAdInfo[@"isIconImageAvailable"] = @(ad.icon != nil);
+    nativeAdInfo[@"isOptionsViewAvailable"] = @(ad.optionsView != nil);
+    nativeAdInfo[@"isMediaViewAvailable"] = @(ad.mediaView != nil);
+    
+    NSMutableDictionary *adInfo = [[AppLovinMAX shared] adInfoForAd: self.nativeAd].mutableCopy;
+    adInfo[@"nativeAd"] = nativeAdInfo;
+    
+    [[AppLovinMAX shared] sendEventWithName: @"OnNativeAdViewAdLoadedEvent" body: adInfo channel: self.channel];
+}
+
+- (void)destroyCurrentAdIfNeeded
+{
+    if ( self.nativeAd )
+    {
+        if ( self.nativeAd.nativeAd )
+        {
+            if ( self.nativeAd.nativeAd.mediaView )
+            {
+                [self.nativeAd.nativeAd.mediaView removeFromSuperview];
+            }
+            if ( self.nativeAd.nativeAd.optionsView )
+            {
+                [self.nativeAd.nativeAd.optionsView removeFromSuperview];
+            }
+        }
         
-        [self.clickableViews addObject: self.titleView];
-    }
-    
-    self.titleView.frame = frame;
-}
-
--(void)addAdvertiserView:(CGRect)frame
-{
-    if ( !self.nativeAd.advertiser ) return;
-    
-    if ( !self.advertiserView )
-    {
-        self.advertiserView = [[UIView alloc] init];
-        self.advertiserView.tag = ADVERTISER_VIEW_TAG;
-        [self.nativeAdView addSubview: self.advertiserView];
+        [self.adLoader destroyAd: self.nativeAd];
         
-        [self.clickableViews addObject: self.advertiserView];
+        self.nativeAd = nil;
     }
     
-    self.advertiserView.frame = frame;
-}
-
--(void)addBodyView:(CGRect)frame
-{
-    if ( !self.nativeAd.body ) return;
-    
-    if ( !self.bodyView )
-    {
-        self.bodyView = [[UIView alloc] init];
-        self.bodyView.tag = BODY_VIEW_TAG;
-        [self.nativeAdView addSubview: self.bodyView];
-        
-        [self.clickableViews addObject: self.bodyView];
-    }
-    
-    self.bodyView.frame = frame;
-}
-
--(void)addCallToActionView:(CGRect)frame
-{
-    if ( !self.nativeAd.callToAction ) return;
-    
-    if ( !self.callToActionView )
-    {
-        self.callToActionView = [[UIView alloc] init];
-        self.callToActionView.tag = CALL_TO_ACTION_VIEW_TAG;
-        [self.nativeAdView addSubview: self.callToActionView];
-        
-        [self.clickableViews addObject: self.callToActionView];
-    }
-    
-    self.callToActionView.frame = frame;
-}
-
--(void)addIconView:(CGRect)frame
-{
-    if ( !self.nativeAd.icon ) return;
-    
-    if ( !self.iconView )
-    {
-        self.iconView = [[UIImageView alloc] init];
-        self.iconView.tag = ICON_VIEW_TAG;
-        self.iconView.userInteractionEnabled = YES;
-        [self.nativeAdView addSubview: self.iconView];
-        
-        [self.clickableViews addObject: self.iconView];
-    }
-    
-    self.iconView.frame = frame;
-    
-    if ( self.nativeAd.icon.URL )
-    {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-            NSData *imageData = [NSData dataWithContentsOfURL: self.nativeAd.icon.URL];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.iconView.image = [UIImage imageWithData:imageData];
-            });
-        });
-    }
-    else if ( self.nativeAd.icon.image )
-    {
-        self.iconView.image = self.nativeAd.icon.image;
-    }
-}
-
--(void)addOptionsView:(CGRect)frame
-{
-    if ( !self.nativeAd.optionsView ) return;
-    
-    if ( !self.optionsViewContainer )
-    {
-        self.optionsViewContainer = [[UIView alloc] init];
-        [self.nativeAdView addSubview: self.optionsViewContainer];
-    }
-    
-    if ( !self.nativeAd.optionsView.superview )
-    {
-        [self.optionsViewContainer addSubview: self.nativeAd.optionsView];
-    }
-    
-    self.optionsViewContainer.frame = frame;
-    
-    self.nativeAd.optionsView.frame = CGRectOffset(frame, -frame.origin.x, -frame.origin.y);
-    
-}
-
--(void)addMediaView:(CGRect)frame
-{
-    if ( !self.nativeAd.mediaView ) return;
-    
-    if ( !self.mediaViewContainer )
-    {
-        self.mediaViewContainer = [[UIView alloc] init];
-        self.mediaViewContainer.tag = MEDIA_VIEW_CONTAINER_TAG;
-        [self.nativeAdView addSubview: self.mediaViewContainer];
-    }
-    
-    if ( !self.nativeAd.mediaView.superview )
-    {
-        [self.mediaViewContainer addSubview: self.nativeAd.mediaView];
-    }
-    
-    self.mediaViewContainer.frame = frame;
-    
-    self.nativeAd.mediaView.frame = CGRectOffset(frame, -frame.origin.x, -frame.origin.y);
-}
-
--(void)completeViewAddition
-{
-    if ( !self.adLoader ) return;
-
-    [self.adLoader registerClickableViews: self.clickableViews withContainer: self.nativeAdView forAd: self.ad];
-    [self.adLoader handleNativeAdViewRenderedForAd: self.ad];
+    [self.clickableViews removeAllObjects];
 }
 
 @end

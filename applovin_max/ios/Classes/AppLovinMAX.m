@@ -1414,8 +1414,7 @@ static FlutterMethodChannel *ALSharedChannel;
              @"placement" : ad.placement ?: @"",
              @"revenue" : @(ad.revenue),
              @"dspName" : ad.DSPName ?: @"",
-             @"waterfall": [self createAdWaterfallInfo: ad.waterfall],
-             @"nativeAd": [self createNativeAdInfo: ad.nativeAd]};
+             @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
 }
 
 - (NSDictionary<NSString *, id> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
@@ -1475,30 +1474,6 @@ static FlutterMethodChannel *ALSharedChannel;
     networkResponseDict[@"latencyMillis"] = @(latencySeconds);
     
     return networkResponseDict;
-}
-
-- (NSDictionary<NSString *, id> *)createNativeAdInfo:(MANativeAd *)nativeAd
-{
-    NSMutableDictionary<NSString *, id> *nativeAdInfo = [NSMutableDictionary dictionary];
-    if ( !nativeAd ) return nativeAdInfo;
-    
-    nativeAdInfo[@"title"] = nativeAd.title;
-    nativeAdInfo[@"advertiser"] = nativeAd.advertiser;
-    nativeAdInfo[@"body"] = nativeAd.body;
-    nativeAdInfo[@"callToAction"] = nativeAd.callToAction;
-    nativeAdInfo[@"starRating"] = nativeAd.starRating;
-
-    // The aspect ratio can be 0.0f when it is not provided by the network.
-    if ( nativeAd.mediaContentAspectRatio > 0 )
-    {
-        nativeAdInfo[@"mediaContentAspectRatio"] = @(nativeAd.mediaContentAspectRatio);
-    }
-    
-    nativeAdInfo[@"isIconImageAvailable"] = @(nativeAd.icon != nil);
-    nativeAdInfo[@"isOptionsViewAvailable"] = @(nativeAd.optionsView != nil);
-    nativeAdInfo[@"isMediaViewAvailable"] = @(nativeAd.mediaView != nil);
-    
-    return nativeAdInfo;
 }
 
 - (ALGender)toAppLovinGender:(nullable NSString *)gender

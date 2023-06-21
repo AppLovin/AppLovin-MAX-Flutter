@@ -31,7 +31,6 @@ import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.mediation.ads.MaxAppOpenAd;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.mediation.ads.MaxRewardedAd;
-import com.applovin.mediation.nativeAds.MaxNativeAd;
 import com.applovin.sdk.AppLovinAdContentRating;
 import com.applovin.sdk.AppLovinGender;
 import com.applovin.sdk.AppLovinMediationProvider;
@@ -1456,7 +1455,7 @@ public class AppLovinMAX
 
     // AD INFO
 
-    private Map<String, Object> getAdInfo(final MaxAd ad)
+    public Map<String, Object> getAdInfo(final MaxAd ad)
     {
         Map<String, Object> adInfo = new HashMap<>( 7 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
@@ -1466,7 +1465,6 @@ public class AppLovinMAX
         adInfo.put( "revenue", ad.getRevenue() );
         adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
-        adInfo.put( "nativeAd", createNativeAdInfo( ad.getNativeAd() ) );
 
         return adInfo;
     }
@@ -1535,36 +1533,6 @@ public class AppLovinMAX
         networkResponseObject.put( "latencyMillis", response.getLatencyMillis() );
 
         return networkResponseObject;
-    }
-
-    // NATIVE AD INFO
-
-    private Map<String, Object> createNativeAdInfo(final MaxNativeAd nativeAd)
-    {
-        Map<String, Object> nativeAdInfo = new HashMap<>();
-        if ( nativeAd == null ) return nativeAdInfo;
-
-        nativeAdInfo.put( "title", nativeAd.getTitle() );
-        nativeAdInfo.put( "advertiser", nativeAd.getAdvertiser() );
-        nativeAdInfo.put( "body", nativeAd.getBody() );
-        nativeAdInfo.put( "callToAction", nativeAd.getCallToAction() );
-
-        if ( nativeAd.getStarRating() != null )
-        {
-            nativeAdInfo.put( "starRating", nativeAd.getStarRating().doubleValue() );
-        }
-
-        // The aspect ratio can be 0.0f when it is not provided by the network.
-        if ( nativeAd.getMediaContentAspectRatio() > 0 )
-        {
-            nativeAdInfo.put( "mediaContentAspectRatio", nativeAd.getMediaContentAspectRatio() );
-        }
-
-        nativeAdInfo.put( "isIconImageAvailable", ( nativeAd.getIcon() != null ) );
-        nativeAdInfo.put( "isOptionsViewAvailable", ( nativeAd.getOptionsView() != null ) );
-        nativeAdInfo.put( "isMediaViewAvailable", ( nativeAd.getMediaView() != null ) );
-
-        return nativeAdInfo;
     }
 
     // Utility Methods

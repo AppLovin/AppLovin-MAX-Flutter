@@ -186,7 +186,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
       _addNativeAdComponent(_bodyViewKey, "addBodyView");
       _addNativeAdComponent(_callToActionViewKey, "addCallToActionView");
       // send a notice for the platform to wrap up the view addition for the native ad components
-      _methodChannel!.invokeMethod("completeViewAddition");
+      _methodChannel!.invokeMethod("renderAd");
 
       // update the all native ad components with the native ad
       _applyNativeAdToComponents(maxAd);
