@@ -138,6 +138,8 @@
     return self;
 }
 
+#pragma mark - Flutter Lifecycle Methods
+
 - (UIView *)view
 {
     return self.nativeAdView;
@@ -233,7 +235,7 @@
         
         [AppLovinMAX log: @"Native ad is of template type, failing ad load..."];
         
-        [self sendErrorEventWithName: @"OnNativeAdViewAdLoadFailedEvent" error: nil];
+        [self sendErrorEventWithName: @"OnNativeAdLoadFailedEvent" error: nil];
         
         return;
     }
@@ -251,17 +253,17 @@
     
     [AppLovinMAX log: @"Failed to load native ad for Ad Unit ID %@ with error: %@", self.adUnitId, error];
     
-    [self sendErrorEventWithName: @"OnNativeAdViewAdLoadFailedEvent" error: error];
+    [self sendErrorEventWithName: @"OnNativeAdLoadFailedEvent" error: error];
 }
 
 - (void)didClickNativeAd:(MAAd *)ad
 {
-    [self sendEventWithName: @"OnNativeAdViewAdClickedEvent" ad: ad];
+    [self sendEventWithName: @"OnNativeAdClickedEvent" ad: ad];
 }
 
 - (void)didPayRevenueForAd:(MAAd *)ad
 {
-    [self sendEventWithName: @"OnNativeAdViewAdRevenuePaidEvent" ad: ad];
+    [self sendEventWithName: @"OnNativeAdRevenuePaidEvent" ad: ad];
 }
 
 #pragma mark - Native Ad Components
@@ -276,9 +278,9 @@
         self.titleView.tag = TITLE_LABEL_TAG;
         [self.nativeAdView addSubview: self.titleView];
     }
-        
+    
     [self.clickableViews addObject: self.titleView];
-
+    
     self.titleView.frame = frame;
 }
 
@@ -292,7 +294,7 @@
         self.advertiserView.tag = ADVERTISER_VIEW_TAG;
         [self.nativeAdView addSubview: self.advertiserView];
     }
-        
+    
     [self.clickableViews addObject: self.advertiserView];
     
     self.advertiserView.frame = frame;
@@ -308,9 +310,9 @@
         self.bodyView.tag = BODY_VIEW_TAG;
         [self.nativeAdView addSubview: self.bodyView];
     }
-        
+    
     [self.clickableViews addObject: self.bodyView];
-
+    
     self.bodyView.frame = frame;
 }
 
@@ -324,9 +326,9 @@
         self.callToActionView.tag = CALL_TO_ACTION_VIEW_TAG;
         [self.nativeAdView addSubview: self.callToActionView];
     }
-        
+    
     [self.clickableViews addObject: self.callToActionView];
-
+    
     self.callToActionView.frame = frame;
 }
 
@@ -337,7 +339,7 @@
         if ( self.iconView ) self.iconView.image = nil;
         return;
     }
-
+    
     if ( !self.iconView )
     {
         self.iconView = [[UIImageView alloc] init];
@@ -345,9 +347,9 @@
         self.iconView.userInteractionEnabled = YES;
         [self.nativeAdView addSubview: self.iconView];
     }
-        
+    
     [self.clickableViews addObject: self.iconView];
-
+    
     self.iconView.frame = frame;
     
     if ( self.nativeAd.nativeAd.icon.URL )
@@ -397,7 +399,7 @@
         self.mediaViewContainer.tag = MEDIA_VIEW_CONTAINER_TAG;
         [self.nativeAdView addSubview: self.mediaViewContainer];
     }
-
+    
     if ( !self.nativeAd.nativeAd.mediaView.superview )
     {
         [self.mediaViewContainer addSubview: self.nativeAd.nativeAd.mediaView];
@@ -415,7 +417,7 @@
         [self.adLoader registerClickableViews: self.clickableViews withContainer: self.nativeAdView forAd: self.nativeAd];
         [self.adLoader handleNativeAdViewRenderedForAd: self.nativeAd];
     }
-
+    
     [self.isLoading set: NO];
 }
 
@@ -465,7 +467,7 @@
     NSMutableDictionary *adInfo = [[AppLovinMAX shared] adInfoForAd: self.nativeAd].mutableCopy;
     adInfo[@"nativeAd"] = nativeAdInfo;
     
-    [[AppLovinMAX shared] sendEventWithName: @"OnNativeAdViewAdLoadedEvent" body: adInfo channel: self.channel];
+    [[AppLovinMAX shared] sendEventWithName: @"OnNativeAdLoadedEvent" body: adInfo channel: self.channel];
 }
 
 - (void)destroyCurrentAdIfNeeded

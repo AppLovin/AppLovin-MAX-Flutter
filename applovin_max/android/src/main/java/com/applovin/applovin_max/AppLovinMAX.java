@@ -23,6 +23,7 @@ import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxAdWaterfallInfo;
 import com.applovin.mediation.MaxError;
+import com.applovin.mediation.MaxErrorCode;
 import com.applovin.mediation.MaxMediatedNetworkInfo;
 import com.applovin.mediation.MaxNetworkResponseInfo;
 import com.applovin.mediation.MaxReward;
@@ -806,9 +807,18 @@ public class AppLovinMAX
         {
             Map<String, Object> params = new HashMap<>( 5 );
             params.put( "adUnitId", adUnitId );
-            params.put( "errorCode", error.getCode() );
-            params.put( "errorMessage", error.getMessage() );
-            params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+
+            if ( error != null )
+            {
+                params.put( "errorCode", error.getCode() );
+                params.put( "errorMessage", error.getMessage() );
+                params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+            }
+            else
+            {
+                params.put( "errorCode", MaxErrorCode.UNSPECIFIED );
+            }
+
             fireCallback( name, params, channel );
         }
         catch ( Throwable ignored ) { }

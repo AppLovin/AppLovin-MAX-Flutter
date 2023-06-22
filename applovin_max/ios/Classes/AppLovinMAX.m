@@ -69,7 +69,7 @@ static FlutterMethodChannel *ALSharedChannel;
     
     AppLovinMAXAdViewFactory *adViewFactory = [[AppLovinMAXAdViewFactory alloc] initWithMessenger: [registrar messenger]];
     [registrar registerViewFactory: adViewFactory withId: @"applovin_max/adview"];
-
+    
     AppLovinMAXNativeAdViewFactory *nativeAdViewFactory = [[AppLovinMAXNativeAdViewFactory alloc] initWithMessenger: [registrar messenger]];
     [registrar registerViewFactory: nativeAdViewFactory withId: @"applovin_max/nativeadview"];
 }
@@ -759,10 +759,14 @@ static FlutterMethodChannel *ALSharedChannel;
                      withError:(MAError *)error
                        channel:(FlutterMethodChannel *)channel
 {
-    NSDictionary *body = @{@"adUnitId": adUnitIdentifier,
-                           @"errorCode" : @(error.code),
-                           @"errorMessage" : error.message,
-                           @"waterfall": [self createAdWaterfallInfo: error.waterfall]};
+    NSDictionary *body = ( error ) ?
+    @{@"adUnitId": adUnitIdentifier,
+      @"errorCode" : @(error.code),
+      @"errorMessage" : error.message,
+      @"waterfall": [self createAdWaterfallInfo: error.waterfall]}
+    :
+    @{@"adUnitId": adUnitIdentifier,
+      @"errorCode" : @(MAErrorCodeUnspecified)};
     [self sendEventWithName: name body: body channel: channel];
 }
 

@@ -269,7 +269,7 @@ public class AppLovinMAXNativeAdView
 
                 AppLovinMAX.e( "Native ad is of template type, failing ad load..." );
 
-                sendErrorEvent( "OnNativeAdViewAdLoadFailedEvent", null );
+                sendErrorEvent( "OnNativeAdLoadFailedEvent", null );
 
                 return;
             }
@@ -288,13 +288,13 @@ public class AppLovinMAXNativeAdView
 
             AppLovinMAX.e( "Failed to load native ad for Ad Unit ID " + adUnitId + " with error: " + error );
 
-            sendErrorEvent( "OnNativeAdViewAdLoadFailedEvent", error );
+            sendErrorEvent( "OnNativeAdLoadFailedEvent", error );
         }
 
         @Override
         public void onNativeAdClicked(final MaxAd ad)
         {
-            sendEvent( "OnNativeAdViewAdClickedEvent", ad );
+            sendEvent( "OnNativeAdClickedEvent", ad );
         }
     }
 
@@ -303,7 +303,7 @@ public class AppLovinMAXNativeAdView
     @Override
     public void onAdRevenuePaid(final MaxAd ad)
     {
-        sendEvent( "OnNativeAdViewAdRevenuePaidEvent", ad );
+        sendEvent( "OnNativeAdRevenuePaidEvent", ad );
     }
 
     /// Native Ad Component Methods
@@ -425,8 +425,6 @@ public class AppLovinMAXNativeAdView
         if ( optionsViewContainer == null )
         {
             optionsViewContainer = new FrameLayout( context );
-            // TODO: What is `setId()` for? `View.generateViewId()` is supposed on API17+ but we technically support API16+, we can bump it to min API 17 but I want to understand this functionality more
-            optionsViewContainer.setId( View.generateViewId() );
             nativeAdView.addView( optionsViewContainer );
         }
 
@@ -451,8 +449,8 @@ public class AppLovinMAXNativeAdView
         if ( mediaViewContainer == null )
         {
             mediaViewContainer = new FrameLayout( context );
-            // TODO: What is `setId()` for? `View.generateViewId()` is supposed on API17+ but we technically support API16+, we can bump it to min API 17 but I want to understand this functionality more
-            mediaViewContainer.setId( View.generateViewId() );
+            // Sets an identifier for the Google plugins to verify the view in the tree
+            mediaViewContainer.setId( MEDIA_VIEW_CONTAINER_TAG );
             mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
             nativeAdView.addView( mediaViewContainer );
         }
@@ -535,7 +533,7 @@ public class AppLovinMAXNativeAdView
         Map<String, Object> adInfo = AppLovinMAX.getInstance().getAdInfo( nativeAd );
         adInfo.put( "nativeAd", nativeAdInfo );
 
-        AppLovinMAX.getInstance().fireCallback( "OnNativeAdViewAdLoadedEvent", adInfo, channel );
+        AppLovinMAX.getInstance().fireCallback( "OnNativeAdLoadedEvent", adInfo, channel );
     }
 
     private void maybeDestroyCurrentAd()

@@ -173,7 +173,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     var arguments = call.arguments;
     var adUnitId = arguments["adUnitId"];
 
-    if ("OnNativeAdViewAdLoadedEvent" == method) {
+    if ("OnNativeAdLoadedEvent" == method) {
       MaxAd maxAd = AppLovinMAX.createAd(adUnitId, arguments);
       widget.listener?.onAdLoadedCallback(maxAd);
 
@@ -191,11 +191,11 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
       // update the all native ad components with the native ad
       _applyNativeAdToComponents(maxAd);
-    } else if ("OnNativeAdViewAdLoadFailedEvent" == method) {
+    } else if ("OnNativeAdLoadFailedEvent" == method) {
       widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));
-    } else if ("OnNativeAdViewAdClickedEvent" == method) {
+    } else if ("OnNativeAdClickedEvent" == method) {
       widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(adUnitId, arguments));
-    } else if ("OnNativeAdViewAdRevenuePaidEvent" == method) {
+    } else if ("OnNativeAdRevenuePaidEvent" == method) {
       widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(adUnitId, arguments));
     }
   }
