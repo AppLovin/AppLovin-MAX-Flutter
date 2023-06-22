@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Represents an ad that has been served by AppLovin MAX.
 class MaxAd {
   /// The ad unit ID for which this ad was loaded.
@@ -101,9 +99,9 @@ class MaxNativeAd {
         callToAction = json['callToAction'],
         starRating = json['starRating'],
         mediaContentAspectRatio = json['mediaContentAspectRatio'],
-        isIconImageAvailable = (defaultTargetPlatform == TargetPlatform.iOS) ? (json['isIconImageAvailable'] == 1) : json['isIconImageAvailable'],
-        isOptionsViewAvailable = (defaultTargetPlatform == TargetPlatform.iOS) ? (json['isOptionsViewAvailable'] == 1) : json['isOptionsViewAvailable'],
-        isMediaViewAvailable = (defaultTargetPlatform == TargetPlatform.iOS) ? (json['isMediaViewAvailable'] == 1) : json['isMediaViewAvailable'];
+        isIconImageAvailable = (json['isIconImageAvailable'].runtimeType == int) ? (json['isIconImageAvailable'] == 1) : json['isIconImageAvailable'],
+        isOptionsViewAvailable = (json['isOptionsViewAvailable'].runtimeType == int) ? (json['isOptionsViewAvailable'] == 1) : json['isOptionsViewAvailable'],
+        isMediaViewAvailable = (json['isMediaViewAvailable'].runtimeType == int) ? (json['isMediaViewAvailable'] == 1) : json['isMediaViewAvailable'];
 
   @override
   String toString() {

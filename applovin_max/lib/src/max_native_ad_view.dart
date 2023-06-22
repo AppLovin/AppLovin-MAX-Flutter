@@ -185,7 +185,8 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
       _addNativeAdComponent(_advertiserViewKey, "addAdvertiserView");
       _addNativeAdComponent(_bodyViewKey, "addBodyView");
       _addNativeAdComponent(_callToActionViewKey, "addCallToActionView");
-      // send a notice for the platform to wrap up the view addition for the native ad components
+
+      // register clickable views and render the ad in the platform
       _methodChannel!.invokeMethod("renderAd");
 
       // update the all native ad components with the native ad
@@ -228,8 +229,8 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   }
 
   // get a frame(rect) size with a relative position to parent
-  Rect _getViewSize(GlobalKey? key, GlobalKey parentKey) {
-    RenderBox renderedObject = key?.currentContext?.findRenderObject() as RenderBox;
+  Rect _getViewSize(GlobalKey key, GlobalKey parentKey) {
+    RenderBox renderedObject = key.currentContext?.findRenderObject() as RenderBox;
     Offset globalPosition = renderedObject.localToGlobal(Offset.zero);
     RenderBox parentRenderedObject = parentKey.currentContext?.findRenderObject() as RenderBox;
     Offset relativePosition = parentRenderedObject.globalToLocal(globalPosition);
