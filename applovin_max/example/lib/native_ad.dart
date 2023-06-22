@@ -150,7 +150,7 @@ class NativeAdViewState extends State<NativeAdView> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              _nativeAdViewController.load();
+              _nativeAdViewController.loadAd();
             },
             child: const Text('Reload'),
           ),

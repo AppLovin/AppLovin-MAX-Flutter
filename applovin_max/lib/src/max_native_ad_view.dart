@@ -29,7 +29,7 @@ class _NativeAdViewScope extends InheritedWidget {
 /// Controls [MaxNativeAdView].
 class MaxNativeAdViewController extends ChangeNotifier {
   /// Loads a native ad.
-  void load() {
+  void loadAd() {
     notifyListeners();
   }
 }
@@ -106,7 +106,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   void initState() {
     super.initState();
     widget.controller?.addListener(() {
-      _methodChannel!.invokeMethod("load");
+      _methodChannel!.invokeMethod("loadAd");
     });
   }
 

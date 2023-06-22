@@ -154,7 +154,7 @@ public class AppLovinMAXNativeAdView
 
                 result.success( null );
             }
-            else if ( "load".equals( call.method ) )
+            else if ( "loadAd".equals( call.method ) )
             {
                 loadAd();
 

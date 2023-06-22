@@ -118,7 +118,7 @@
                 
                 result(nil);
             }
-            else if ( [@"load" isEqualToString: call.method] )
+            else if ( [@"loadAd" isEqualToString: call.method] )
             {
                 [weakSelf loadAd];
                 
