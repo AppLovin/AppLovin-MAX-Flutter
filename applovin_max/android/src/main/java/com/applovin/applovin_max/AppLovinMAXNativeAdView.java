@@ -449,7 +449,7 @@ public class AppLovinMAXNativeAdView
         if ( mediaViewContainer == null )
         {
             mediaViewContainer = new FrameLayout( context );
-            // Sets an identifier for the Google plugins to verify the view in the tree
+            // Sets an identifier for the Google adapters to verify the view in the tree
             mediaViewContainer.setId( MEDIA_VIEW_CONTAINER_TAG );
             mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
             nativeAdView.addView( mediaViewContainer );
@@ -472,6 +472,10 @@ public class AppLovinMAXNativeAdView
         {
             adLoader.a( clickableViews, nativeAdView, nativeAd );
             adLoader.b( nativeAd );
+        }
+        else
+        {
+            AppLovinMAX.e( "Attempting to render ad before ad has been loaded for Ad Unit ID " + adUnitId );
         }
 
         isLoading.set( false );

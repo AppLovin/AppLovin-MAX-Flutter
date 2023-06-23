@@ -417,6 +417,10 @@
         [self.adLoader registerClickableViews: self.clickableViews withContainer: self.nativeAdView forAd: self.nativeAd];
         [self.adLoader handleNativeAdViewRenderedForAd: self.nativeAd];
     }
+    else
+    {
+        [AppLovinMAX log: @"Attempting to render ad before ad has been loaded for Ad Unit ID %@", self.adUnitId];
+    }
     
     [self.isLoading set: NO];
 }
