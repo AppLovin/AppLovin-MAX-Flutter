@@ -9,6 +9,10 @@
 #define CALL_TO_ACTION_VIEW_TAG  5
 #define ADVERTISER_VIEW_TAG      8
 
+@interface UIImageView (ALSdk)
+- (void)al_setImageWithURL:(NSURL *)URL;
+@end
+
 @interface MANativeAdLoader()
 - (void)registerClickableViews:(NSArray<UIView *> *)clickableViews
                  withContainer:(UIView *)container
@@ -145,7 +149,7 @@
     return self.nativeAdView;
 }
 
--(void)dealloc
+- (void)dealloc
 {
     [self destroyCurrentAdIfNeeded];
     
@@ -268,7 +272,7 @@
 
 #pragma mark - Native Ad Components
 
--(void)addTitleView:(CGRect)frame
+- (void)addTitleView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.title ) return;
     
@@ -284,7 +288,7 @@
     self.titleView.frame = frame;
 }
 
--(void)addAdvertiserView:(CGRect)frame
+- (void)addAdvertiserView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.advertiser ) return;
     
@@ -300,7 +304,7 @@
     self.advertiserView.frame = frame;
 }
 
--(void)addBodyView:(CGRect)frame
+- (void)addBodyView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.body ) return;
     
@@ -316,7 +320,7 @@
     self.bodyView.frame = frame;
 }
 
--(void)addCallToActionView:(CGRect)frame
+- (void)addCallToActionView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.callToAction ) return;
     
@@ -332,7 +336,7 @@
     self.callToActionView.frame = frame;
 }
 
--(void)addIconView:(CGRect)frame
+- (void)addIconView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.icon )
     {
@@ -354,13 +358,7 @@
     
     if ( self.nativeAd.nativeAd.icon.URL )
     {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-            NSData *imageData = [NSData dataWithContentsOfURL: self.nativeAd.nativeAd.icon.URL];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.iconView.image = [UIImage imageWithData:imageData];
-            });
-        });
+        [self.iconView al_setImageWithURL: self.nativeAd.nativeAd.icon.URL];
     }
     else if ( self.nativeAd.nativeAd.icon.image )
     {
@@ -368,7 +366,7 @@
     }
 }
 
--(void)addOptionsView:(CGRect)frame
+- (void)addOptionsView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.optionsView ) return;
     
@@ -389,7 +387,7 @@
     
 }
 
--(void)addMediaView:(CGRect)frame
+- (void)addMediaView:(CGRect)frame
 {
     if ( !self.nativeAd.nativeAd.mediaView ) return;
     
@@ -410,7 +408,7 @@
     self.nativeAd.nativeAd.mediaView.frame = CGRectOffset(frame, -frame.origin.x, -frame.origin.y);
 }
 
--(void)renderAd
+- (void)renderAd
 {
     if ( self.adLoader )
     {
