@@ -1,10 +1,7 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -13,20 +10,16 @@ import android.widget.ImageView;
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxError;
-import com.applovin.mediation.MaxErrorCode;
 import com.applovin.mediation.nativeAds.MaxNativeAd;
 import com.applovin.mediation.nativeAds.MaxNativeAdListener;
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader;
 import com.applovin.mediation.nativeAds.MaxNativeAdView;
 import com.applovin.sdk.AppLovinSdk;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
@@ -35,7 +28,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
-import io.flutter.util.HandlerCompat;
 
 public class AppLovinMAXNativeAdView
         implements PlatformView, MaxAdRevenueListener
@@ -265,11 +257,7 @@ public class AppLovinMAXNativeAdView
             // Log a warning if it is a template native ad returned - as our plugin will be responsible for re-rendering the native ad's assets
             if ( nativeAdView != null )
             {
-                isLoading.set( false );
-
-                AppLovinMAX.e( "Native ad is of template type, failing ad load..." );
-
-                sendErrorEvent( "OnNativeAdLoadFailedEvent", null );
+                handleAdLoadFailed( "Native ad is of template type, failing ad load...", null );
 
                 return;
             }
@@ -284,11 +272,7 @@ public class AppLovinMAXNativeAdView
         @Override
         public void onNativeAdLoadFailed(final String adUnitId, final MaxError error)
         {
-            isLoading.set( false );
-
-            AppLovinMAX.e( "Failed to load native ad for Ad Unit ID " + adUnitId + " with error: " + error );
-
-            sendErrorEvent( "OnNativeAdLoadFailedEvent", error );
+            handleAdLoadFailed( "Failed to load native ad for Ad Unit ID " + adUnitId + " with error: " + error, error );
         }
 
         @Override
@@ -395,19 +379,8 @@ public class AppLovinMAXNativeAdView
 
         if ( icon.getUri() != null )
         {
-            Executors.newSingleThreadExecutor().execute( () -> {
-                try
-                {
-                    InputStream inputStream = new URL( icon.getUri().toString() ).openStream();
-                    Bitmap bitmap = BitmapFactory.decodeStream( inputStream );
-
-                    HandlerCompat.createAsyncHandler( Looper.getMainLooper() ).post( () -> iconView.setImageBitmap( bitmap ) );
-                }
-                catch ( Exception e )
-                {
-                    AppLovinMAX.e( "Failed to load an icon image for Ad Unit ID " + adUnitId + " with error: " + e );
-                }
-            } );
+            // TODO: Update import when MAX SDK with API is released.
+            // AppLovinSdkUtils.setImageUrl( icon.getUri(), iconView );
         }
         else if ( icon.getDrawable() != null )
         {
@@ -505,9 +478,12 @@ public class AppLovinMAXNativeAdView
         AppLovinMAX.getInstance().fireCallback( event, ad, channel );
     }
 
-    private void sendErrorEvent(final String event, final MaxError error)
+    private void handleAdLoadFailed(final String message, @Nullable final MaxError error)
     {
-        AppLovinMAX.getInstance().fireErrorCallback( event, adUnitId, error, channel );
+        isLoading.set( false );
+
+        AppLovinMAX.e( message );
+        AppLovinMAX.getInstance().fireErrorCallback( "OnNativeAdLoadFailedEvent", adUnitId, error, channel );
     }
 
     private void sendAdLoadedReactNativeEventForAd(final MaxNativeAd ad)
