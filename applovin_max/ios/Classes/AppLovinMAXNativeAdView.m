@@ -235,12 +235,7 @@
     // Log a warning if it is a template native ad returned - as our plugin will be responsible for re-rendering the native ad's assets
     if ( nativeAdView )
     {
-        [self.isLoading set: NO];
-        
-        [AppLovinMAX log: @"Native ad is of template type, failing ad load..."];
-        
-        [self sendErrorEventWithName: @"OnNativeAdLoadFailedEvent" error: nil];
-        
+        [self handleAdLoadFailed: @"Native ad is of template type, failing ad load..." error: nil];
         return;
     }
     
@@ -253,11 +248,7 @@
 
 - (void)didFailToLoadNativeAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
 {
-    [self.isLoading set: NO];
-    
-    [AppLovinMAX log: @"Failed to load native ad for Ad Unit ID %@ with error: %@", self.adUnitId, error];
-    
-    [self sendErrorEventWithName: @"OnNativeAdLoadFailedEvent" error: error];
+    [self handleAdLoadFailed: [NSString stringWithFormat: @"Failed to load native ad for Ad Unit ID %@ with error: %@", self.adUnitId, error] error: error];
 }
 
 - (void)didClickNativeAd:(MAAd *)ad
@@ -439,9 +430,13 @@
     [[AppLovinMAX shared] sendEventWithName: name ad: ad channel: self.channel];
 }
 
-- (void)sendErrorEventWithName:(NSString *)name error:(MAError *)error
+- (void)handleAdLoadFailed:(NSString *)message error:(MAError *)error
 {
-    [[AppLovinMAX shared] sendErrorEventWithName: name
+    [self.isLoading set: NO];
+    
+    [AppLovinMAX log: message];
+    
+    [[AppLovinMAX shared] sendErrorEventWithName: @"OnNativeAdLoadFailedEvent"
                              forAdUnitIdentifier: self.adUnitId
                                        withError: error
                                          channel: self.channel];
