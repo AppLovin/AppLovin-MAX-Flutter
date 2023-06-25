@@ -30,7 +30,7 @@
     ALSdk *sdk = AppLovinMAX.shared.sdk;
     if ( !sdk )
     {
-        [AppLovinMAX log: @"Failed to create MaxAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!"];
+        [AppLovinMAX log: @"Failed to create MaxNativeAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!"];
         return nil;
     }
     
@@ -43,12 +43,12 @@
     NSString *customData = [args[@"customData"] isKindOfClass: [NSString class]] ? args[@"customData"] : nil; // May be NSNull
     
     return [[AppLovinMAXNativeAdView alloc] initWithFrame: frame
-                                             viewId: viewId
-                                           adUnitId: adUnitId
-                                          placement: placement
-                                         customData: customData
-                                          messenger: self.messenger
-                                                sdk: sdk];
+                                                   viewId: viewId
+                                                 adUnitId: adUnitId
+                                                placement: placement
+                                               customData: customData
+                                                messenger: self.messenger
+                                                      sdk: sdk];
 }
 
 @end
