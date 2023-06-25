@@ -93,63 +93,47 @@ public class AppLovinMAXNativeAdView
 
             if ( "addTitleView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addTitleView( rect );
-
+                addTitleView( call );
                 result.success( null );
             }
             else if ( "addAdvertiserView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addAdvertiserView( rect );
-
+                addAdvertiserView( call );
                 result.success( null );
             }
             else if ( "addBodyView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addBodyView( rect );
-
+                addBodyView( call );
                 result.success( null );
             }
             else if ( "addCallToActionView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addCallToActionView( rect );
-
+                addCallToActionView( call );
                 result.success( null );
             }
             else if ( "addIconView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addIconView( rect );
-
+                addIconView( call );
                 result.success( null );
             }
             else if ( "addOptionsView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addOptionsView( rect );
-
+                addOptionsView( call );
                 result.success( null );
             }
             else if ( "addMediaView".equals( call.method ) )
             {
-                Rect rect = getRect( call );
-                addMediaView( rect );
-
+                addMediaView( call );
                 result.success( null );
             }
             else if ( "renderAd".equals( call.method ) )
             {
                 renderAd();
-
                 result.success( null );
             }
             else if ( "loadAd".equals( call.method ) )
             {
                 loadAd();
-
                 result.success( null );
             }
             else
@@ -292,7 +276,7 @@ public class AppLovinMAXNativeAdView
 
     /// Native Ad Component Methods
 
-    private void addTitleView(final Rect rect)
+    private void addTitleView(final MethodCall call)
     {
         if ( nativeAd.getNativeAd().getTitle() == null ) return;
 
@@ -305,10 +289,10 @@ public class AppLovinMAXNativeAdView
 
         clickableViews.add( titleView );
 
-        updateViewLayout( nativeAdView, titleView, rect );
+        updateViewLayout( nativeAdView, titleView, getRect( call ) );
     }
 
-    private void addAdvertiserView(final Rect rect)
+    private void addAdvertiserView(final MethodCall call)
     {
         if ( nativeAd.getNativeAd().getAdvertiser() == null ) return;
 
@@ -321,10 +305,10 @@ public class AppLovinMAXNativeAdView
 
         clickableViews.add( advertiserView );
 
-        updateViewLayout( nativeAdView, advertiserView, rect );
+        updateViewLayout( nativeAdView, advertiserView, getRect( call ) );
     }
 
-    private void addBodyView(final Rect rect)
+    private void addBodyView(final MethodCall call)
     {
         if ( nativeAd.getNativeAd().getBody() == null ) return;
 
@@ -337,10 +321,10 @@ public class AppLovinMAXNativeAdView
 
         clickableViews.add( bodyView );
 
-        updateViewLayout( nativeAdView, bodyView, rect );
+        updateViewLayout( nativeAdView, bodyView, getRect( call ) );
     }
 
-    private void addCallToActionView(final Rect rect)
+    private void addCallToActionView(final MethodCall call)
     {
         if ( nativeAd.getNativeAd().getCallToAction() == null ) return;
 
@@ -353,16 +337,20 @@ public class AppLovinMAXNativeAdView
 
         clickableViews.add( callToActionView );
 
-        updateViewLayout( nativeAdView, callToActionView, rect );
+        updateViewLayout( nativeAdView, callToActionView, getRect( call ) );
     }
 
-    private void addIconView(final Rect rect)
+    private void addIconView(final MethodCall call)
     {
         MaxNativeAd.MaxNativeAdImage icon = nativeAd.getNativeAd().getIcon();
 
         if ( icon == null )
         {
-            if ( iconView != null ) iconView.setImageDrawable( null );
+            if ( iconView != null )
+            {
+                iconView.setImageDrawable( null );
+            }
+
             return;
         }
 
@@ -375,7 +363,7 @@ public class AppLovinMAXNativeAdView
 
         clickableViews.add( iconView );
 
-        updateViewLayout( nativeAdView, iconView, rect );
+        updateViewLayout( nativeAdView, iconView, getRect( call ) );
 
         if ( icon.getUri() != null )
         {
@@ -388,7 +376,7 @@ public class AppLovinMAXNativeAdView
         }
     }
 
-    private void addOptionsView(final Rect rect)
+    private void addOptionsView(final MethodCall call)
     {
         if ( nativeAd == null ) return;
 
@@ -409,10 +397,10 @@ public class AppLovinMAXNativeAdView
             optionsView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
         }
 
-        updateViewLayout( nativeAdView, optionsViewContainer, rect );
+        updateViewLayout( nativeAdView, optionsViewContainer, getRect( call ) );
     }
 
-    private void addMediaView(final Rect rect)
+    private void addMediaView(final MethodCall call)
     {
         if ( nativeAd == null ) return;
 
@@ -436,7 +424,7 @@ public class AppLovinMAXNativeAdView
             mediaView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
         }
 
-        updateViewLayout( nativeAdView, mediaViewContainer, rect );
+        updateViewLayout( nativeAdView, mediaViewContainer, getRect( call ) );
     }
 
     private void renderAd()
@@ -488,7 +476,7 @@ public class AppLovinMAXNativeAdView
 
     private void sendAdLoadedReactNativeEventForAd(final MaxNativeAd ad)
     {
-        Map<String, Object> nativeAdInfo = new HashMap<>();
+        Map<String, Object> nativeAdInfo = new HashMap<>( 10 );
 
         nativeAdInfo.put( "title", ad.getTitle() );
         nativeAdInfo.put( "advertiser", ad.getAdvertiser() );
