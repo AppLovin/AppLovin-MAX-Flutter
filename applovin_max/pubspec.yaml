@@ -1,6 +1,6 @@
 name: applovin_max
 description: AppLovin MAX Flutter Plugin for Android and iOS - with support for interstitial ads, rewarded ads, banners, and MRECs.
-version: 2.6.0
+version: 3.0.0
 homepage: https://github.com/AppLovin/AppLovin-MAX-Flutter
 
 environment:
