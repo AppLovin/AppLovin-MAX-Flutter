@@ -16,6 +16,11 @@
 @property (nonatomic, weak, readonly) ALSdk *sdk;
 
 /**
+ * Returns a dictionay value of adInfo for the specified ad.
+ */
+- (NSDictionary<NSString *, id> *)adInfoForAd:(MAAd *)ad;
+
+/**
  * Utility method for sending ad events through the Flutter channel into Dart.
  */
 - (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad channel:(FlutterMethodChannel *)channel;

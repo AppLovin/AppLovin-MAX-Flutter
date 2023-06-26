@@ -5,6 +5,9 @@ import 'dart:math';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
 
+import 'native_ad.dart';
+import 'scrolled_adview.dart';
+
 enum AdLoadState { notLoaded, loading, loaded }
 
 void main() {
@@ -28,6 +31,7 @@ final String _interstitialAdUnitId = Platform.isAndroid ? "ANDROID_INTER_AD_UNIT
 final String _rewardedAdUnitId = Platform.isAndroid ? "ANDROID_REWARDED_AD_UNIT_ID" : "IOS_REWARDED_AD_UNIT_ID";
 final String _bannerAdUnitId = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "IOS_BANNER_AD_UNIT_ID";
 final String _mrecAdUnitId = Platform.isAndroid ? "ANDROID_MREC_AD_UNIT_ID" : "IOS_MREC_AD_UNIT_ID";
+final String _nativeAdUnitId = Platform.isAndroid ? "ANDROID_NATIVE_AD_UNIT_ID" : "IOS_NATIVE_AD_UNIT_ID";
 
 // Create states
 var _isInitialized = false;
@@ -362,7 +366,22 @@ class _MyAppState extends State<MyApp> {
                 ? () async {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ScrolledAdView()),
+                      MaterialPageRoute(builder: (context) => NativeAdView(adUnitId: _nativeAdUnitId)),
+                    );
+                  }
+                : null,
+            child: const Text("Show Native Ad"),
+          ),
+          ElevatedButton(
+            onPressed: (_isInitialized)
+                ? () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ScrolledAdView(
+                                bannerAdUnitId: _bannerAdUnitId,
+                                mrecAdUnitId: _mrecAdUnitId,
+                              )),
                     );
                   }
                 : null,
@@ -405,79 +424,5 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
-  }
-}
-
-class ScrolledAdView extends StatefulWidget {
-  const ScrolledAdView({super.key});
-
-  @override
-  State createState() => ScrolledAdViewState();
-}
-
-class ScrolledAdViewState extends State<ScrolledAdView> {
-  static const String _sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
-      "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
-      "minim veniam, quis nostrud exercitation ullamco laboris nisi ut "
-      "aliquip ex ea commodo consequat. Duis aute irure dolor in "
-      "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
-      "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
-      "culpa qui officia deserunt mollit anim id est laborum.";
-
-  bool _isAdEnabled = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Scrolled Banner / MREC'),
-        ),
-        body: SafeArea(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _isAdEnabled = !_isAdEnabled;
-              });
-            },
-            child: _isAdEnabled ? const Text('Disable ads') : const Text('Enable ads'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(4),
-              shrinkWrap: true,
-              itemCount: 4,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(children: [
-                  const Text(
-                    _sampleText,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                  _isAdEnabled
-                      ? (index % 2 == 0)
-                          ? MaxAdView(adUnitId: _bannerAdUnitId, adFormat: AdFormat.banner)
-                          : MaxAdView(adUnitId: _mrecAdUnitId, adFormat: AdFormat.mrec)
-                      : const SizedBox(
-                          height: 50,
-                          child: Center(child: Text('Ad Placeholder')),
-                        ),
-                  const Text(
-                    _sampleText,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                ]);
-              },
-            ),
-          ),
-          _isAdEnabled
-              ? MaxAdView(adUnitId: _bannerAdUnitId, adFormat: AdFormat.banner)
-              : const SizedBox(
-                  height: 50,
-                  child: Center(child: Text('Ad Placeholder')),
-                ),
-        ])));
   }
 }

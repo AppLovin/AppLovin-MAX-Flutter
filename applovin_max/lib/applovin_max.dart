@@ -8,6 +8,7 @@ export 'package:applovin_max/src/ad_classes.dart';
 export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
+export 'package:applovin_max/src/max_native_ad_view.dart';
 export 'package:applovin_max/src/targeting_data.dart';
 
 /// Represents the AppLovin SDK.
@@ -135,6 +136,10 @@ class AppLovinMAX {
 
   /// @nodoc
   static MaxAd createAd(String adUnitId, dynamic arguments) {
+    var rawNativeAd = arguments["nativeAd"];
+    var jsonNativeAd = (rawNativeAd != null) ?  Map<String, dynamic>.from(rawNativeAd) : null;
+    var nativeAd = (jsonNativeAd != null) ? MaxNativeAd.fromJson(jsonNativeAd) : null;
+
     return MaxAd(
       adUnitId,
       arguments["networkName"],
@@ -143,6 +148,7 @@ class AppLovinMAX {
       arguments["dspName"],
       arguments["placement"],
       Map<String, dynamic>.from(arguments["waterfall"]),
+      nativeAd,
     );
   }
 

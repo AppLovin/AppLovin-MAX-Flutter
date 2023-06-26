@@ -23,6 +23,7 @@ import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
 import com.applovin.mediation.MaxAdWaterfallInfo;
 import com.applovin.mediation.MaxError;
+import com.applovin.mediation.MaxErrorCode;
 import com.applovin.mediation.MaxMediatedNetworkInfo;
 import com.applovin.mediation.MaxNetworkResponseInfo;
 import com.applovin.mediation.MaxReward;
@@ -115,7 +116,7 @@ public class AppLovinMAX
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding)
+    public void onAttachedToEngine(@NonNull final FlutterPluginBinding binding)
     {
         // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
         // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
@@ -132,10 +133,13 @@ public class AppLovinMAX
 
         AppLovinMAXAdViewFactory adViewFactory = new AppLovinMAXAdViewFactory( binding.getBinaryMessenger() );
         binding.getPlatformViewRegistry().registerViewFactory( "applovin_max/adview", adViewFactory );
+
+        AppLovinMAXNativeAdViewFactory nativeAdViewFactory = new AppLovinMAXNativeAdViewFactory( binding.getBinaryMessenger() );
+        binding.getPlatformViewRegistry().registerViewFactory( "applovin_max/nativeadview", nativeAdViewFactory );
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding)
+    public void onDetachedFromEngine(@NonNull final FlutterPluginBinding binding)
     {
         sharedChannel.setMethodCallHandler( null );
     }
@@ -803,9 +807,18 @@ public class AppLovinMAX
         {
             Map<String, Object> params = new HashMap<>( 5 );
             params.put( "adUnitId", adUnitId );
-            params.put( "errorCode", error.getCode() );
-            params.put( "errorMessage", error.getMessage() );
-            params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+
+            if ( error != null )
+            {
+                params.put( "errorCode", error.getCode() );
+                params.put( "errorMessage", error.getMessage() );
+                params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+            }
+            else
+            {
+                params.put( "errorCode", MaxErrorCode.UNSPECIFIED );
+            }
+
             fireCallback( name, params, channel );
         }
         catch ( Throwable ignored ) { }
@@ -1452,7 +1465,7 @@ public class AppLovinMAX
 
     // AD INFO
 
-    private Map<String, Object> getAdInfo(final MaxAd ad)
+    public Map<String, Object> getAdInfo(final MaxAd ad)
     {
         Map<String, Object> adInfo = new HashMap<>( 7 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
