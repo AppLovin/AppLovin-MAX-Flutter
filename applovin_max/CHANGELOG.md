@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.0.1
 * Fix native ad app icon not rendering on Android.
 ## 3.0.0
 * Add support for native ads. Please refer to our documentation [here](https://dash.applovin.com/documentation/mediation/flutter/ad-formats/native-manual)) for more info. Addresses https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/26.
