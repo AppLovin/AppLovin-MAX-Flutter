@@ -59,7 +59,7 @@ class NativeAdViewState extends State<NativeAdView> {
             child: MaxNativeAdView(
               adUnitId: widget.adUnitId,
               controller: _nativeAdViewController,
-              listener: NativeAdViewAdListener(onAdLoadedCallback: (ad) {
+              listener: NativeAdListener(onAdLoadedCallback: (ad) {
                 logStatus('Native ad loaded from ${ad.networkName}');
                 setState(() {
                   _mediaViewAspectRatio = ad.nativeAd?.mediaContentAspectRatio ?? _kMediaViewAspectRatio;

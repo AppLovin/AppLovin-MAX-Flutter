@@ -61,7 +61,7 @@ class MaxNativeAdView extends StatefulWidget {
   final String? customData;
 
   /// The listener for various native ad callbacks.
-  final NativeAdViewAdListener? listener;
+  final NativeAdListener? listener;
 
   /// If non-null, requires the child to have exactly this width.
   final double? width;

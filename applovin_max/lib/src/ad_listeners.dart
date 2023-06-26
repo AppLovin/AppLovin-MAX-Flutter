@@ -70,9 +70,9 @@ class AdViewAdListener extends AdListener {
 }
 
 /// Defines an NativeAdView ad listener to be notified about native ad view events.
-class NativeAdViewAdListener extends AdListener {
+class NativeAdListener extends AdListener {
   /// @nodoc
-  const NativeAdViewAdListener({
+  const NativeAdListener({
     required Function(MaxAd ad) onAdLoadedCallback,
     required Function(String adUnitId, MaxError error) onAdLoadFailedCallback,
     required Function(MaxAd ad) onAdClickedCallback,
