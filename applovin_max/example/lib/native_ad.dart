@@ -87,7 +87,7 @@ class NativeAdViewState extends State<NativeAdView> {
                             height: 48,
                           ),
                         ),
-                        const Flexible(
+                        Flexible(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +114,7 @@ class NativeAdViewState extends State<NativeAdView> {
                         ),
                       ],
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Flexible(
