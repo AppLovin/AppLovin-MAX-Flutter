@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Add support for native ads. Please refer to our documentation [here](https://dash.applovin.com/documentation/mediation/flutter/ad-formats/native-manual)) for more info. Addresses https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/26.
 ## 2.6.0
 * Depends on Android SDK v11.10.1 and iOS SDK v11.10.1.
 ## 2.5.0
