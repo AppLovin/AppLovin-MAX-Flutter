@@ -435,10 +435,10 @@ public class AppLovinMAXNativeAdView
 
         if ( mediaView.getParent() == null )
         {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams( rect.width(), rect.height() );
-            params.addRule( RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE );
-            params.addRule( RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE );
-            mediaViewContainer.addView( mediaView, params );
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT );
+            mediaViewContainer.addView( mediaView, layoutParams );
         }
         else
         {
