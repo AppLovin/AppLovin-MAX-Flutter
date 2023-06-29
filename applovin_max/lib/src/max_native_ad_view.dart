@@ -44,6 +44,8 @@ class MaxNativeAdView extends StatefulWidget {
     required this.adUnitId,
     this.placement,
     this.customData,
+    this.extraParameters,
+    this.localExtraParameters,
     this.listener,
     this.width = double.infinity,
     this.height = double.infinity,
@@ -59,6 +61,12 @@ class MaxNativeAdView extends StatefulWidget {
 
   /// A string value representing the customData name that you assign when you integrate each ad format, for granular reporting in ad events.
   final String? customData;
+
+  /// A list of extra parameter key/value pairs for the ad.
+  final Map<String, String?>? extraParameters;
+
+  /// A list of local extra parameters to pass to the adapter instances.
+  final Map<String, dynamic>? localExtraParameters;
 
   /// The listener for various native ad callbacks.
   final NativeAdListener? listener;
@@ -134,7 +142,13 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
               }),
               AndroidView(
                 viewType: "applovin_max/nativeadview",
-                creationParams: <String, dynamic>{"ad_unit_id": widget.adUnitId, "customData": widget.customData, "placement": widget.placement},
+                creationParams: <String, dynamic>{
+                  "ad_unit_id": widget.adUnitId,
+                  "custom_data": widget.customData,
+                  "placement": widget.placement,
+                  "extra_parameters": widget.extraParameters,
+                  "local_extra_parameters": widget.localExtraParameters,
+                },
                 creationParamsCodec: const StandardMessageCodec(),
                 onPlatformViewCreated: _onMaxNativeAdViewCreated,
               ),
@@ -153,7 +167,13 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
               }),
               UiKitView(
                   viewType: "applovin_max/nativeadview",
-                  creationParams: <String, dynamic>{"ad_unit_id": widget.adUnitId, "customData": widget.customData, "placement": widget.placement},
+                  creationParams: <String, dynamic>{
+                    "ad_unit_id": widget.adUnitId,
+                    "custom_data": widget.customData,
+                    "placement": widget.placement,
+                    "extra_parameters": widget.extraParameters,
+                    "local_extra_parameters": widget.localExtraParameters,
+                  },
                   creationParamsCodec: const StandardMessageCodec(),
                   onPlatformViewCreated: _onMaxNativeAdViewCreated),
             ]),

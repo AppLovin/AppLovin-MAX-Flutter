@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Add suppport for extra parameters and local extra parameters.
 * Fix blank media views for Mintegral native ads.
 ## 3.0.1
 * Fix native ad app icon not rendering on Android.

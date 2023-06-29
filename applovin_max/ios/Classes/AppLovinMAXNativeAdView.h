@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
                      adUnitId:(NSString *)adUnitId
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
+              extraParameters:(nullable NSDictionary *)extraParameters
+         localExtraParameters:(nullable NSDictionary *)localExtraParameters
                     messenger:(id<FlutterBinaryMessenger>)messenger
                           sdk:(ALSdk *)sdk;
 

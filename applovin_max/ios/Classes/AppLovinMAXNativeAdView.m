@@ -31,6 +31,8 @@
 @property (nonatomic, copy) NSString *adUnitId;
 @property (nonatomic, copy, nullable) NSString *placement;
 @property (nonatomic, copy, nullable) NSString *customData;
+@property (nonatomic, copy, nullable) NSDictionary *extraParameters;
+@property (nonatomic, copy, nullable) NSDictionary *localExtraParameters;
 
 @property (nonatomic, strong) UIView *nativeAdView;
 @property (nonatomic, strong, nullable) UIView *titleView;
@@ -52,6 +54,8 @@
                      adUnitId:(NSString *)adUnitId
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
+              extraParameters:(nullable NSDictionary *)extraParameters
+         localExtraParameters:(nullable NSDictionary *)localExtraParameters
                     messenger:(id<FlutterBinaryMessenger>)messenger
                           sdk:(ALSdk *)sdk
 {
@@ -61,6 +65,8 @@
         self.adUnitId = adUnitId;
         self.placement = placement;
         self.customData = customData;
+        self.extraParameters = extraParameters;
+        self.localExtraParameters = localExtraParameters;
         self.isLoading = [[ALAtomicBoolean alloc] init];
         self.clickableViews = [NSMutableArray array];
         
@@ -203,6 +209,17 @@
         
         self.adLoader.placement = self.placement;
         self.adLoader.customData = self.customData;
+        
+        for ( NSString *key in self.extraParameters )
+        {
+            [self.adLoader setExtraParameterForKey: key value: self.extraParameters[key]];
+        }
+        
+        for ( NSString *key in self.localExtraParameters )
+        {
+            [self.adLoader setLocalExtraParameterForKey: key value: self.localExtraParameters[key]];
+        }
+        
         
         [self.adLoader loadAd];
     }
