@@ -440,11 +440,6 @@ public class AppLovinMAXNativeAdView
                     RelativeLayout.LayoutParams.MATCH_PARENT );
             mediaViewContainer.addView( mediaView, layoutParams );
         }
-        else
-        {
-            mediaView.getLayoutParams().width = rect.width();
-            mediaView.getLayoutParams().height = rect.height();
-        }
 
         updateViewLayout( nativeAdView, mediaViewContainer, rect );
     }
