@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-* Fix black screen in mintegral native ads
+* Fix blank views for Mintegral native ads.
 ## 3.0.1
 * Fix native ad app icon not rendering on Android.
 ## 3.0.0
