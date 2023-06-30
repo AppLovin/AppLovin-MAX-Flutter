@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdRevenueListener;
@@ -68,21 +69,21 @@ public class AppLovinMAXNativeAdView
     @Nullable
     private final String customData;
 
-    private final FrameLayout nativeAdView;
+    private final FrameLayout    nativeAdView;
     @Nullable
-    private       View        titleView;
+    private       View           titleView;
     @Nullable
-    private       View        advertiserView;
+    private       View           advertiserView;
     @Nullable
-    private       View        bodyView;
+    private       View           bodyView;
     @Nullable
-    private       View        callToActionView;
+    private       View           callToActionView;
     @Nullable
-    private       ImageView   iconView;
+    private       ImageView      iconView;
     @Nullable
-    private       FrameLayout optionsViewContainer;
+    private       FrameLayout    optionsViewContainer;
     @Nullable
-    private       FrameLayout mediaViewContainer;
+    private       RelativeLayout mediaViewContainer;
 
     private final List<View> clickableViews = new ArrayList<>();
 
@@ -423,22 +424,24 @@ public class AppLovinMAXNativeAdView
 
         if ( mediaViewContainer == null )
         {
-            mediaViewContainer = new FrameLayout( context );
+            mediaViewContainer = new RelativeLayout( context );
             // Sets an identifier for the Google adapters to verify the view in the tree
             mediaViewContainer.setId( MEDIA_VIEW_CONTAINER_TAG );
             mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
             nativeAdView.addView( mediaViewContainer );
         }
 
+        Rect rect = getRect( call );
+
         if ( mediaView.getParent() == null )
         {
-            mediaViewContainer.addView( mediaView );
-
-            mediaView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-            mediaView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT );
+            mediaViewContainer.addView( mediaView, layoutParams );
         }
 
-        updateViewLayout( nativeAdView, mediaViewContainer, getRect( call ) );
+        updateViewLayout( nativeAdView, mediaViewContainer, rect );
     }
 
     private void renderAd()
