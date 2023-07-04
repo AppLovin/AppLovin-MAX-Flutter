@@ -220,7 +220,6 @@
             [self.adLoader setLocalExtraParameterForKey: key value: self.localExtraParameters[key]];
         }
         
-        
         [self.adLoader loadAd];
     }
     else
