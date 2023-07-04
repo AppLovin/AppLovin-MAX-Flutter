@@ -113,9 +113,13 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   @override
   void initState() {
     super.initState();
-    widget.controller?.addListener(() {
-      _methodChannel!.invokeMethod("loadAd");
-    });
+    widget.controller?.addListener(_handleControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller!.removeListener(_handleControllerChanged);
+    super.dispose();
   }
 
   @override
@@ -181,6 +185,10 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     }
 
     return Container();
+  }
+
+  void _handleControllerChanged() {
+    _methodChannel!.invokeMethod("loadAd");
   }
 
   void _onMaxNativeAdViewCreated(int id) {
