@@ -42,6 +42,12 @@ class MaxAdView extends StatefulWidget {
   /// A string value representing the customData name that you assign when you integrate each ad format, for granular reporting in ad events.
   final String? customData;
 
+  /// A list of extra parameter key/value pairs for the ad.
+  final Map<String, String?>? extraParameters;
+
+  /// A list of local extra parameters to pass to the adapter instances.
+  final Map<String, dynamic>? localExtraParameters;
+
   /// The listener for various ad callbacks.
   final AdViewAdListener? listener;
 
@@ -58,6 +64,8 @@ class MaxAdView extends StatefulWidget {
     required this.adFormat,
     this.placement,
     this.customData,
+    this.extraParameters,
+    this.localExtraParameters,
     this.listener,
     this.isAutoRefreshEnabled = true,
   }) : super(key: key);
@@ -98,8 +106,10 @@ class _MaxAdViewState extends State<MaxAdView> {
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
               "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "customData": widget.customData,
-              "placement": widget.placement
+              "custom_data": widget.customData,
+              "placement": widget.placement,
+              "extra_parameters": widget.extraParameters,
+              "local_extra_parameters": widget.localExtraParameters,
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,
@@ -118,8 +128,10 @@ class _MaxAdViewState extends State<MaxAdView> {
               "ad_unit_id": widget.adUnitId,
               "ad_format": widget.adFormat.value,
               "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "customData": widget.customData,
-              "placement": widget.placement
+              "custom_data": widget.customData,
+              "placement": widget.placement,
+              "extra_parameters": widget.extraParameters,
+              "local_extra_parameters": widget.localExtraParameters,
             },
             creationParamsCodec: const StandardMessageCodec(),
             onPlatformViewCreated: _onMaxAdViewCreated,

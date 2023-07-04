@@ -63,11 +63,15 @@ public class AppLovinMAXNativeAdView
     private       MaxAd             nativeAd;
     private final AtomicBoolean     isLoading = new AtomicBoolean(); // Guard against repeated ad loads
 
-    private final String adUnitId;
+    private final String              adUnitId;
     @Nullable
-    private final String placement;
+    private final String              placement;
     @Nullable
-    private final String customData;
+    private final String              customData;
+    @Nullable
+    private       Map<String, Object> extraParameters;
+    @Nullable
+    private       Map<String, Object> localExtraParameters;
 
     private final FrameLayout    nativeAdView;
     @Nullable
@@ -91,6 +95,8 @@ public class AppLovinMAXNativeAdView
                                    final String adUnitId,
                                    @Nullable final String placement,
                                    @Nullable final String customData,
+                                   @Nullable final Map<String, Object> extraParameters,
+                                   @Nullable final Map<String, Object> localExtraParameters,
                                    final BinaryMessenger messenger,
                                    final AppLovinSdk sdk,
                                    final Context context)
@@ -100,6 +106,8 @@ public class AppLovinMAXNativeAdView
         this.customData = customData;
         this.sdk = sdk;
         this.context = context;
+        this.extraParameters = extraParameters;
+        this.localExtraParameters = localExtraParameters;
 
         String uniqueChannelName = "applovin_max/nativeadview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
@@ -233,6 +241,22 @@ public class AppLovinMAXNativeAdView
 
             adLoader.setPlacement( placement );
             adLoader.setCustomData( customData );
+
+            if ( extraParameters != null )
+            {
+                for ( Map.Entry<String, Object> entry : extraParameters.entrySet() )
+                {
+                    adLoader.setExtraParameter( entry.getKey(), (String) entry.getValue() );
+                }
+            }
+
+            if ( localExtraParameters != null )
+            {
+                for ( Map.Entry<String, Object> entry : localExtraParameters.entrySet() )
+                {
+                    adLoader.setLocalExtraParameter( entry.getKey(), entry.getValue() );
+                }
+            }
 
             adLoader.loadAd();
         }

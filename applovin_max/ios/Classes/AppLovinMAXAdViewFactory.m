@@ -50,7 +50,9 @@
     // Optional params
     BOOL isAutoRefreshEnabled = ((NSNumber *) args[@"is_auto_refresh_enabled"]).boolValue; // Defaults to true
     NSString *placement = [args[@"placement"] isKindOfClass: [NSString class]] ? args[@"placement"] : nil; // May be NSNull
-    NSString *customData = [args[@"customData"] isKindOfClass: [NSString class]] ? args[@"customData"] : nil; // May be NSNull
+    NSString *customData = [args[@"custom_data"] isKindOfClass: [NSString class]] ? args[@"custom_data"] : nil; // May be NSNull
+    NSDictionary *extraParameters = [args[@"extra_parameters"] isKindOfClass: [NSDictionary class]] ? args[@"extra_parameters"] : nil;
+    NSDictionary *localExtraParameters = [args[@"local_extra_parameters"] isKindOfClass: [NSDictionary class]] ? args[@"local_extra_parameters"] : nil;
     
     return [[AppLovinMAXAdView alloc] initWithFrame: (CGRect) { .size = adFormat.size }
                                              viewId: viewId
@@ -59,6 +61,8 @@
                                isAutoRefreshEnabled: isAutoRefreshEnabled
                                           placement: placement
                                          customData: customData
+                                    extraParameters: extraParameters
+                               localExtraParameters: localExtraParameters
                                           messenger: self.messenger
                                                 sdk: sdk];
 }

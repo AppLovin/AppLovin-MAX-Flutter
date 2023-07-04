@@ -45,8 +45,10 @@ public class AppLovinMAXNativeAdViewFactory
 
         // Optional params
         String placement = params.containsKey( "placement" ) ? (String) params.get( "placement" ) : null;
-        String customData = params.containsKey( "customData" ) ? (String) params.get( "customData" ) : null;
+        String customData = params.containsKey( "custom_data" ) ? (String) params.get( "custom_data" ) : null;
+        Map<String, Object> extraParameters = params.containsKey( "extra_parameters" ) ? (Map<String, Object>) params.get( "extra_parameters" ) : null;
+        Map<String, Object> localExtraParameters = params.containsKey( "local_extra_parameters" ) ? (Map<String, Object>) params.get( "local_extra_parameters" ) : null;
 
-        return new AppLovinMAXNativeAdView( viewId, adUnitId, placement, customData, messenger, sdk, context );
+        return new AppLovinMAXNativeAdView( viewId, adUnitId, placement, customData, extraParameters, localExtraParameters, messenger, sdk, context );
     }
 }

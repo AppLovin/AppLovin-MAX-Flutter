@@ -23,6 +23,8 @@
          isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
+              extraParameters:(nullable NSDictionary *)extraParameters
+         localExtraParameters:(nullable NSDictionary *)localExtraParameters
                     messenger:(id<FlutterBinaryMessenger>)messenger
                           sdk:(ALSdk *)sdk
 {
@@ -60,6 +62,16 @@
         self.adView.customData = customData;
         
         [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
+        
+        for ( NSString *key in extraParameters )
+        {
+            [self.adView setExtraParameterForKey: key value: extraParameters[key]];
+        }
+        
+        for ( NSString *key in localExtraParameters )
+        {
+            [self.adView setLocalExtraParameterForKey: key value: localExtraParameters[key]];
+        }
         
         [self.adView loadAd];
         

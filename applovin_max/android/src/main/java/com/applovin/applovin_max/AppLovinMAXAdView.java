@@ -11,6 +11,8 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinSdk;
 
+import java.util.Map;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -33,6 +35,8 @@ public class AppLovinMAXAdView
                              final boolean isAutoRefreshEnabled,
                              @Nullable final String placement,
                              @Nullable final String customData,
+                             @Nullable final Map<String, Object> extraParameters,
+                             @Nullable final Map<String, Object> localExtraParameters,
                              final BinaryMessenger messenger,
                              final AppLovinSdk sdk,
                              final Context context)
@@ -69,6 +73,22 @@ public class AppLovinMAXAdView
         adView.setCustomData( customData );
 
         adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
+
+        if ( extraParameters != null )
+        {
+            for ( Map.Entry<String, Object> entry : extraParameters.entrySet() )
+            {
+                adView.setExtraParameter( entry.getKey(), (String) entry.getValue() );
+            }
+        }
+
+        if ( localExtraParameters != null )
+        {
+            for ( Map.Entry<String, Object> entry : localExtraParameters.entrySet() )
+            {
+                adView.setLocalExtraParameter( entry.getKey(), entry.getValue() );
+            }
+        }
 
         adView.loadAd();
 
