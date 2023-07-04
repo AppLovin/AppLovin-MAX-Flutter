@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-* Add suppport for extra parameters and local extra parameters.
+* Add API for passing extra parameters and local extra parameters for widget banners, MRECs, and native ads.
 * Fix blank media views for Mintegral native ads.
 ## 3.0.1
 * Fix native ad app icon not rendering on Android.
