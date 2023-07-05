@@ -52,13 +52,13 @@ class MaxAdView extends StatefulWidget {
   final AdViewAdListener? listener;
 
   /// A boolean value representing whether the ad currently has auto-refresh enabled or not. Defaults to true.
-  bool isAutoRefreshEnabled;
+  final bool isAutoRefreshEnabled;
 
   /// Creates a new ad view directly in the user's widget tree.
   ///
   /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
   /// * [MREC Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method)
-  MaxAdView({
+  const MaxAdView({
     Key? key,
     required this.adUnitId,
     required this.adFormat,
