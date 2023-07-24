@@ -21,6 +21,7 @@ import com.applovin.mediation.nativeAds.MaxNativeAdListener;
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader;
 import com.applovin.mediation.nativeAds.MaxNativeAdView;
 import com.applovin.sdk.AppLovinSdk;
+import com.applovin.sdk.AppLovinSdkUtils;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -405,9 +406,7 @@ public class AppLovinMAXNativeAdView
 
         if ( icon.getUri() != null )
         {
-            // TODO: Update import when MAX SDK with API is released.
-            // AppLovinSdkUtils.setImageUrl( icon.getUri(), iconView );
-            setImageUrl( icon.getUri().toString(), iconView );
+            AppLovinSdkUtils.setImageUrl( icon.getUri().toString(), iconView, sdk );
         }
         else if ( icon.getDrawable() != null )
         {
@@ -565,31 +564,5 @@ public class AppLovinMAXNativeAdView
         }
 
         clickableViews.clear();
-    }
-
-    private void setImageUrl(final String imageUrl, final ImageView imageView)
-    {
-        if ( TextUtils.isEmpty( imageUrl ) ) return;
-        if ( imageView == null ) return;
-
-        cachingExecutor.execute( () -> {
-
-            try
-            {
-                InputStream inputStream = new URL( imageUrl ).openStream();
-                Bitmap imageData = BitmapFactory.decodeStream( inputStream );
-
-                runOnUiThread( () -> {
-                    Drawable imageDrawable = new BitmapDrawable( context.getResources(), imageData );
-                    imageView.setImageDrawable( imageDrawable );
-                } );
-
-                inputStream.close();
-            }
-            catch ( Throwable th )
-            {
-                AppLovinMAX.e( "Failed to fetch image: " + imageUrl + " because of: " + th );
-            }
-        } );
     }
 }
