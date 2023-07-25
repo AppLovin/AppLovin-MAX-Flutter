@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Depends on Android SDK v11.11.0 and iOS SDK v11.11.0.
 * Add API for passing extra parameters and local extra parameters for widget banners, MRECs, and native ads.
 * Fix blank media views for Mintegral native ads.
 ## 3.0.1
