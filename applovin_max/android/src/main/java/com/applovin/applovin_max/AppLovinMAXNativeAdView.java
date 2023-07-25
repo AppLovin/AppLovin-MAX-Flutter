@@ -1,12 +1,7 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -23,14 +18,10 @@ import com.applovin.mediation.nativeAds.MaxNativeAdView;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkUtils;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
@@ -39,8 +30,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
-
-import static com.applovin.sdk.AppLovinSdkUtils.runOnUiThread;
 
 public class AppLovinMAXNativeAdView
         implements PlatformView, MaxAdRevenueListener
@@ -51,8 +40,6 @@ public class AppLovinMAXNativeAdView
     private static final int BODY_VIEW_TAG            = 4;
     private static final int CALL_TO_ACTION_VIEW_TAG  = 5;
     private static final int ADVERTISER_VIEW_TAG      = 8;
-
-    private static final Executor cachingExecutor = Executors.newSingleThreadExecutor();
 
     private final Context       context;
     private final MethodChannel channel;
