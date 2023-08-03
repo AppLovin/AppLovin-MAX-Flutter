@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.1.0
 * Depends on Android SDK v11.11.1 and iOS SDK v11.11.2.
 * Fix banner and MREC widgets occupying space before it is loaded. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/40
 * Add API for passing extra parameters and local extra parameters for widget banners, MRECs, and native ads.
