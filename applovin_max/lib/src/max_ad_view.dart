@@ -54,6 +54,9 @@ class MaxAdView extends StatefulWidget {
   /// A boolean value representing whether the ad currently has auto-refresh enabled or not. Defaults to true.
   final bool isAutoRefreshEnabled;
 
+  /// A boolean value to switch between showing the widget or hiding it until an initial ad is loaded.  Defaults to true.
+  final bool visible;
+
   /// Creates a new ad view directly in the user's widget tree.
   ///
   /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
@@ -68,6 +71,7 @@ class MaxAdView extends StatefulWidget {
     this.localExtraParameters,
     this.listener,
     this.isAutoRefreshEnabled = true,
+    this.visible = true,
   }) : super(key: key);
 
   /// @nodoc
@@ -78,6 +82,14 @@ class MaxAdView extends StatefulWidget {
 class _MaxAdViewState extends State<MaxAdView> {
   /// Unique [MethodChannel] to this [MaxAdView] instance.
   MethodChannel? _methodChannel;
+
+  late bool visible;
+
+  @override
+  void initState() {
+    super.initState();
+    visible = widget.visible;
+  }
 
   @override
   void didUpdateWidget(MaxAdView oldWidget) {
@@ -95,49 +107,57 @@ class _MaxAdViewState extends State<MaxAdView> {
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return SizedBox(
-        width: _getWidth(),
-        height: _getHeight(),
-        child: OverflowBox(
-          alignment: Alignment.bottomCenter,
-          child: AndroidView(
-            viewType: "applovin_max/adview",
-            creationParams: <String, dynamic>{
-              "ad_unit_id": widget.adUnitId,
-              "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "custom_data": widget.customData,
-              "placement": widget.placement,
-              "extra_parameters": widget.extraParameters,
-              "local_extra_parameters": widget.localExtraParameters,
-            },
-            creationParamsCodec: const StandardMessageCodec(),
-            onPlatformViewCreated: _onMaxAdViewCreated,
-          ),
-        ),
-      );
+      return Visibility(
+          maintainState: true,
+          maintainAnimation: true,
+          visible: visible,
+          child: SizedBox(
+            width: _getWidth(),
+            height: _getHeight(),
+            child: OverflowBox(
+              alignment: Alignment.bottomCenter,
+              child: AndroidView(
+                viewType: "applovin_max/adview",
+                creationParams: <String, dynamic>{
+                  "ad_unit_id": widget.adUnitId,
+                  "ad_format": widget.adFormat.value,
+                  "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+                  "custom_data": widget.customData,
+                  "placement": widget.placement,
+                  "extra_parameters": widget.extraParameters,
+                  "local_extra_parameters": widget.localExtraParameters,
+                },
+                creationParamsCodec: const StandardMessageCodec(),
+                onPlatformViewCreated: _onMaxAdViewCreated,
+              ),
+            ),
+          ));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return SizedBox(
-        width: _getWidth(),
-        height: _getHeight(),
-        child: OverflowBox(
-          alignment: Alignment.bottomCenter,
-          child: UiKitView(
-            viewType: "applovin_max/adview",
-            creationParams: <String, dynamic>{
-              "ad_unit_id": widget.adUnitId,
-              "ad_format": widget.adFormat.value,
-              "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-              "custom_data": widget.customData,
-              "placement": widget.placement,
-              "extra_parameters": widget.extraParameters,
-              "local_extra_parameters": widget.localExtraParameters,
-            },
-            creationParamsCodec: const StandardMessageCodec(),
-            onPlatformViewCreated: _onMaxAdViewCreated,
-          ),
-        ),
-      );
+      return Visibility(
+          maintainState: true,
+          maintainAnimation: true,
+          visible: visible,
+          child: SizedBox(
+            width: _getWidth(),
+            height: _getHeight(),
+            child: OverflowBox(
+              alignment: Alignment.bottomCenter,
+              child: UiKitView(
+                viewType: "applovin_max/adview",
+                creationParams: <String, dynamic>{
+                  "ad_unit_id": widget.adUnitId,
+                  "ad_format": widget.adFormat.value,
+                  "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+                  "custom_data": widget.customData,
+                  "placement": widget.placement,
+                  "extra_parameters": widget.extraParameters,
+                  "local_extra_parameters": widget.localExtraParameters,
+                },
+                creationParamsCodec: const StandardMessageCodec(),
+                onPlatformViewCreated: _onMaxAdViewCreated,
+              ),
+            ),
+          ));
     }
 
     return Container();
@@ -152,6 +172,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       var adUnitId = arguments["adUnitId"];
 
       if ("OnAdViewAdLoadedEvent" == method) {
+        if (!visible) visible = true;
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {
         widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));

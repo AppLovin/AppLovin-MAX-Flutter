@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Fix banner and MREC widgets occupying space before it is loaded. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/40
 * Depends on Android SDK v11.11.0 and iOS SDK v11.11.0.
 * Add API for passing extra parameters and local extra parameters for widget banners, MRECs, and native ads.
 * Fix blank media views for Mintegral native ads.
