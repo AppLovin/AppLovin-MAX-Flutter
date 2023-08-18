@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.1.2
 * Fixed `LateInitializationError` when building native ad widget. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/113.
 ## 3.1.1
 * Depends on Android SDK v11.11.2 and iOS SDK v11.11.2.
