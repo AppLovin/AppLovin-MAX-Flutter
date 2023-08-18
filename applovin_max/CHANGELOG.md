@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fixed LateInitializationError on accessing a late variable in didChangeDependencies().
 ## 3.1.1
 * Depends on Android SDK v11.11.2 and iOS SDK v11.11.2.
 ## 3.1.0
