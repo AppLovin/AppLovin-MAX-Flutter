@@ -91,9 +91,6 @@ class MaxNativeAdView extends StatefulWidget {
 class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   final GlobalKey _nativeAdViewKey = GlobalKey();
 
-  // The number of device pixels for each logical pixel.
-  late final double _devicePixelRatio;
-
   // Unique [MethodChannel] to this [MaxNativeAdView] instance.
   MethodChannel? _methodChannel;
 
@@ -120,15 +117,6 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   void dispose() {
     widget.controller!.removeListener(_handleControllerChanged);
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      MediaQueryData queryData = MediaQuery.of(context);
-      _devicePixelRatio = queryData.devicePixelRatio;
-    }
   }
 
   @override
@@ -233,11 +221,12 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     if (key == null) return;
     Rect rect = _getViewSize(key, _nativeAdViewKey);
     if (defaultTargetPlatform == TargetPlatform.android) {
+      double devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
       _methodChannel!.invokeMethod(method, <String, dynamic>{
-        'x': (rect.left * _devicePixelRatio).round(),
-        'y': (rect.top * _devicePixelRatio).round(),
-        'width': (rect.width * _devicePixelRatio).round(),
-        'height': (rect.height * _devicePixelRatio).round(),
+        'x': (rect.left * devicePixelRatio).round(),
+        'y': (rect.top * devicePixelRatio).round(),
+        'width': (rect.width * devicePixelRatio).round(),
+        'height': (rect.height * devicePixelRatio).round(),
       });
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       _methodChannel!.invokeMethod(method, <String, dynamic>{
