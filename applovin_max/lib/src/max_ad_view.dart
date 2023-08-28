@@ -57,6 +57,9 @@ class MaxAdView extends StatefulWidget {
   /// A boolean value to switch between showing the widget or hiding it until an initial ad is loaded.  Defaults to true.
   final bool visible;
 
+  /// The width of the banner for adaptive banners.
+  final double? adaptiveBannerWidth;
+
   /// Creates a new ad view directly in the user's widget tree.
   ///
   /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
@@ -72,6 +75,7 @@ class MaxAdView extends StatefulWidget {
     this.listener,
     this.isAutoRefreshEnabled = true,
     this.visible = true,
+    this.adaptiveBannerWidth,
   }) : super(key: key);
 
   /// @nodoc
@@ -83,12 +87,16 @@ class _MaxAdViewState extends State<MaxAdView> {
   /// Unique [MethodChannel] to this [MaxAdView] instance.
   MethodChannel? _methodChannel;
 
-  late bool visible;
+  late double _width;
+  late double _height;
+  late bool _visible;
+  late bool _adaptiveBannerEnabled;
 
   @override
   void initState() {
     super.initState();
-    visible = widget.visible;
+    _visible = widget.visible;
+    _adaptiveBannerEnabled = (widget.extraParameters?['adaptive_banner'] == 'true');
   }
 
   @override
@@ -106,14 +114,27 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: _getAdViewSize(),
+        builder: (BuildContext context, AsyncSnapshot<Size> snapshot) {
+          if (snapshot.hasData) {
+            _width = snapshot.data!.width;
+            _height = snapshot.data!.height;
+            return buildAdView(context);
+          }
+          return Container();
+        });
+  }
+
+  Widget buildAdView(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       return Visibility(
           maintainState: true,
           maintainAnimation: true,
-          visible: visible,
+          visible: _visible,
           child: SizedBox(
-            width: _getWidth(),
-            height: _getHeight(),
+            width: _width,
+            height: _height,
             child: OverflowBox(
               alignment: Alignment.bottomCenter,
               child: AndroidView(
@@ -136,10 +157,10 @@ class _MaxAdViewState extends State<MaxAdView> {
       return Visibility(
           maintainState: true,
           maintainAnimation: true,
-          visible: visible,
+          visible: _visible,
           child: SizedBox(
-            width: _getWidth(),
-            height: _getHeight(),
+            width: _width,
+            height: _height,
             child: OverflowBox(
               alignment: Alignment.bottomCenter,
               child: UiKitView(
@@ -172,7 +193,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       var adUnitId = arguments["adUnitId"];
 
       if ("OnAdViewAdLoadedEvent" == method) {
-        if (!visible) visible = true;
+        if (!_visible) _visible = true;
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {
         widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));
@@ -188,20 +209,34 @@ class _MaxAdViewState extends State<MaxAdView> {
     });
   }
 
+  Future<Size> _getAdViewSize() async {
+    double width = _getWidth();
+    double height = (await _getHeight(width))!;
+    return Size(width, height);
+  }
+
   double _getWidth() {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecWidth;
     } else if (widget.adFormat == AdFormat.banner) {
+      if (_adaptiveBannerEnabled) {
+        if (widget.adaptiveBannerWidth != null) {
+          return widget.adaptiveBannerWidth!;
+        }
+      }
       return _isTablet() ? _leaderWidth : _bannerWidth;
     }
 
     return -1;
   }
 
-  double _getHeight() {
+  Future<double?> _getHeight(double width) async {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecHeight;
     } else if (widget.adFormat == AdFormat.banner) {
+      if (_adaptiveBannerEnabled) {
+        return await AppLovinMAX.getAdaptiveBannerHeightForWidth(width);
+      }
       return _isTablet() ? _leaderHeight : _bannerHeight;
     }
 

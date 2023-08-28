@@ -412,6 +412,13 @@ class AppLovinMAX {
     });
   }
 
+  /// Gets the adaptive banner size for the provided width.
+  static Future<double?> getAdaptiveBannerHeightForWidth(double width) {
+    return channel.invokeMethod('getAdaptiveBannerHeightForWidth', {
+        'width': width,
+    });
+  }
+
   //
   // MRECs
   //

@@ -594,6 +594,11 @@ public class AppLovinMAX
         destroyAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat() );
     }
 
+    public void getAdaptiveBannerHeightForWidth(final double width, final Result result)
+    {
+        result.success( (double) getDeviceSpecificBannerAdViewAdFormat().getAdaptiveSize( (int) width, applicationContext ).getHeight() );
+    }
+
     // MRECS
 
     public void createMRec(final String adUnitId, final String mrecPosition)
@@ -1819,6 +1824,11 @@ public class AppLovinMAX
             destroyBanner( adUnitId );
 
             result.success( null );
+        }
+        else if ( "getAdaptiveBannerHeightForWidth".equals( call.method ) )
+        {
+            double width = call.argument( "width" );
+            getAdaptiveBannerHeightForWidth( width, result );
         }
         else if ( "createMRec".equals( call.method ) )
         {
