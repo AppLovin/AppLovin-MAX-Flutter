@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.2.0
 * Add support for widget adaptive banners via `MaxAdView(extraParameters: {"adaptive_banner": "true"}, ... )`.
 ## 3.1.2
 * Fix `LateInitializationError` when building native ad widget. Fixes https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/113.
