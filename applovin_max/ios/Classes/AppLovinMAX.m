@@ -547,6 +547,11 @@ static FlutterMethodChannel *ALSharedChannel;
     [self destroyAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT];
 }
 
+- (void)getAdaptiveBannerHeightForWidth:(CGFloat)width andNotify:(FlutterResult)result
+{
+    result(@([DEVICE_SPECIFIC_ADVIEW_AD_FORMAT adaptiveSizeForWidth: width].height));
+}
+
 #pragma mark - MRECs
 
 - (void)createMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier position:(NSString *)position
@@ -1727,6 +1732,11 @@ static FlutterMethodChannel *ALSharedChannel;
         [self destroyBannerForAdUnitIdentifier: adUnitId];
         
         result(nil);
+    }
+    else if ( [@"getAdaptiveBannerHeightForWidth" isEqualToString: call.method] )
+    {
+        NSNumber *width = call.arguments[@"width"];
+        [self getAdaptiveBannerHeightForWidth: [width doubleValue] andNotify: result];
     }
     else if ( [@"createMRec" isEqualToString: call.method] )
     {
