@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-* Replace `MediaQuery.devicePixelRatioOf` with `MediaQuery.of().devicePixelRatio`.
+* Replace `MediaQuery.devicePixelRatioOf` with `MediaQuery.of().devicePixelRatio`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/120
 ## 3.2.0
 * Add support for widget adaptive banners via `MaxAdView(extraParameters: {"adaptive_banner": "true"}, ... )`.
 ## 3.1.2
