@@ -221,7 +221,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     if (key == null) return;
     Rect rect = _getViewSize(key, _nativeAdViewKey);
     if (defaultTargetPlatform == TargetPlatform.android) {
-      double devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+      double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
       _methodChannel!.invokeMethod(method, <String, dynamic>{
         'x': (rect.left * devicePixelRatio).round(),
         'y': (rect.top * devicePixelRatio).round(),
