@@ -1422,6 +1422,7 @@ static FlutterMethodChannel *ALSharedChannel;
              @"networkName" : ad.networkName,
              @"placement" : ad.placement ?: @"",
              @"revenue" : @(ad.revenue),
+             @"revenuePrecision" : ad.revenuePrecision,
              @"dspName" : ad.DSPName ?: @"",
              @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
 }

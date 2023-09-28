@@ -9,6 +9,9 @@ class MaxAd {
   /// The ad’s revenue amount, or 0 if no revenue amount exists.
   final double revenue;
 
+  /// The precision of the revenue as defined in the docs. possible values: 'publisher_defined', 'exact', 'estimated', 'undefined', ''
+  final String revenuePrecision;
+
   /// The creative ID tied to the ad, if any. You can report creative issues to the corresponding ad network using this ID.
   final String creativeId;
 
@@ -25,11 +28,11 @@ class MaxAd {
   final MaxNativeAd? nativeAd;
 
   /// @nodoc
-  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
+  MaxAd(this.adUnitId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
+    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
   }
 }
 
