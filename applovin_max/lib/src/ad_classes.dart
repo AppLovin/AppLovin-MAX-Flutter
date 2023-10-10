@@ -9,6 +9,16 @@ class MaxAd {
   /// The ad’s revenue amount, or 0 if no revenue amount exists.
   final double revenue;
 
+  /// The precision of the revenue value for this ad.
+  ///
+  /// Possible values:
+  /// * "publisher_defined" - If the revenue is the price assigned to the line item by the publisher.
+  /// * "exact" - If the revenue is the resulting price of a real-time auction.
+  /// * "estimated" - If the revenue is the price obtained by auto-CPM.
+  /// * "undefined" - If we do not have permission from the ad network to share impression-level data.
+  /// * "" - An empty string, if revenue and precision are not valid (for example, in test mode).
+  final String revenuePrecision;
+
   /// The creative ID tied to the ad, if any. You can report creative issues to the corresponding ad network using this ID.
   final String creativeId;
 
@@ -25,11 +35,11 @@ class MaxAd {
   final MaxNativeAd? nativeAd;
 
   /// @nodoc
-  MaxAd(this.adUnitId, this.networkName, this.revenue, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
+  MaxAd(this.adUnitId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
+    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
   }
 }
 

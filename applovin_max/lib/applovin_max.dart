@@ -144,6 +144,7 @@ class AppLovinMAX {
       adUnitId,
       arguments["networkName"],
       arguments["revenue"],
+      arguments["revenuePrecision"],
       arguments["creativeId"],
       arguments["dspName"],
       arguments["placement"],

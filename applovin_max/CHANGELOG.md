@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Add `revenuePrecision` API to the `MaxAd` object returned in ad callbacks. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#impression-level-user-revenue-api).
 * Replace `MediaQuery.devicePixelRatioOf` with `MediaQuery.of().devicePixelRatio`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/120
 ## 3.2.0
 * Add support for widget adaptive banners via `MaxAdView(extraParameters: {"adaptive_banner": "true"}, ... )`.
