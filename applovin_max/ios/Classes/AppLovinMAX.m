@@ -1298,15 +1298,7 @@ static FlutterMethodChannel *ALSharedChannel;
     // All positions have constant height
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray arrayWithObject: [adView.heightAnchor constraintEqualToConstant: adViewSize.height]];
     
-    UILayoutGuide *layoutGuide;
-    if ( @available(iOS 11.0, *) )
-    {
-        layoutGuide = superview.safeAreaLayoutGuide;
-    }
-    else
-    {
-        layoutGuide = superview.layoutMarginsGuide;
-    }
+    UILayoutGuide *layoutGuide = superview.safeAreaLayoutGuide;
     
     // If top of bottom center, stretch width of screen
     if ( [adViewPosition isEqual: @"top_center"] || [adViewPosition isEqual: @"bottom_center"] )
