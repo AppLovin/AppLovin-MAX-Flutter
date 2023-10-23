@@ -15,7 +15,7 @@ DESC
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '11.0'
   s.static_framework = true
   s.dependency 'Flutter'
   s.dependency 'AppLovinSDK', '11.11.2'
