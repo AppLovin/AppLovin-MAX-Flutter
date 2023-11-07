@@ -36,6 +36,8 @@
 @property (nonatomic, strong, nullable) NSArray<NSString *> *targetingKeywordsToSet;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *targetingInterestsToSet;
 
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *extraParametersToSet;
+
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MARewardedAd *> *rewardedAds;
@@ -95,7 +97,8 @@ static FlutterMethodChannel *ALSharedChannel;
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
         self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
-        
+        self.extraParametersToSet = [[NSMutableDictionary alloc] init];
+
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
         self.safeAreaBackground.backgroundColor = UIColor.clearColor;
@@ -226,7 +229,19 @@ static FlutterMethodChannel *ALSharedChannel;
         self.sdk.targetingData.interests = self.targetingInterestsToSet;
         self.targetingInterestsToSet = nil;
     }
-    
+
+    if ( self.extraParametersToSet.count > 0 )
+    {
+        ALSdkSettings *settings = [ALSdk shared].settings;
+        for (NSString* key in self.extraParametersToSet)
+        {
+            NSString* value = self.extraParametersToSet[key];
+            [settings setExtraParameterForKey: @"uid2_token" value: @"VALUE"];
+        }
+        [self.extraParametersToSet removeAllObjects];
+    }
+
+
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
      {
         [self log: @"SDK initialized"];
@@ -488,6 +503,19 @@ static FlutterMethodChannel *ALSharedChannel;
     }
     
     [self.sdk.targetingData clearAll];
+}
+
+- (void)setExtraParameter:key:(NSString *)key value:(NSString *)value
+{
+    if ( self.isPluginInitialized )
+    {
+        [self.extraParametersToSet setObject: value forKey: key];
+        return;
+    }
+    else
+    {
+        [self.sdk.settings setExtraParameterForKey: key value: value];
+    }
 }
 
 #pragma mark - Banners
@@ -1961,6 +1989,14 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( [@"clearAllTargetingData" isEqualToString: call.method] )
     {
         [self clearAllTargetingData];
+        
+        result(nil);
+    }
+    else if ( [@"setExtraParamater" isEqualToString: call.method] )
+    {
+        NSString *key = call.arguments[@"key"];
+        NSString *value = call.arguments[@"value"];
+        [self setExtraParameter: key: key value: value];
         
         result(nil);
     }

@@ -93,6 +93,8 @@ public class AppLovinMAX
     private List<String> targetingKeywordsToSet;
     private List<String> targetingInterestsToSet;
 
+    private final Map<String, String> extraParametersToSet = new HashMap<>();
+
     // Fullscreen Ad Fields
     private final Map<String, MaxInterstitialAd> mInterstitials = new HashMap<>( 2 );
     private final Map<String, MaxRewardedAd>     mRewardedAds   = new HashMap<>( 2 );
@@ -273,6 +275,15 @@ public class AppLovinMAX
         {
             sdk.getTargetingData().setInterests( targetingInterestsToSet );
             targetingInterestsToSet = null;
+        }
+
+        if ( !extraParametersToSet.isEmpty() )
+        {
+            for ( Map.Entry<String, String> entry : extraParametersToSet.entrySet() )
+            {
+                sdk.getSettings().setExtraParameter( entry.getKey(), entry.getValue() );
+            }
+            extraParametersToSet.clear();
         }
 
         sdk.initializeSdk( configuration -> {
@@ -722,6 +733,19 @@ public class AppLovinMAX
     {
         MaxAppOpenAd appOpenAd = retrieveAppOpenAd( adUnitId );
         appOpenAd.setExtraParameter( key, value );
+    }
+
+
+    public void setExtraParameter(final String key, final String value)
+    {
+        if ( isPluginInitialized )
+        {
+            sdk.getSettings().setExtraParameter( key, value );
+        }
+        else
+        {
+            extraParametersToSet.put( key, value );
+        }
     }
 
     // AD CALLBACKS
@@ -2033,6 +2057,14 @@ public class AppLovinMAX
         {
             List<String> value = call.argument( "value" );
             setTargetingDataInterests( value );
+
+            result.success( null );
+        }
+        else if ( "setExtraParameter".equals( call.method ) )
+        {
+            String key = call.argument( "key" );
+            String value = call.argument( "value" );
+            setExtraParameter( key, value );
 
             result.success( null );
         }
