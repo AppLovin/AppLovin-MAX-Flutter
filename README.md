@@ -8,17 +8,17 @@ Check out our integration docs [here](https://dash.applovin.com/documentation/me
 See [pub.dev](https://pub.dev/packages/applovin_max) for the latest releases of the plugin.
 
 ## Demo App Instructions
-To get started with the demo app, please make sure you have Flutter properly installed on your system. Once everything is properly installed, follow the instructions below to get the demo application up and running. 
+To get started with the demo app, please ensure Flutter is installed on your system. Once everything is properly installed, follow the instructions below to get the demo application up and running. 
 
-1. Update the SDK_KEY and ad unit IDs in the `main.dart` file. 
+1. Update the `SDK_KEY` and ad unit IDs in the `main.dart` file. 
 2. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
 
 ### Android
-1. Adding Adapters to `build.gradle`:
+#### 1. Adding Adapters to `build.gradle`:
 - Navigate to your Flutter project directory in your file explorer or terminal. 
 - Within the project directory, navigate to `android/app/` to find the `build.gradle` file. 
 - Open `build.gradle` with a text editor or an IDE. 
-- Under dependencies, add the adapters you need, as the documentation specifies. It will look something like this: 
+- Add the adapters you need under dependencies, as the documentation specifies. It will look something like this: 
 ```
 dependencies {
     // Other dependencies...
@@ -26,11 +26,11 @@ dependencies {
 }
 ```
 
-2. Updating `AndroidManifest.xml` with `meta-data` (if required):
+#### 2. Updating `AndroidManifest.xml` with `meta-data` (if required):
 - Within the `android/app/` directory, locate and open the `AndroidManifest.xml` file. 
-- If the network adapter you are adding requires `meta-data`, insert the necessary `meta-data` elements within the `<application>` tag. 
+- If the network adapter you add requires `meta-data`, insert the necessary `meta-data` elements within the `<application>` tag. 
 
-3. Adding Java or Kotlin Code (if required):
+#### 3. Adding Java or Kotlin Code (if required):
    
 For Java: 
 - Navigate to `android/app/src/main/java/com/example/your_project_name`
@@ -56,7 +56,7 @@ override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 ```
 
 ### iOS 
-1. Adding adapters to your podfile:
+#### 1. Adding adapters to your podfile:
 - Locate your `Podfile` in the `/ios` folder.
 - Open the Podfile with a text editor or IDE.
 - Add the adapter pods to your application as specified in the documentation. It will look something like this
@@ -66,16 +66,16 @@ target 'Runner' do
   pod `AppLovinSDK`
 end
 ```
-2. Install the Pods:
+#### 2. Install the Pods:
 - Save the `Podfile`.
-- Open a terminal window and navigate to the root of your Flutter project, and run the following command to install the pods:
+- Open a terminal window, navigate to the root of your Flutter project, and run the following command to install the pods:
 ```flutter pub get```
 - Optionally, you may also run `pod install` within the `ios` directory. 
 
-2. Adding code to your Xcode Project (if required):
-- In the `ios` folder of your Flutter project, find and open the `Runner.xcworkspace` file to launch Xcode.
+#### 3. Adding code to your Xcode Project (if required):
+- In your Flutter project's `ios` folder, find and open the `Runner.xcworkspace` file to launch Xcode.
 - Locate the `AppDelegate.m` (Objective-C) or `AppDelegate.swift` (Swift) file within Xcode.
-- Add the necessary code as directed by the adapter documentation. 
+- Add the necessary code in the `didFinishingLaunchingWithOptions` as the adapter documentation directs. 
   
 ## License
 MIT
