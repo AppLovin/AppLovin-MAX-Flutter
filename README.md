@@ -12,7 +12,7 @@ To get started with the demo app, please ensure Flutter is installed on your sys
 
 1. Obtain your AppLovin SDK Key from the dashboard [here](https://dash.applovin.com/documentation/mediation/flutter/getting-started/integration#initialize-the-sdk). 
 2. Obtain your Ad Unit IDs from the dashboard [here](https://dash.applovin.com/o/mediation/ad_units).
-3. Update the `SDK_KEY` and Ad Unit IDs in the `main.dart` file . 
+3. Update the `SDK_KEY` and Ad Unit IDs in the `main.dart` file. 
 4. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
 
 ### Android
