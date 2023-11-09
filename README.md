@@ -10,8 +10,10 @@ See [pub.dev](https://pub.dev/packages/applovin_max) for the latest releases of 
 ## Demo App Instructions
 To get started with the demo app, please ensure Flutter is installed on your system. Once everything is properly installed, follow the instructions below to get the demo application up and running. 
 
-1. Update the `SDK_KEY` and ad unit IDs in the `main.dart` file [here](https://github.com/AppLovin/AppLovin-MAX-Flutter/blob/73c5a281439791f4b81f595ab795f6b99cbc9457/applovin_max/example/lib/main.dart#L28). 
-2. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
+1. Obtain your AppLovin SDK Key from the dashboard [here](https://dash.applovin.com/documentation/mediation/flutter/getting-started/integration#initialize-the-sdk). 
+2. Obtain your Ad Unit IDs from the dashboard [here](https://dash.applovin.com/o/mediation/ad_units).
+3. Update the `SDK_KEY` and Ad Unit IDs in the `main.dart` file . 
+4. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
 
 ### Android
 #### 1. Adding Adapters to `build.gradle`:
