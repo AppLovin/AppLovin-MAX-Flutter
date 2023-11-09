@@ -10,7 +10,7 @@ See [pub.dev](https://pub.dev/packages/applovin_max) for the latest releases of 
 ## Demo App Instructions
 To get started with the demo app, please ensure Flutter is installed on your system. Once everything is properly installed, follow the instructions below to get the demo application up and running. 
 
-1. Update the `SDK_KEY` and ad unit IDs in the `main.dart` file. 
+1. Update the `SDK_KEY` and ad unit IDs in the `main.dart` file [here](https://github.com/AppLovin/AppLovin-MAX-Flutter/blob/73c5a281439791f4b81f595ab795f6b99cbc9457/applovin_max/example/lib/main.dart#L28). 
 2. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
 
 ### Android
@@ -18,7 +18,7 @@ To get started with the demo app, please ensure Flutter is installed on your sys
 - Navigate to your Flutter project directory in your file explorer or terminal. 
 - Within the project directory, navigate to `android/app/` to find the `build.gradle` file. 
 - Open `build.gradle` with a text editor or an IDE. 
-- Add the adapters you need under dependencies, as the documentation specifies. It will look something like this: 
+- Add the adapters you need under dependencies, as the [documentation](https://dash.applovin.com/documentation/mediation/flutter/mediation-adapters/android) specifies. It will look something like this: 
 ```
 dependencies {
     // Other dependencies...
@@ -59,7 +59,7 @@ override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 #### 1. Adding adapters to your podfile:
 - Locate your `Podfile` in the `/ios` folder.
 - Open the Podfile with a text editor or IDE.
-- Add the adapter pods to your application as specified in the documentation. It will look something like this
+- Add the adapter pods to your application as specified in the [documentation](https://dash.applovin.com/documentation/mediation/flutter/mediation-adapters/ios). It will look something like this
 ```
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -70,7 +70,7 @@ end
 - Save the `Podfile`.
 - Open a terminal window, navigate to the root of your Flutter project, and run the following command to install the pods:
 ```flutter pub get```
-- Optionally, you may also run `pod install` within the `ios` directory. 
+- Alternatively, you may also run `pod install` within the `ios` directory. 
 
 #### 3. Adding code to your Xcode Project (if required):
 - In your Flutter project's `ios` folder, find and open the `Runner.xcworkspace` file to launch Xcode.
