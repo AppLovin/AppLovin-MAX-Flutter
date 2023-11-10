@@ -408,7 +408,7 @@ static FlutterMethodChannel *ALSharedChannel;
     if ( self.sdk )
     {
         ALSdkSettings *settings = self.sdk.settings;
-        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil ];
+        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
         [self setPendingExtraParametersIfNeeded: settings];
     }
     else
@@ -1188,7 +1188,7 @@ static FlutterMethodChannel *ALSharedChannel;
     for ( NSString *key in self.extraParametersToSet )
     {
         NSString *value = self.extraParametersToSet[key];
-        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil ];
+        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
     }
     
     [self.extraParametersToSet removeAllObjects];
