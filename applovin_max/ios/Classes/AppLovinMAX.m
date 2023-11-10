@@ -27,6 +27,7 @@
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
 @property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
 @property (nonatomic, strong, nullable) NSNumber *locationCollectionEnabledToSet;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *extraParametersToSet;
 
 @property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
 @property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
@@ -95,7 +96,8 @@ static FlutterMethodChannel *ALSharedChannel;
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
         self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
-        
+        self.extraParametersToSet = [NSMutableDictionary dictionaryWithCapacity: 8];
+
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
         self.safeAreaBackground.backgroundColor = UIColor.clearColor;
@@ -226,7 +228,9 @@ static FlutterMethodChannel *ALSharedChannel;
         self.sdk.targetingData.interests = self.targetingInterestsToSet;
         self.targetingInterestsToSet = nil;
     }
-    
+
+    [self setPendingExtraParametersIfNeeded: self.sdk.settings];
+
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
      {
         [self log: @"SDK initialized"];
@@ -390,6 +394,26 @@ static FlutterMethodChannel *ALSharedChannel;
     else
     {
         self.locationCollectionEnabledToSet = @(enabled);
+    }
+}
+
+- (void)setExtraParameter:(NSString *)key value:(NSString *)value
+{
+    if ( ![key al_isValidString] )
+    {
+        [self log: @"[%@] Failed to set extra parameter for nil or empty key: %@", TAG, key];
+        return;
+    }
+
+    if ( self.sdk )
+    {
+        ALSdkSettings *settings = self.sdk.settings;
+        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
+        [self setPendingExtraParametersIfNeeded: settings];
+    }
+    else
+    {
+        self.extraParametersToSet[key] = value;
     }
 }
 
@@ -1157,6 +1181,19 @@ static FlutterMethodChannel *ALSharedChannel;
     [self.adViewAdFormats removeObjectForKey: adUnitIdentifier];
 }
 
+- (void)setPendingExtraParametersIfNeeded:(ALSdkSettings *)settings
+{
+    if ( self.extraParametersToSet.count <= 0 ) return;
+    
+    for ( NSString *key in self.extraParametersToSet )
+    {
+        NSString *value = self.extraParametersToSet[key];
+        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
+    }
+    
+    [self.extraParametersToSet removeAllObjects];
+}
+
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat
 {
     [self log: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
@@ -1637,6 +1674,14 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         BOOL isLocationCollectionEnabled = ((NSNumber *)call.arguments[@"value"]).boolValue;
         [self setLocationCollectionEnabled: isLocationCollectionEnabled];
+        
+        result(nil);
+    }
+    else if ( [@"setExtraParameter" isEqualToString: call.method] )
+    {
+        NSString *key = call.arguments[@"key"];
+        NSString *value = call.arguments[@"value"];
+        [self setExtraParameter: key value: value];
         
         result(nil);
     }
