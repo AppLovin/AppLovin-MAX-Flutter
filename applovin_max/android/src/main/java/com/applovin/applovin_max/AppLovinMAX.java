@@ -79,11 +79,12 @@ public class AppLovinMAX
     private AppLovinSdkConfiguration sdkConfiguration;
 
     // Store these values if pub attempts to set it before initializing
-    private String       userIdToSet;
-    private List<String> testDeviceAdvertisingIdsToSet;
-    private Boolean      verboseLoggingToSet;
-    private Boolean      creativeDebuggerEnabledToSet;
-    private Boolean      locationCollectionEnabledToSet;
+    private       String              userIdToSet;
+    private       List<String>        testDeviceAdvertisingIdsToSet;
+    private       Boolean             verboseLoggingToSet;
+    private       Boolean             creativeDebuggerEnabledToSet;
+    private       Boolean             locationCollectionEnabledToSet;
+    private final Map<String, String> extraParametersToSet = new HashMap<>( 8 );
 
     private Integer      targetingYearOfBirthToSet;
     private String       targetingGenderToSet;
@@ -275,6 +276,8 @@ public class AppLovinMAX
             targetingInterestsToSet = null;
         }
 
+        setPendingExtraParametersIfNeeded( sdk.getSettings() );
+
         sdk.initializeSdk( configuration -> {
 
             d( "SDK initialized" );
@@ -444,6 +447,26 @@ public class AppLovinMAX
         else
         {
             locationCollectionEnabledToSet = enabled;
+        }
+    }
+
+    public void setExtraParameter(final String key, @Nullable final String value)
+    {
+        if ( TextUtils.isEmpty( key ) )
+        {
+            e( "ERROR: Failed to set extra parameter for null or empty key: " + key );
+            return;
+        }
+
+        if ( sdk != null )
+        {
+            AppLovinSdkSettings settings = sdk.getSettings();
+            settings.setExtraParameter( key, value );
+            setPendingExtraParametersIfNeeded( settings );
+        }
+        else
+        {
+            extraParametersToSet.put( key, value );
         }
     }
 
@@ -1285,6 +1308,18 @@ public class AppLovinMAX
         }
     }
 
+    private void setPendingExtraParametersIfNeeded(final AppLovinSdkSettings settings)
+    {
+        if ( extraParametersToSet.size() <= 0 ) return;
+
+        for ( final String key : extraParametersToSet.keySet() )
+        {
+            settings.setExtraParameter( key, extraParametersToSet.get( key ) );
+        }
+
+        extraParametersToSet.clear();
+    }
+
     // Utility Methods
 
     private void logInvalidAdFormat(MaxAdFormat adFormat)
@@ -1740,6 +1775,14 @@ public class AppLovinMAX
         {
             boolean isLocationCollectionEnabled = call.argument( "value" );
             setLocationCollectionEnabled( isLocationCollectionEnabled );
+
+            result.success( null );
+        }
+        else if ( "setExtraParameter".equals( call.method ) )
+        {
+            String key = call.argument( "key" );
+            String value = call.argument( "value" );
+            setExtraParameter( key, value );
 
             result.success( null );
         }
