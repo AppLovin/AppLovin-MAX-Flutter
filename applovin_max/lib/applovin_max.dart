@@ -631,4 +631,12 @@ class AppLovinMAX {
       'value': value,
     });
   }
+
+  /// Sets an extra parameter.
+  static void setExtraParameter(String key, String value) {
+    channel.invokeMethod('setExtraParameter', {
+      'key': key,
+      'value': value,
+    });
+  }
 }
