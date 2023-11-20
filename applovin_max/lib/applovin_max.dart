@@ -304,6 +304,14 @@ class AppLovinMAX {
     });
   }
 
+  /// Sets an extra parameter to pass to the AppLovin server.
+  static void setExtraParameter(String key, String? value) {
+    channel.invokeMethod('setExtraParameter', {
+      'key': key,
+      'value': value,
+    });
+  }
+
   //
   // BANNERS
   //
