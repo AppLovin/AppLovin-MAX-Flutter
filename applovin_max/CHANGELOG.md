@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Depends on Android SDK v12.0.0 and iOS SDK v12.0.0.
 * Add support for `AppLvinMAX.setExtraParameter()` API.
 ## 3.3.0
 * Add `revenuePrecision` API to the `MaxAd` object returned in ad callbacks. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#impression-level-user-revenue-api).
