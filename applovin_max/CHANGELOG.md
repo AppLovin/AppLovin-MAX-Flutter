@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.4.0
 * Depends on Android SDK v12.0.0 and iOS SDK v12.0.0.
 * Add support for `AppLvinMAX.setExtraParameter()` API.
 ## 3.3.0
