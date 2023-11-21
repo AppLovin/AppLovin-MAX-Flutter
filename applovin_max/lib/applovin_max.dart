@@ -137,7 +137,7 @@ class AppLovinMAX {
   /// @nodoc
   static MaxAd createAd(String adUnitId, dynamic arguments) {
     var rawNativeAd = arguments["nativeAd"];
-    var jsonNativeAd = (rawNativeAd != null) ?  Map<String, dynamic>.from(rawNativeAd) : null;
+    var jsonNativeAd = (rawNativeAd != null) ? Map<String, dynamic>.from(rawNativeAd) : null;
     var nativeAd = (jsonNativeAd != null) ? MaxNativeAd.fromJson(jsonNativeAd) : null;
 
     return MaxAd(
@@ -312,6 +312,37 @@ class AppLovinMAX {
     });
   }
 
+  /// Enables the MAX Terms and Privacy Policy Flow.
+  static void setTermsAndPrivacyPolicyFlowEnabled(bool enabled) {
+    channel.invokeMethod('setTermsAndPrivacyPolicyFlowEnabled', {
+      'value': enabled,
+    });
+  }
+
+  /// The URL of your company’s privacy policy, as a string. This is required in
+  /// order to enable the Terms Flow.
+  static void setPrivacyPolicyUrl(String urlString) {
+    channel.invokeMethod('setPrivacyPolicyUrl', {
+      'value': urlString,
+    });
+  }
+
+  /// The URL of your company’s terms of service, as a string. This is optional;
+  /// you can enable the Terms Flow with or without it.
+  static void setTermsOfServiceUrl(String urlString) {
+    channel.invokeMethod('setTermsOfServiceUrl', {
+      'value': urlString,
+    });
+  }
+
+  /// Set debug user geography. You may use this to test CMP flow by setting
+  /// this to [ConsentFlowUserGeography.GDPR].
+  static void setConsentFlowDebugUserGeography(ConsentFlowUserGeography userGeography) {
+    channel.invokeMethod('setConsentFlowDebugUserGeography', {
+      'value': userGeography.value,
+    });
+  }
+
   //
   // BANNERS
   //
@@ -424,7 +455,7 @@ class AppLovinMAX {
   /// Gets the adaptive banner size for the provided width.
   static Future<double?> getAdaptiveBannerHeightForWidth(double width) {
     return channel.invokeMethod('getAdaptiveBannerHeightForWidth', {
-        'width': width,
+      'width': width,
     });
   }
 

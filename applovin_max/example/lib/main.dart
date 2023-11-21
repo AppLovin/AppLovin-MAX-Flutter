@@ -59,6 +59,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> initializePlugin() async {
     logStatus("Initializing SDK...");
 
+    // MAX Consent Flow - https://dash.applovin.com/documentation/mediation/react-native/getting-started/terms-and-privacy-policy-flow
+    AppLovinMAX.setTermsAndPrivacyPolicyFlowEnabled(true);
+    AppLovinMAX.setPrivacyPolicyUrl("https://your_company_name.com/privacy");
+    AppLovinMAX.setTermsOfServiceUrl("https://your_company_name.com/terms");
+
     Map? configuration = await AppLovinMAX.initialize(_sdkKey);
     if (configuration != null) {
       _isInitialized = true;

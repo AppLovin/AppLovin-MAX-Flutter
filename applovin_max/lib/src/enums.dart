@@ -71,3 +71,56 @@ enum UserGender {
   /// @nodoc
   const UserGender(this.value);
 }
+
+///
+/// This enum represents the user's geography used to determine the type of
+/// consent flow shown to the user.
+///
+enum ConsentFlowUserGeography {
+  /// User's geography is unknown.
+  unknown('U'),
+
+  /// The user is in GDPR region.
+  gdpr('G'),
+
+  /// The user is in a non-GDPR region.
+  other('O');
+
+  /// @nodoc
+  final String value;
+
+  /// @nodoc
+  const ConsentFlowUserGeography(this.value);
+}
+
+///
+/// AppLovin SDK-defined app tracking transparency status values (extended to include "unavailable"
+/// state on iOS before iOS14).
+///
+enum AppTrackingStatus {
+  /// Device is on iOS before iOS14, AppTrackingTransparency.framework is not
+  /// available.
+  unavailable('U'),
+
+  /// The user has not yet received an authorization request to authorize access
+  /// to app-related data that can be used for tracking the user or the device.
+  notDetermined('N'),
+
+  /// Authorization to access app-related data that can be used for tracking the
+  /// user or the device is restricted.
+  restricted('R'),
+
+  /// The user denies authorization to access app-related data that can be used
+  /// for tracking the user or the device.
+  denied('D'),
+
+  /// The user authorizes access to app-related data that can be used for
+  /// tracking the user or the device.
+  authorized('A');
+
+  /// @nodoc
+  final String value;
+
+  /// @nodoc
+  const AppTrackingStatus(this.value);
+}

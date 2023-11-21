@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Add support for Terms and Privacy Policy Flow [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow).
 * Depends on Android SDK v12.0.0 and iOS SDK v12.0.0.
 * Add support for `AppLvinMAX.setExtraParameter()` API.
 ## 3.3.0

@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.applovin.sdk.AppLovinSdkConfiguration.ConsentFlowUserGeography;
 import com.applovin.sdk.AppLovinSdkSettings;
 import com.applovin.sdk.AppLovinSdkUtils;
 import com.applovin.sdk.AppLovinUserService;
@@ -85,6 +87,11 @@ public class AppLovinMAX
     private       Boolean             creativeDebuggerEnabledToSet;
     private       Boolean             locationCollectionEnabledToSet;
     private final Map<String, String> extraParametersToSet = new HashMap<>( 8 );
+
+    private Boolean termsAndPrivacyPolicyFlowEnabledToSet;
+    private Uri     privacyPolicyURLToSet;
+    private Uri     termsOfServiceURLToSet;
+    private String  debugUserGeographyToSet;
 
     private Integer      targetingYearOfBirthToSet;
     private String       targetingGenderToSet;
@@ -199,8 +206,34 @@ public class AppLovinMAX
             }
         }
 
+        AppLovinSdkSettings settings = new AppLovinSdkSettings( applicationContext );
+
+        if ( termsAndPrivacyPolicyFlowEnabledToSet != null )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setEnabled( termsAndPrivacyPolicyFlowEnabledToSet );
+            termsAndPrivacyPolicyFlowEnabledToSet = null;
+        }
+
+        if ( privacyPolicyURLToSet != null )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setPrivacyPolicyUri( privacyPolicyURLToSet );
+            privacyPolicyURLToSet = null;
+        }
+
+        if ( termsOfServiceURLToSet != null )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setTermsOfServiceUri( termsOfServiceURLToSet );
+            termsOfServiceURLToSet = null;
+        }
+
+        if ( !TextUtils.isEmpty( debugUserGeographyToSet ) )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setDebugUserGeography( getAppLovinConsentFlowUserGeography( debugUserGeographyToSet ) );
+            debugUserGeographyToSet = null;
+        }
+
         // Initialize SDK
-        sdk = AppLovinSdk.getInstance( sdkKeyToUse, new AppLovinSdkSettings( applicationContext ), applicationContext );
+        sdk = AppLovinSdk.getInstance( sdkKeyToUse, settings, applicationContext );
         sdk.setPluginVersion( "Flutter-" + pluginVersion );
         sdk.setMediationProvider( AppLovinMediationProvider.MAX );
 
@@ -296,6 +329,8 @@ public class AppLovinMAX
             Map<String, Object> message = new HashMap<>( 2 );
             message.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
             message.put( "countryCode", sdkConfiguration.getCountryCode() );
+            message.put( "isTestModeEnabled", sdkConfiguration.isTestModeEnabled() );
+            message.put( "consentFlowUserGeography", getRawAppLovinConsentFlowUserGeography( sdkConfiguration.getConsentFlowUserGeography() ) );
 
             return message;
         }
@@ -468,6 +503,28 @@ public class AppLovinMAX
         {
             extraParametersToSet.put( key, value );
         }
+    }
+
+    // MAX Terms and Privacy Policy Flow
+
+    public void setTermsAndPrivacyPolicyFlowEnabled(final boolean enabled)
+    {
+        termsAndPrivacyPolicyFlowEnabledToSet = enabled;
+    }
+
+    public void setPrivacyPolicyUrl(final String urlString)
+    {
+        privacyPolicyURLToSet = Uri.parse( urlString );
+    }
+
+    public void setTermsOfServiceUrl(final String urlString)
+    {
+        termsOfServiceURLToSet = Uri.parse( urlString );
+    }
+
+    public void setConsentFlowDebugUserGeography(final String userGeography)
+    {
+        debugUserGeographyToSet = userGeography;
     }
 
     // Data Passing
@@ -1674,6 +1731,34 @@ public class AppLovinMAX
         return AppLovinAdContentRating.NONE;
     }
 
+    private static ConsentFlowUserGeography getAppLovinConsentFlowUserGeography(final String userGeography)
+    {
+        if ( "G".equalsIgnoreCase( userGeography ) )
+        {
+            return ConsentFlowUserGeography.GDPR;
+        }
+        else if ( "O".equalsIgnoreCase( userGeography ) )
+        {
+            return ConsentFlowUserGeography.OTHER;
+        }
+
+        return ConsentFlowUserGeography.UNKNOWN;
+    }
+
+    private static String getRawAppLovinConsentFlowUserGeography(final ConsentFlowUserGeography userGeography)
+    {
+        if ( ConsentFlowUserGeography.GDPR == userGeography )
+        {
+            return "G";
+        }
+        else if ( ConsentFlowUserGeography.OTHER == userGeography )
+        {
+            return "O";
+        }
+
+        return "U";
+    }
+
     // Flutter channel
 
     @Override
@@ -1783,6 +1868,34 @@ public class AppLovinMAX
             String key = call.argument( "key" );
             String value = call.argument( "value" );
             setExtraParameter( key, value );
+
+            result.success( null );
+        }
+        else if ( "setTermsAndPrivacyPolicyFlowEnabled".equals( call.method ) )
+        {
+            boolean value = call.argument( "value" );
+            setTermsAndPrivacyPolicyFlowEnabled( value );
+
+            result.success( null );
+        }
+        else if ( "setPrivacyPolicyUrl".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setPrivacyPolicyUrl( value );
+
+            result.success( null );
+        }
+        else if ( "setTermsOfServiceUrl".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setTermsOfServiceUrl( value );
+
+            result.success( null );
+        }
+        else if ( "setConsentFlowDebugUserGeography".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setConsentFlowDebugUserGeography( value );
 
             result.success( null );
         }
