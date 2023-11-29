@@ -68,6 +68,10 @@ public class AppLovinMAX
     private static final String SDK_TAG = "AppLovinSdk";
     private static final String TAG     = "AppLovinMAX";
 
+    private static final String USER_GEOGRAPHY_GDPR    = "G";
+    private static final String USER_GEOGRAPHY_OTHER   = "O";
+    private static final String USER_GEOGRAPHY_UNKNOWN = "U";
+
     public static AppLovinMAX instance;
 
     private MethodChannel         sharedChannel;
@@ -226,7 +230,7 @@ public class AppLovinMAX
             termsOfServiceURLToSet = null;
         }
 
-        if ( !TextUtils.isEmpty( debugUserGeographyToSet ) )
+        if ( AppLovinSdkUtils.isValidString( debugUserGeographyToSet ) )
         {
             settings.getTermsAndPrivacyPolicyFlowSettings().setDebugUserGeography( getAppLovinConsentFlowUserGeography( debugUserGeographyToSet ) );
             debugUserGeographyToSet = null;
@@ -1733,11 +1737,11 @@ public class AppLovinMAX
 
     private static ConsentFlowUserGeography getAppLovinConsentFlowUserGeography(final String userGeography)
     {
-        if ( "G".equalsIgnoreCase( userGeography ) )
+        if ( USER_GEOGRAPHY_GDPR.equalsIgnoreCase( userGeography ) )
         {
             return ConsentFlowUserGeography.GDPR;
         }
-        else if ( "O".equalsIgnoreCase( userGeography ) )
+        else if ( USER_GEOGRAPHY_OTHER.equalsIgnoreCase( userGeography ) )
         {
             return ConsentFlowUserGeography.OTHER;
         }
@@ -1749,14 +1753,14 @@ public class AppLovinMAX
     {
         if ( ConsentFlowUserGeography.GDPR == userGeography )
         {
-            return "G";
+            return USER_GEOGRAPHY_GDPR;
         }
         else if ( ConsentFlowUserGeography.OTHER == userGeography )
         {
-            return "O";
+            return USER_GEOGRAPHY_OTHER;
         }
 
-        return "U";
+        return USER_GEOGRAPHY_UNKNOWN;
     }
 
     // Flutter channel

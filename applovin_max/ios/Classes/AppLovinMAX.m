@@ -63,6 +63,16 @@
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
 
+static NSString *const USER_GEOGRAPHY_GDPR = @"G";
+static NSString *const USER_GEOGRAPHY_OTHER = @"O";
+static NSString *const USER_GEOGRAPHY_UNKNOWN = @"U";
+
+static NSString *const APP_TRACKING_STATUS_NOTDETERMINED = @"N";
+static NSString *const APP_TRACKING_STATUS_RESTRICTED = @"R";
+static NSString *const APP_TRACKING_STATUS_DENIED = @"D";
+static NSString *const APP_TRACKING_STATUS_AUTHORIZED = @"A";
+static NSString *const APP_TRACKING_STATUS_UNAVAILABLE = @"U";
+
 static AppLovinMAX *AppLovinMAXShared;
 
 static FlutterMethodChannel *ALSharedChannel;
@@ -158,15 +168,30 @@ static FlutterMethodChannel *ALSharedChannel;
     }
     
     ALSdkSettings *settings = [[ALSdkSettings alloc] init];
-    settings.termsAndPrivacyPolicyFlowSettings.enabled = self.termsAndPrivacyPolicyFlowEnabledToSet.boolValue;
-    settings.termsAndPrivacyPolicyFlowSettings.privacyPolicyURL = self.privacyPolicyURLToSet;
-    settings.termsAndPrivacyPolicyFlowSettings.termsOfServiceURL = self.termsOfServiceURLToSet;
-    settings.termsAndPrivacyPolicyFlowSettings.debugUserGeography = [self toAppLovinConsentFlowUserGeography: self.debugUserGeographyToSet];
 
-    self.termsAndPrivacyPolicyFlowEnabledToSet = nil;
-    self.privacyPolicyURLToSet = nil;
-    self.termsOfServiceURLToSet = nil;
-    self.debugUserGeographyToSet = nil;
+    if ( self.termsAndPrivacyPolicyFlowEnabledToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.enabled = self.termsAndPrivacyPolicyFlowEnabledToSet.boolValue;
+        self.termsAndPrivacyPolicyFlowEnabledToSet = nil;
+    }
+
+    if ( self.privacyPolicyURLToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.privacyPolicyURL = self.privacyPolicyURLToSet;
+        self.privacyPolicyURLToSet = nil;
+    }
+
+    if ( self.termsOfServiceURLToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.termsOfServiceURL = self.termsOfServiceURLToSet;
+        self.termsOfServiceURLToSet = nil;
+    }
+
+    if ( self.debugUserGeographyToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.debugUserGeography = [self toAppLovinConsentFlowUserGeography: self.debugUserGeographyToSet];
+        self.debugUserGeographyToSet = nil;
+    }
     
     // Initialize SDK
     self.sdk = [ALSdk sharedWithKey: sdkKey settings: settings];
@@ -1602,11 +1627,11 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (ALConsentFlowUserGeography)toAppLovinConsentFlowUserGeography:(NSString *)userGeography
 {
-    if ( [@"G" al_isEqualToStringIgnoringCase: userGeography] )
+    if ( [USER_GEOGRAPHY_GDPR al_isEqualToStringIgnoringCase: userGeography] )
     {
         return ALConsentFlowUserGeographyGDPR;
     }
-    else if ( [@"O" al_isEqualToStringIgnoringCase: userGeography] )
+    else if ( [USER_GEOGRAPHY_OTHER al_isEqualToStringIgnoringCase: userGeography] )
     {
         return ALConsentFlowUserGeographyOther;
     }
@@ -1618,36 +1643,36 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     if ( ALConsentFlowUserGeographyGDPR == userGeography )
     {
-        return @"G";
+        return USER_GEOGRAPHY_GDPR;
     }
     else if ( ALConsentFlowUserGeographyOther == userGeography )
     {
-        return @"O";
+        return USER_GEOGRAPHY_OTHER;
     }
 
-    return @"U";
+    return USER_GEOGRAPHY_UNKNOWN;
 }
 
 - (NSString *)fromAppLovinAppTrackingStatus:(ALAppTrackingTransparencyStatus)status
 {
     if ( ALAppTrackingTransparencyStatusNotDetermined == status )
     {
-        return @"N";
+        return APP_TRACKING_STATUS_NOTDETERMINED;
     }
     else if ( ALAppTrackingTransparencyStatusRestricted == status )
     {
-        return @"R";
+        return APP_TRACKING_STATUS_RESTRICTED;
     }
     else if ( ALAppTrackingTransparencyStatusDenied == status )
     {
-        return @"D";
+        return APP_TRACKING_STATUS_DENIED;
     }
     else if ( ALAppTrackingTransparencyStatusAuthorized == status )
     {
-        return @"A";
+        return APP_TRACKING_STATUS_AUTHORIZED;
     }
 
-    return @"U"; // ALAppTrackingTransparencyStatusUnavailable
+    return APP_TRACKING_STATUS_UNAVAILABLE;
 }
 
 #pragma mark - Flutter Event Channel
