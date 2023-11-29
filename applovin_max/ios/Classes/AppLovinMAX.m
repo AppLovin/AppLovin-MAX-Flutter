@@ -22,6 +22,7 @@
 @property (nonatomic, strong) ALSdkConfiguration *sdkConfiguration;
 
 // Store these values if pub attempts to set it before initializing
+@property (nonatomic, strong, nullable) NSArray<NSString *> *initializationAdUnitIdentifiersToSet;
 @property (nonatomic,   copy, nullable) NSString *userIdentifierToSet;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *testDeviceIdentifiersToSet;
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
@@ -168,6 +169,13 @@ static FlutterMethodChannel *ALSharedChannel;
     }
     
     ALSdkSettings *settings = [[ALSdkSettings alloc] init];
+
+    // Selective init
+    if ( self.initializationAdUnitIdentifiersToSet )
+    {
+        settings.initializationAdUnitIdentifiers = self.initializationAdUnitIdentifiersToSet;
+        self.initializationAdUnitIdentifiersToSet = nil;
+    }
 
     if ( self.termsAndPrivacyPolicyFlowEnabledToSet )
     {
@@ -459,6 +467,11 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.extraParametersToSet[key] = value;
     }
+}
+
+- (void)setInitializationAdUnitIds:(NSArray<NSString *> *)adUnitIds
+{
+    self.initializationAdUnitIdentifiersToSet = adUnitIds;
 }
 
 #pragma mark - MAX Terms and Privacy Policy Flow
@@ -1798,6 +1811,13 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *key = call.arguments[@"key"];
         NSString *value = call.arguments[@"value"];
         [self setExtraParameter: key value: value];
+        
+        result(nil);
+    }
+    else if ( [@"setInitializationAdUnitIds" isEqualToString: call.method] )
+    {
+        NSArray<NSString *> *adUnitIds = call.arguments[@"value"];
+        [self setInitializationAdUnitIds: adUnitIds];
         
         result(nil);
     }

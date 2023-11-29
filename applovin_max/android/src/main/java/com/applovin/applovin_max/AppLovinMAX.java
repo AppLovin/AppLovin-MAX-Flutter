@@ -85,6 +85,7 @@ public class AppLovinMAX
     private AppLovinSdkConfiguration sdkConfiguration;
 
     // Store these values if pub attempts to set it before initializing
+    private       List<String>        initializationAdUnitIdsToSet;
     private       String              userIdToSet;
     private       List<String>        testDeviceAdvertisingIdsToSet;
     private       Boolean             verboseLoggingToSet;
@@ -211,6 +212,13 @@ public class AppLovinMAX
         }
 
         AppLovinSdkSettings settings = new AppLovinSdkSettings( applicationContext );
+
+        // Selective init
+        if ( initializationAdUnitIdsToSet != null )
+        {
+            settings.setInitializationAdUnitIds( initializationAdUnitIdsToSet );
+            initializationAdUnitIdsToSet = null;
+        }
 
         if ( termsAndPrivacyPolicyFlowEnabledToSet != null )
         {
@@ -507,6 +515,11 @@ public class AppLovinMAX
         {
             extraParametersToSet.put( key, value );
         }
+    }
+
+    public void setInitializationAdUnitIds(final List<String> rawAdUnitIds)
+    {
+        initializationAdUnitIdsToSet = new ArrayList<>( rawAdUnitIds );
     }
 
     // MAX Terms and Privacy Policy Flow
@@ -1872,6 +1885,13 @@ public class AppLovinMAX
             String key = call.argument( "key" );
             String value = call.argument( "value" );
             setExtraParameter( key, value );
+
+            result.success( null );
+        }
+        else if ( "setInitializationAdUnitIds".equals( call.method ) )
+        {
+            List<String> adUnitIds = call.argument( "value" );
+            setInitializationAdUnitIds( adUnitIds );
 
             result.success( null );
         }
