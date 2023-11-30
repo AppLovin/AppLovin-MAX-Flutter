@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -188,7 +187,7 @@ public class AppLovinMAX
 
         // If SDK key passed in is empty, check Android Manifest
         String sdkKeyToUse = sdkKey;
-        if ( TextUtils.isEmpty( sdkKey ) )
+        if ( !AppLovinSdkUtils.isValidString( sdkKey ) )
         {
             try
             {
@@ -204,7 +203,7 @@ public class AppLovinMAX
                 e( "Unable to retrieve SDK key from Android Manifest: " + th );
             }
 
-            if ( TextUtils.isEmpty( sdkKeyToUse ) )
+            if ( !AppLovinSdkUtils.isValidString( sdkKeyToUse ) )
             {
                 throw new IllegalStateException( "Unable to initialize AppLovin SDK - no SDK key provided and not found in Android Manifest!" );
             }
@@ -236,39 +235,41 @@ public class AppLovinMAX
             debugUserGeographyToSet = null;
         }
 
-        // Initialize SDK
-        sdk = AppLovinSdk.getInstance( sdkKeyToUse, settings, applicationContext );
-        sdk.setPluginVersion( "Flutter-" + pluginVersion );
-        sdk.setMediationProvider( AppLovinMediationProvider.MAX );
-
-        if ( !TextUtils.isEmpty( userIdToSet ) )
-        {
-            sdk.setUserIdentifier( userIdToSet );
-            userIdToSet = null;
-        }
-
         if ( testDeviceAdvertisingIdsToSet != null )
         {
-            sdk.getSettings().setTestDeviceAdvertisingIds( testDeviceAdvertisingIdsToSet );
+            settings.setTestDeviceAdvertisingIds( testDeviceAdvertisingIdsToSet );
             testDeviceAdvertisingIdsToSet = null;
         }
 
         if ( verboseLoggingToSet != null )
         {
-            sdk.getSettings().setVerboseLogging( verboseLoggingToSet );
+            settings.setVerboseLogging( verboseLoggingToSet );
             verboseLoggingToSet = null;
         }
 
         if ( creativeDebuggerEnabledToSet != null )
         {
-            sdk.getSettings().setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
+            settings.setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
             creativeDebuggerEnabledToSet = null;
         }
 
         if ( locationCollectionEnabledToSet != null )
         {
-            sdk.getSettings().setLocationCollectionEnabled( locationCollectionEnabledToSet );
+            settings.setLocationCollectionEnabled( locationCollectionEnabledToSet );
             locationCollectionEnabledToSet = null;
+        }
+
+        setPendingExtraParametersIfNeeded( settings );
+
+        // Initialize SDK
+        sdk = AppLovinSdk.getInstance( sdkKeyToUse, settings, applicationContext );
+        sdk.setPluginVersion( "Flutter-" + pluginVersion );
+        sdk.setMediationProvider( AppLovinMediationProvider.MAX );
+
+        if ( AppLovinSdkUtils.isValidString( userIdToSet ) )
+        {
+            sdk.setUserIdentifier( userIdToSet );
+            userIdToSet = null;
         }
 
         if ( targetingYearOfBirthToSet != null )
@@ -312,8 +313,6 @@ public class AppLovinMAX
             sdk.getTargetingData().setInterests( targetingInterestsToSet );
             targetingInterestsToSet = null;
         }
-
-        setPendingExtraParametersIfNeeded( sdk.getSettings() );
 
         sdk.initializeSdk( configuration -> {
 
@@ -491,7 +490,7 @@ public class AppLovinMAX
 
     public void setExtraParameter(final String key, @Nullable final String value)
     {
-        if ( TextUtils.isEmpty( key ) )
+        if ( !AppLovinSdkUtils.isValidString( key ) )
         {
             e( "ERROR: Failed to set extra parameter for null or empty key: " + key );
             return;
@@ -820,7 +819,7 @@ public class AppLovinMAX
             name = ( MaxAdFormat.MREC == adFormat ) ? "OnMRecAdLoadedEvent" : "OnBannerAdLoadedEvent";
 
             String adViewPosition = mAdViewPositions.get( ad.getAdUnitId() );
-            if ( !TextUtils.isEmpty( adViewPosition ) )
+            if ( AppLovinSdkUtils.isValidString( adViewPosition ) )
             {
                 // Only position ad if not native UI component
                 positionAdView( ad );
@@ -858,7 +857,7 @@ public class AppLovinMAX
     @Override
     public void onAdLoadFailed(final String adUnitId, final MaxError error)
     {
-        if ( TextUtils.isEmpty( adUnitId ) )
+        if ( !AppLovinSdkUtils.isValidString( adUnitId ) )
         {
             logStackTrace( new IllegalArgumentException( "adUnitId cannot be null" ) );
             return;
@@ -1570,12 +1569,12 @@ public class AppLovinMAX
     {
         Map<String, Object> adInfo = new HashMap<>( 7 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
-        adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
+        adInfo.put( "creativeId", AppLovinSdkUtils.isValidString( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
         adInfo.put( "networkName", ad.getNetworkName() );
-        adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
+        adInfo.put( "placement", AppLovinSdkUtils.isValidString( ad.getPlacement() ) ? ad.getPlacement() : "" );
         adInfo.put( "revenue", ad.getRevenue() );
         adInfo.put( "revenuePrecision", ad.getRevenuePrecision() );
-        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
+        adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
 
         return adInfo;
