@@ -21,7 +21,7 @@ enum AdViewPosition {
 ///
 /// The state where no such determination could be made is represented by [ConsentDialogState.unknown].
 ///
-@Deprecated('Use [ConsentFlowUserGeography] instead')
+@Deprecated('Use ConsentFlowUserGeography instead.')
 enum ConsentDialogState {
   ///
   /// The consent dialog state could not be determined. This is likely due to the SDK failing to initialize.

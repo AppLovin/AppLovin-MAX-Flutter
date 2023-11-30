@@ -188,6 +188,7 @@ class AppLovinMAX {
   /// To learn more about how this information is encoded in the integer, see [ConsentDialogState].
   ///
   /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
+  @Deprecated('Check consentFlowUserGeography in the return object of initialize() instead.')
   static Future<int?> getConsentDialogState() {
     return channel.invokeMethod('getConsentDialogState');
   }
