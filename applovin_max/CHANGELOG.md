@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.4.0
 * Add APIs for Selective Init. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#selective-init).
 * Add support for Terms and Privacy Policy Flow. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow).
 * Depends on Android SDK v12.0.0 and iOS SDK v12.0.0.
