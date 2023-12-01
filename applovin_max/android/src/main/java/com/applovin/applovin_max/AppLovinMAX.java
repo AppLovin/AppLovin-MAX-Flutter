@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.applovin.sdk.AppLovinSdkConfiguration.ConsentFlowUserGeography;
 import com.applovin.sdk.AppLovinSdkSettings;
 import com.applovin.sdk.AppLovinSdkUtils;
 import com.applovin.sdk.AppLovinUserService;
@@ -66,6 +68,10 @@ public class AppLovinMAX
     private static final String SDK_TAG = "AppLovinSdk";
     private static final String TAG     = "AppLovinMAX";
 
+    private static final String USER_GEOGRAPHY_GDPR    = "G";
+    private static final String USER_GEOGRAPHY_OTHER   = "O";
+    private static final String USER_GEOGRAPHY_UNKNOWN = "U";
+
     public static AppLovinMAX instance;
 
     private MethodChannel         sharedChannel;
@@ -85,6 +91,11 @@ public class AppLovinMAX
     private       Boolean             creativeDebuggerEnabledToSet;
     private       Boolean             locationCollectionEnabledToSet;
     private final Map<String, String> extraParametersToSet = new HashMap<>( 8 );
+
+    private Boolean termsAndPrivacyPolicyFlowEnabledToSet;
+    private Uri     privacyPolicyURLToSet;
+    private Uri     termsOfServiceURLToSet;
+    private String  debugUserGeographyToSet;
 
     private Integer      targetingYearOfBirthToSet;
     private String       targetingGenderToSet;
@@ -199,39 +210,67 @@ public class AppLovinMAX
             }
         }
 
-        // Initialize SDK
-        sdk = AppLovinSdk.getInstance( sdkKeyToUse, new AppLovinSdkSettings( applicationContext ), applicationContext );
-        sdk.setPluginVersion( "Flutter-" + pluginVersion );
-        sdk.setMediationProvider( AppLovinMediationProvider.MAX );
+        AppLovinSdkSettings settings = new AppLovinSdkSettings( applicationContext );
 
-        if ( !TextUtils.isEmpty( userIdToSet ) )
+        if ( termsAndPrivacyPolicyFlowEnabledToSet != null )
         {
-            sdk.setUserIdentifier( userIdToSet );
-            userIdToSet = null;
+            settings.getTermsAndPrivacyPolicyFlowSettings().setEnabled( termsAndPrivacyPolicyFlowEnabledToSet );
+            termsAndPrivacyPolicyFlowEnabledToSet = null;
+        }
+
+        if ( privacyPolicyURLToSet != null )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setPrivacyPolicyUri( privacyPolicyURLToSet );
+            privacyPolicyURLToSet = null;
+        }
+
+        if ( termsOfServiceURLToSet != null )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setTermsOfServiceUri( termsOfServiceURLToSet );
+            termsOfServiceURLToSet = null;
+        }
+
+        if ( AppLovinSdkUtils.isValidString( debugUserGeographyToSet ) )
+        {
+            settings.getTermsAndPrivacyPolicyFlowSettings().setDebugUserGeography( getAppLovinConsentFlowUserGeography( debugUserGeographyToSet ) );
+            debugUserGeographyToSet = null;
         }
 
         if ( testDeviceAdvertisingIdsToSet != null )
         {
-            sdk.getSettings().setTestDeviceAdvertisingIds( testDeviceAdvertisingIdsToSet );
+            settings.setTestDeviceAdvertisingIds( testDeviceAdvertisingIdsToSet );
             testDeviceAdvertisingIdsToSet = null;
         }
 
         if ( verboseLoggingToSet != null )
         {
-            sdk.getSettings().setVerboseLogging( verboseLoggingToSet );
+            settings.setVerboseLogging( verboseLoggingToSet );
             verboseLoggingToSet = null;
         }
 
         if ( creativeDebuggerEnabledToSet != null )
         {
-            sdk.getSettings().setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
+            settings.setCreativeDebuggerEnabled( creativeDebuggerEnabledToSet );
             creativeDebuggerEnabledToSet = null;
         }
 
         if ( locationCollectionEnabledToSet != null )
         {
-            sdk.getSettings().setLocationCollectionEnabled( locationCollectionEnabledToSet );
+            settings.setLocationCollectionEnabled( locationCollectionEnabledToSet );
             locationCollectionEnabledToSet = null;
+        }
+
+        setPendingExtraParametersIfNeeded( settings );
+
+        // Initialize SDK
+        sdk = AppLovinSdk.getInstance( sdkKeyToUse, settings, applicationContext );
+        sdk.setPluginVersion( "Flutter-" + pluginVersion );
+        sdk.setMediationProvider( AppLovinMediationProvider.MAX );
+
+        if ( AppLovinSdkUtils.isValidString( userIdToSet ) )
+        {
+            sdk.setUserIdentifier( userIdToSet );
+            userIdToSet = null;
         }
 
         if ( targetingYearOfBirthToSet != null )
@@ -276,8 +315,6 @@ public class AppLovinMAX
             targetingInterestsToSet = null;
         }
 
-        setPendingExtraParametersIfNeeded( sdk.getSettings() );
-
         sdk.initializeSdk( configuration -> {
 
             d( "SDK initialized" );
@@ -296,6 +333,8 @@ public class AppLovinMAX
             Map<String, Object> message = new HashMap<>( 2 );
             message.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
             message.put( "countryCode", sdkConfiguration.getCountryCode() );
+            message.put( "isTestModeEnabled", sdkConfiguration.isTestModeEnabled() );
+            message.put( "consentFlowUserGeography", getRawAppLovinConsentFlowUserGeography( sdkConfiguration.getConsentFlowUserGeography() ) );
 
             return message;
         }
@@ -468,6 +507,28 @@ public class AppLovinMAX
         {
             extraParametersToSet.put( key, value );
         }
+    }
+
+    // MAX Terms and Privacy Policy Flow
+
+    public void setTermsAndPrivacyPolicyFlowEnabled(final boolean enabled)
+    {
+        termsAndPrivacyPolicyFlowEnabledToSet = enabled;
+    }
+
+    public void setPrivacyPolicyUrl(final String urlString)
+    {
+        privacyPolicyURLToSet = Uri.parse( urlString );
+    }
+
+    public void setTermsOfServiceUrl(final String urlString)
+    {
+        termsOfServiceURLToSet = Uri.parse( urlString );
+    }
+
+    public void setConsentFlowDebugUserGeography(final String userGeography)
+    {
+        debugUserGeographyToSet = userGeography;
     }
 
     // Data Passing
@@ -759,7 +820,7 @@ public class AppLovinMAX
             name = ( MaxAdFormat.MREC == adFormat ) ? "OnMRecAdLoadedEvent" : "OnBannerAdLoadedEvent";
 
             String adViewPosition = mAdViewPositions.get( ad.getAdUnitId() );
-            if ( !TextUtils.isEmpty( adViewPosition ) )
+            if ( AppLovinSdkUtils.isValidString( adViewPosition ) )
             {
                 // Only position ad if not native UI component
                 positionAdView( ad );
@@ -1509,12 +1570,12 @@ public class AppLovinMAX
     {
         Map<String, Object> adInfo = new HashMap<>( 7 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
-        adInfo.put( "creativeId", !TextUtils.isEmpty( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
+        adInfo.put( "creativeId", AppLovinSdkUtils.isValidString( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
         adInfo.put( "networkName", ad.getNetworkName() );
-        adInfo.put( "placement", !TextUtils.isEmpty( ad.getPlacement() ) ? ad.getPlacement() : "" );
+        adInfo.put( "placement", AppLovinSdkUtils.isValidString( ad.getPlacement() ) ? ad.getPlacement() : "" );
         adInfo.put( "revenue", ad.getRevenue() );
         adInfo.put( "revenuePrecision", ad.getRevenuePrecision() );
-        adInfo.put( "dspName", !TextUtils.isEmpty( ad.getDspName() ) ? ad.getDspName() : "" );
+        adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
 
         return adInfo;
@@ -1674,6 +1735,34 @@ public class AppLovinMAX
         return AppLovinAdContentRating.NONE;
     }
 
+    private static ConsentFlowUserGeography getAppLovinConsentFlowUserGeography(final String userGeography)
+    {
+        if ( USER_GEOGRAPHY_GDPR.equalsIgnoreCase( userGeography ) )
+        {
+            return ConsentFlowUserGeography.GDPR;
+        }
+        else if ( USER_GEOGRAPHY_OTHER.equalsIgnoreCase( userGeography ) )
+        {
+            return ConsentFlowUserGeography.OTHER;
+        }
+
+        return ConsentFlowUserGeography.UNKNOWN;
+    }
+
+    private static String getRawAppLovinConsentFlowUserGeography(final ConsentFlowUserGeography userGeography)
+    {
+        if ( ConsentFlowUserGeography.GDPR == userGeography )
+        {
+            return USER_GEOGRAPHY_GDPR;
+        }
+        else if ( ConsentFlowUserGeography.OTHER == userGeography )
+        {
+            return USER_GEOGRAPHY_OTHER;
+        }
+
+        return USER_GEOGRAPHY_UNKNOWN;
+    }
+
     // Flutter channel
 
     @Override
@@ -1783,6 +1872,34 @@ public class AppLovinMAX
             String key = call.argument( "key" );
             String value = call.argument( "value" );
             setExtraParameter( key, value );
+
+            result.success( null );
+        }
+        else if ( "setTermsAndPrivacyPolicyFlowEnabled".equals( call.method ) )
+        {
+            boolean value = call.argument( "value" );
+            setTermsAndPrivacyPolicyFlowEnabled( value );
+
+            result.success( null );
+        }
+        else if ( "setPrivacyPolicyUrl".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setPrivacyPolicyUrl( value );
+
+            result.success( null );
+        }
+        else if ( "setTermsOfServiceUrl".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setTermsOfServiceUrl( value );
+
+            result.success( null );
+        }
+        else if ( "setConsentFlowDebugUserGeography".equals( call.method ) )
+        {
+            String value = call.argument( "value" );
+            setConsentFlowDebugUserGeography( value );
 
             result.success( null );
         }

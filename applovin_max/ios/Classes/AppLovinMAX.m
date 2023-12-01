@@ -29,6 +29,11 @@
 @property (nonatomic, strong, nullable) NSNumber *locationCollectionEnabledToSet;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *extraParametersToSet;
 
+@property (nonatomic, strong, nullable) NSNumber *termsAndPrivacyPolicyFlowEnabledToSet;
+@property (nonatomic, strong, nullable) NSURL *privacyPolicyURLToSet;
+@property (nonatomic, strong, nullable) NSURL *termsOfServiceURLToSet;
+@property (nonatomic,   copy, nullable) NSString *debugUserGeographyToSet;
+
 @property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
 @property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
 @property (nonatomic, strong, nullable) NSNumber *targetingMaximumAdContentRatingToSet;
@@ -57,6 +62,16 @@
 @implementation AppLovinMAX
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
+
+static NSString *const USER_GEOGRAPHY_GDPR = @"G";
+static NSString *const USER_GEOGRAPHY_OTHER = @"O";
+static NSString *const USER_GEOGRAPHY_UNKNOWN = @"U";
+
+static NSString *const APP_TRACKING_STATUS_NOTDETERMINED = @"N";
+static NSString *const APP_TRACKING_STATUS_RESTRICTED = @"R";
+static NSString *const APP_TRACKING_STATUS_DENIED = @"D";
+static NSString *const APP_TRACKING_STATUS_AUTHORIZED = @"A";
+static NSString *const APP_TRACKING_STATUS_UNAVAILABLE = @"U";
 
 static AppLovinMAX *AppLovinMAXShared;
 
@@ -152,8 +167,60 @@ static FlutterMethodChannel *ALSharedChannel;
         }
     }
     
+    ALSdkSettings *settings = [[ALSdkSettings alloc] init];
+
+    if ( self.termsAndPrivacyPolicyFlowEnabledToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.enabled = self.termsAndPrivacyPolicyFlowEnabledToSet.boolValue;
+        self.termsAndPrivacyPolicyFlowEnabledToSet = nil;
+    }
+
+    if ( self.privacyPolicyURLToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.privacyPolicyURL = self.privacyPolicyURLToSet;
+        self.privacyPolicyURLToSet = nil;
+    }
+
+    if ( self.termsOfServiceURLToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.termsOfServiceURL = self.termsOfServiceURLToSet;
+        self.termsOfServiceURLToSet = nil;
+    }
+
+    if ( self.debugUserGeographyToSet )
+    {
+        settings.termsAndPrivacyPolicyFlowSettings.debugUserGeography = [self toAppLovinConsentFlowUserGeography: self.debugUserGeographyToSet];
+        self.debugUserGeographyToSet = nil;
+    }
+    
+    if ( self.testDeviceIdentifiersToSet )
+    {
+        settings.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
+        self.testDeviceIdentifiersToSet = nil;
+    }
+    
+    if ( self.verboseLoggingToSet )
+    {
+        settings.verboseLoggingEnabled = self.verboseLoggingToSet.boolValue;
+        self.verboseLoggingToSet = nil;
+    }
+    
+    if ( self.creativeDebuggerEnabledToSet )
+    {
+        settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
+        self.creativeDebuggerEnabledToSet = nil;
+    }
+    
+    if ( self.locationCollectionEnabledToSet )
+    {
+        settings.locationCollectionEnabled = self.locationCollectionEnabledToSet.boolValue;
+        self.locationCollectionEnabledToSet = nil;
+    }
+    
+    [self setPendingExtraParametersIfNeeded: settings];
+
     // Initialize SDK
-    self.sdk = [ALSdk sharedWithKey: sdkKey];
+    self.sdk = [ALSdk sharedWithKey: sdkKey settings: settings];
     [self.sdk setPluginVersion: [@"Flutter-" stringByAppendingString: pluginVersion]];
     [self.sdk setMediationProvider: ALMediationProviderMAX];
     
@@ -161,30 +228,6 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.sdk.userIdentifier = self.userIdentifierToSet;
         self.userIdentifierToSet = nil;
-    }
-    
-    if ( self.testDeviceIdentifiersToSet )
-    {
-        self.sdk.settings.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
-        self.testDeviceIdentifiersToSet = nil;
-    }
-    
-    if ( self.verboseLoggingToSet )
-    {
-        self.sdk.settings.verboseLoggingEnabled = self.verboseLoggingToSet.boolValue;
-        self.verboseLoggingToSet = nil;
-    }
-    
-    if ( self.creativeDebuggerEnabledToSet )
-    {
-        self.sdk.settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
-        self.creativeDebuggerEnabledToSet = nil;
-    }
-    
-    if ( self.locationCollectionEnabledToSet )
-    {
-        self.sdk.settings.locationCollectionEnabled = self.locationCollectionEnabledToSet.boolValue;
-        self.locationCollectionEnabledToSet = nil;
     }
     
     if ( self.targetingYearOfBirthToSet )
@@ -229,8 +272,6 @@ static FlutterMethodChannel *ALSharedChannel;
         self.targetingInterestsToSet = nil;
     }
 
-    [self setPendingExtraParametersIfNeeded: self.sdk.settings];
-
     [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
      {
         [self log: @"SDK initialized"];
@@ -250,6 +291,9 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         message[@"consentDialogState"] = @(self.sdkConfiguration.consentDialogState);
         message[@"countryCode"] = self.sdkConfiguration.countryCode;
+        message[@"isTestModeEnabled"] = @(self.sdkConfiguration.isTestModeEnabled);
+        message[@"consentFlowUserGeography"] = [self fromAppLovinConsentFlowUserGeography: self.sdkConfiguration.consentFlowUserGeography];
+        message[@"appTrackingStatus"] = [self fromAppLovinAppTrackingStatus: self.sdkConfiguration.appTrackingTransparencyStatus];
     }
     else
     {
@@ -415,6 +459,28 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         self.extraParametersToSet[key] = value;
     }
+}
+
+#pragma mark - MAX Terms and Privacy Policy Flow
+
+- (void)setTermsAndPrivacyPolicyFlowEnabled:(BOOL)enabled
+{
+    self.termsAndPrivacyPolicyFlowEnabledToSet = @(enabled);
+}
+
+- (void)setPrivacyPolicyUrl:(NSString *)urlString
+{
+    self.privacyPolicyURLToSet = [NSURL URLWithString: urlString];
+}
+
+- (void)setTermsOfServiceUrl:(NSString *)urlString
+{
+    self.termsOfServiceURLToSet = [NSURL URLWithString: urlString];
+}
+
+- (void)setConsentFlowDebugUserGeography:(NSString *)userGeography
+{
+    self.debugUserGeographyToSet = userGeography;
 }
 
 #pragma mark - Data Passing
@@ -1559,6 +1625,56 @@ static FlutterMethodChannel *ALSharedChannel;
     return ALAdContentRatingNone;
 }
 
+- (ALConsentFlowUserGeography)toAppLovinConsentFlowUserGeography:(NSString *)userGeography
+{
+    if ( [USER_GEOGRAPHY_GDPR al_isEqualToStringIgnoringCase: userGeography] )
+    {
+        return ALConsentFlowUserGeographyGDPR;
+    }
+    else if ( [USER_GEOGRAPHY_OTHER al_isEqualToStringIgnoringCase: userGeography] )
+    {
+        return ALConsentFlowUserGeographyOther;
+    }
+
+    return ALConsentFlowUserGeographyUnknown;
+}
+
+- (NSString *)fromAppLovinConsentFlowUserGeography:(ALConsentFlowUserGeography)userGeography
+{
+    if ( ALConsentFlowUserGeographyGDPR == userGeography )
+    {
+        return USER_GEOGRAPHY_GDPR;
+    }
+    else if ( ALConsentFlowUserGeographyOther == userGeography )
+    {
+        return USER_GEOGRAPHY_OTHER;
+    }
+
+    return USER_GEOGRAPHY_UNKNOWN;
+}
+
+- (NSString *)fromAppLovinAppTrackingStatus:(ALAppTrackingTransparencyStatus)status
+{
+    if ( ALAppTrackingTransparencyStatusNotDetermined == status )
+    {
+        return APP_TRACKING_STATUS_NOTDETERMINED;
+    }
+    else if ( ALAppTrackingTransparencyStatusRestricted == status )
+    {
+        return APP_TRACKING_STATUS_RESTRICTED;
+    }
+    else if ( ALAppTrackingTransparencyStatusDenied == status )
+    {
+        return APP_TRACKING_STATUS_DENIED;
+    }
+    else if ( ALAppTrackingTransparencyStatusAuthorized == status )
+    {
+        return APP_TRACKING_STATUS_AUTHORIZED;
+    }
+
+    return APP_TRACKING_STATUS_UNAVAILABLE;
+}
+
 #pragma mark - Flutter Event Channel
 
 - (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad channel:(FlutterMethodChannel *)channel
@@ -1682,6 +1798,34 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *key = call.arguments[@"key"];
         NSString *value = call.arguments[@"value"];
         [self setExtraParameter: key value: value];
+        
+        result(nil);
+    }
+    else if ( [@"setTermsAndPrivacyPolicyFlowEnabled" isEqualToString: call.method] )
+    {
+        BOOL isConsentFlowEnabled = ((NSNumber *)call.arguments[@"value"]).boolValue;
+        [self setTermsAndPrivacyPolicyFlowEnabled: isConsentFlowEnabled];
+        
+        result(nil);
+    }
+    else if ( [@"setPrivacyPolicyUrl" isEqualToString: call.method] )
+    {
+        NSString *privacyPolicyUrl = call.arguments[@"value"];
+        [self setPrivacyPolicyUrl: privacyPolicyUrl];
+        
+        result(nil);
+    }
+    else if ( [@"setTermsOfServiceUrl" isEqualToString: call.method] )
+    {
+        NSString *termsOfServiceUrl = call.arguments[@"value"];
+        [self setTermsOfServiceUrl: termsOfServiceUrl];
+        
+        result(nil);
+    }
+    else if ( [@"setConsentFlowDebugUserGeography" isEqualToString: call.method] )
+    {
+        NSString *debugUserGeography = call.arguments[@"value"];
+        [self setConsentFlowDebugUserGeography: debugUserGeography];
         
         result(nil);
     }
