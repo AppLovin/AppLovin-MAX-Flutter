@@ -314,6 +314,7 @@ class AppLovinMAX {
   }
 
   /// Sets a list of the ad units for the SDK to initialize only those networks.
+  /// Should be set before initializing the SDK.
   static void setInitializationAdUnitIds(List adUnitIds) {
     channel.invokeMethod('setInitializationAdUnitIds', {
       'value': adUnitIds,
