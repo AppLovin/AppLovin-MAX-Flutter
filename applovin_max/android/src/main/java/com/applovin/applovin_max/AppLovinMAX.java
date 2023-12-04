@@ -713,6 +713,11 @@ public class AppLovinMAX
         updateAdViewPosition( adUnitId, mrecPosition, MaxAdFormat.MREC );
     }
 
+    public void setMRecExtraParameter(final String adUnitId, final String key, final String value)
+    {
+        setAdViewExtraParameters( adUnitId, MaxAdFormat.MREC, key, value );
+    }
+
     public void showMRec(final String adUnitId)
     {
         showAdView( adUnitId, MaxAdFormat.MREC );
@@ -2032,6 +2037,15 @@ public class AppLovinMAX
             String adUnitId = call.argument( "ad_unit_id" );
             String position = call.argument( "position" );
             updateMRecPosition( adUnitId, position );
+
+            result.success( null );
+        }
+        else if ( "setMRecExtraParameter".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            String key = call.argument( "key" );
+            String value = call.argument( "value" );
+            setMRecExtraParameter( adUnitId, key, value );
 
             result.success( null );
         }
