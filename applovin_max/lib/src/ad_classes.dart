@@ -107,8 +107,8 @@ class MaxNativeAd {
         advertiser = json['advertiser'],
         body = json['body'],
         callToAction = json['callToAction'],
-        starRating = json['starRating'],
-        mediaContentAspectRatio = json['mediaContentAspectRatio'],
+        starRating = double.tryParse(json['starRating'].toString()),
+        mediaContentAspectRatio = double.tryParse(json['mediaContentAspectRatio'].toString()),
         isIconImageAvailable = (json['isIconImageAvailable'].runtimeType == int) ? (json['isIconImageAvailable'] == 1) : json['isIconImageAvailable'],
         isOptionsViewAvailable = (json['isOptionsViewAvailable'].runtimeType == int) ? (json['isOptionsViewAvailable'] == 1) : json['isOptionsViewAvailable'],
         isMediaViewAvailable = (json['isMediaViewAvailable'].runtimeType == int) ? (json['isMediaViewAvailable'] == 1) : json['isMediaViewAvailable'];
