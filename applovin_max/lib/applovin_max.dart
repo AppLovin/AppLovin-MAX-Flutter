@@ -505,6 +505,15 @@ class AppLovinMAX {
     });
   }
 
+  /// Sets an extra parameter to the MREC with the specified [adUnitId].
+  static void setMRecExtraParameter(String adUnitId, String key, String value) {
+    channel.invokeMethod('setMRecExtraParameter', {
+      'ad_unit_id': adUnitId,
+      'key': key,
+      'value': value,
+    });
+  }
+
   /// Shows the MREC with the specified [adUnitId].
   static void showMRec(String adUnitId) {
     channel.invokeMethod('showMRec', {
