@@ -672,6 +672,11 @@ static FlutterMethodChannel *ALSharedChannel;
     [self updateAdViewPosition: position forAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
 }
 
+- (void)setMRecExtraParameterForAdUnitIdentifier:(NSString *)adUnitIdentifier key:(NSString *)key value:(NSString *)value
+{
+    [self setAdViewExtraParameterForAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec key: key value: value];
+}
+
 - (void)showMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     [self showAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
@@ -1964,6 +1969,15 @@ static FlutterMethodChannel *ALSharedChannel;
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *position = call.arguments[@"position"];
         [self updateMRecPositionForAdUnitIdentifier: adUnitId position: position];
+        
+        result(nil);
+    }
+    else if ( [@"setMRecExtraParameter" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        NSString *key = call.arguments[@"key"];
+        NSString *value = call.arguments[@"value"];
+        [self setMRecExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
         
         result(nil);
     }

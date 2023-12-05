@@ -2,10 +2,11 @@
 
 ## x.x.x
 * Fix `starRating` not correctly converting from platform on iOS.
+* Add support for `AppLovinMAX.setMRecExtraParameter()` API.
 * Add APIs for Selective Init. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#selective-init).
 * Add support for Terms and Privacy Policy Flow. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow).
 * Depends on Android SDK v12.0.0 and iOS SDK v12.0.0.
-* Add support for `AppLvinMAX.setExtraParameter()` API.
+* Add support for `AppLovinMAX.setExtraParameter()` API.
 ## 3.3.0
 * Add `revenuePrecision` API to the `MaxAd` object returned in ad callbacks. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#impression-level-user-revenue-api).
 * Replace `MediaQuery.devicePixelRatioOf` with `MediaQuery.of().devicePixelRatio`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/120
