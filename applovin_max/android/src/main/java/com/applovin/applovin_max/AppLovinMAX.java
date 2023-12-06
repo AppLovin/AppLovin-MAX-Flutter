@@ -87,6 +87,7 @@ public class AppLovinMAX
     // Store these values if pub attempts to set it before initializing
     private       List<String>        initializationAdUnitIdsToSet;
     private       String              userIdToSet;
+    private       Boolean             mutedToSet;
     private       List<String>        testDeviceAdvertisingIdsToSet;
     private       Boolean             verboseLoggingToSet;
     private       Boolean             creativeDebuggerEnabledToSet;
@@ -242,6 +243,12 @@ public class AppLovinMAX
         {
             settings.getTermsAndPrivacyPolicyFlowSettings().setDebugUserGeography( getAppLovinConsentFlowUserGeography( debugUserGeographyToSet ) );
             debugUserGeographyToSet = null;
+        }
+
+        if ( mutedToSet != null )
+        {
+            settings.setMuted( mutedToSet );
+            mutedToSet = null;
         }
 
         if ( testDeviceAdvertisingIdsToSet != null )
@@ -431,9 +438,15 @@ public class AppLovinMAX
 
     public void setMuted(final boolean muted)
     {
-        if ( !isPluginInitialized ) return;
-
-        sdk.getSettings().setMuted( muted );
+        if ( isPluginInitialized )
+        {
+            sdk.getSettings().setMuted( muted );
+            mutedToSet = null;
+        }
+        else
+        {
+            mutedToSet = muted;
+        }
     }
 
     public boolean isMuted()
