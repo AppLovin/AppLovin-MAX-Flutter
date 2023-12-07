@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.4.1
 * Allow calls to `AppLovinMAX.setMuted(...)` before SDK is initialized.
 * Depends on Android SDK v12.1.0 and iOS SDK v12.1.0.
 ## 3.4.0
