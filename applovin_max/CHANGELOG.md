@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Allow calls to `AppLovinMAX.setMuted(...)` before SDK is initialized.
 * Depends on Android SDK v12.1.0 and iOS SDK v12.1.0.
 ## 3.4.0
 * Add support for Selective Init. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#selective-init).
