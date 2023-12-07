@@ -24,6 +24,7 @@
 // Store these values if pub attempts to set it before initializing
 @property (nonatomic, strong, nullable) NSArray<NSString *> *initializationAdUnitIdentifiersToSet;
 @property (nonatomic,   copy, nullable) NSString *userIdentifierToSet;
+@property (nonatomic, strong, nullable) NSNumber *mutedToSet;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *testDeviceIdentifiersToSet;
 @property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
 @property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
@@ -201,6 +202,12 @@ static FlutterMethodChannel *ALSharedChannel;
         self.debugUserGeographyToSet = nil;
     }
     
+    if ( self.mutedToSet )
+    {
+        settings.muted = self.mutedToSet;
+        self.mutedToSet = nil;
+    }
+
     if ( self.testDeviceIdentifiersToSet )
     {
         settings.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
@@ -392,9 +399,15 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)setMuted:(BOOL)muted
 {
-    if ( ![self isPluginInitialized] ) return;
-    
-    self.sdk.settings.muted = muted;
+    if ( [self isPluginInitialized] )
+    {
+        self.sdk.settings.muted = muted;
+        self.mutedToSet = nil;
+    }
+    else
+    {
+        self.mutedToSet = @(muted);
+    }
 }
 
 - (void)setVerboseLogging:(BOOL)enabled
