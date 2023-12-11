@@ -92,11 +92,17 @@ class _MyAppState extends State<MyApp> {
         // Interstitial ad failed to load
         // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
         _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
+        if (_interstitialRetryAttempt > 6) {
+          logStatus('Interstitial ad failed to load with code ${error.code}');
+          return;
+        }
 
         int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
         logStatus('Interstitial ad failed to load with code ${error.code} - retrying in ${retryDelay}s');
 
         Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
+          _interstitialLoadState = AdLoadState.loading;
+          logStatus('Interstitial ad retrying to load...');
           AppLovinMAX.loadInterstitial(_interstitialAdUnitId);
         });
       },
@@ -134,11 +140,17 @@ class _MyAppState extends State<MyApp> {
       // Rewarded ad failed to load
       // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
       _rewardedAdRetryAttempt = _rewardedAdRetryAttempt + 1;
+      if (_rewardedAdRetryAttempt > 6) {
+        logStatus('Rewarded ad failed to load with code ${error.code}');
+        return;
+      }
 
       int retryDelay = pow(2, min(6, _rewardedAdRetryAttempt)).toInt();
       logStatus('Rewarded ad failed to load with code ${error.code} - retrying in ${retryDelay}s');
 
       Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
+        _rewardedAdLoadState = AdLoadState.loading;
+        logStatus('Rewarded ad retrying to load...');
         AppLovinMAX.loadRewardedAd(_rewardedAdUnitId);
       });
     }, onAdDisplayedCallback: (ad) {
