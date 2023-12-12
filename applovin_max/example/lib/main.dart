@@ -33,6 +33,8 @@ final String _bannerAdUnitId = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" 
 final String _mrecAdUnitId = Platform.isAndroid ? "ANDROID_MREC_AD_UNIT_ID" : "IOS_MREC_AD_UNIT_ID";
 final String _nativeAdUnitId = Platform.isAndroid ? "ANDROID_NATIVE_AD_UNIT_ID" : "IOS_NATIVE_AD_UNIT_ID";
 
+const int _maxExponentialRetryCount = 6;
+
 // Create states
 var _isInitialized = false;
 var _interstitialLoadState = AdLoadState.notLoaded;
@@ -92,12 +94,12 @@ class _MyAppState extends State<MyApp> {
         // Interstitial ad failed to load
         // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
         _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
-        if (_interstitialRetryAttempt > 6) {
+        if (_interstitialRetryAttempt > _maxExponentialRetryCount) {
           logStatus('Interstitial ad failed to load with code ${error.code}');
           return;
         }
 
-        int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
+        int retryDelay = pow(2, min(_maxExponentialRetryCount, _interstitialRetryAttempt)).toInt();
         logStatus('Interstitial ad failed to load with code ${error.code} - retrying in ${retryDelay}s');
 
         Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
@@ -140,12 +142,12 @@ class _MyAppState extends State<MyApp> {
       // Rewarded ad failed to load
       // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
       _rewardedAdRetryAttempt = _rewardedAdRetryAttempt + 1;
-      if (_rewardedAdRetryAttempt > 6) {
+      if (_rewardedAdRetryAttempt > _maxExponentialRetryCount) {
         logStatus('Rewarded ad failed to load with code ${error.code}');
         return;
       }
 
-      int retryDelay = pow(2, min(6, _rewardedAdRetryAttempt)).toInt();
+      int retryDelay = pow(2, min(_maxExponentialRetryCount, _rewardedAdRetryAttempt)).toInt();
       logStatus('Rewarded ad failed to load with code ${error.code} - retrying in ${retryDelay}s');
 
       Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
