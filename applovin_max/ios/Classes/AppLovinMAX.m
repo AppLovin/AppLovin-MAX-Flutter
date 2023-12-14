@@ -301,7 +301,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (NSDictionary<NSString *, id> *)initializationMessage
 {
-    NSMutableDictionary<NSString *, id> *message = [NSMutableDictionary dictionaryWithCapacity: 4];
+    NSMutableDictionary<NSString *, id> *message = [NSMutableDictionary dictionaryWithCapacity: 8];
     
     if ( self.sdkConfiguration )
     {
