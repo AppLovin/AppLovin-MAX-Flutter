@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Add better support for Amazon bidding.
 ## 3.4.1
 * Allow calls to `AppLovinMAX.setMuted(...)` before SDK is initialized.
 * Depends on Android SDK v12.1.0 and iOS SDK v12.1.0.
