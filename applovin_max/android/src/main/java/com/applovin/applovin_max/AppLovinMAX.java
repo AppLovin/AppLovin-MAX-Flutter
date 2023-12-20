@@ -1722,9 +1722,15 @@ public class AppLovinMAX
 
             interstitial.setLocalExtraParameter( key, result );
         }
-        else
+        else // MaxAdFormat.BANNER or MaxAdFormat.MREC
         {
             MaxAdView adView = retrieveAdView( adUnitId, adFormat );
+            if ( adView == null )
+            {
+                e( "Unable to set Amazon result - unable to retrieve " + adFormat.getLabel().toLowerCase() );
+                return;
+            }
+
             adView.setLocalExtraParameter( key, result );
         }
     }

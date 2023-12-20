@@ -1650,11 +1650,23 @@ static FlutterMethodChannel *ALSharedChannel;
     if ( adFormat == MAAdFormat.interstitial )
     {
         MAInterstitialAd *interstitial = [self retrieveInterstitialForAdUnitIdentifier: adUnitIdentifier];
+        if ( !interstitial )
+        {
+            [self log: @"Failed to set Amazon result - unable to find interstitial"];
+            return;
+        }
+
         [interstitial setLocalExtraParameterForKey: key value: result];
     }
-    else
+    else // MAAdFormat.banner or MAAdFormat.mrec
     {
         MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+        if ( !adView )
+        {
+            [self log: @"Failed to set Amazon result - unable to find %@", [[adFormat label] lowercaseString]];
+            return;
+        }
+
         [adView setLocalExtraParameterForKey: key value: result];
     }
 }
