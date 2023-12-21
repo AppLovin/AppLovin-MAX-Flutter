@@ -1,4 +1,5 @@
 #import "AppLovinMAX.h"
+#import "AppLovinMAXAdView.h"
 #import "AppLovinMAXAdViewFactory.h"
 #import "AppLovinMAXNativeAdViewFactory.h"
 
@@ -1660,14 +1661,21 @@ static FlutterMethodChannel *ALSharedChannel;
     }
     else // MAAdFormat.banner or MAAdFormat.mrec
     {
-        MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+        MAAdView *adView = [AppLovinMAXAdView sharedWithAdUnitIdentifier: adUnitIdentifier];
+
         if ( !adView )
         {
-            [self log: @"Failed to set Amazon result - unable to find %@", [[adFormat label] lowercaseString]];
-            return;
+            adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
         }
-
-        [adView setLocalExtraParameterForKey: key value: result];
+        
+        if ( adView )
+        {
+            [adView setLocalExtraParameterForKey: key value: result];
+        }
+        else
+        {
+            [self log: @"Failed to set Amazon result - unable to find %@", adFormat];
+        }
     }
 }
 
