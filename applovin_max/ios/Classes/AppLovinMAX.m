@@ -1,4 +1,5 @@
 #import "AppLovinMAX.h"
+#import "AppLovinMAXAdView.h"
 #import "AppLovinMAXAdViewFactory.h"
 #import "AppLovinMAXNativeAdViewFactory.h"
 
@@ -1611,6 +1612,80 @@ static FlutterMethodChannel *ALSharedChannel;
     
     return networkResponseDict;
 }
+
+#pragma mark - Amazon
+
+- (void)setAmazonResult:(id)result forBannerAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self setAmazonResult: result forAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.banner];
+}
+
+- (void)setAmazonResult:(id)result forMRecAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self setAmazonResult: result forAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec];
+}
+
+- (void)setAmazonResult:(id)result forInterstitialAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    [self setAmazonResult: result forAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.interstitial];
+}
+
+- (void)setAmazonResult:(id /* DTBAdResponse or DTBAdErrorInfo */)result forAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    if ( !self.sdk )
+    {
+        NSString *errorMessage = [NSString stringWithFormat: @"Failed to set Amazon result - SDK not initialized: %@", adUnitIdentifier];
+        [self logUninitializedAccessError: errorMessage];
+        
+        return;
+    }
+    
+    if ( !result )
+    {
+        [self log: @"Failed to set Amazon result - nil value"];
+        return;
+    }
+    
+    NSString *key = [self localExtraParameterKeyForAmazonResult: result];
+    
+    if ( adFormat == MAAdFormat.interstitial )
+    {
+        MAInterstitialAd *interstitial = [self retrieveInterstitialForAdUnitIdentifier: adUnitIdentifier];
+        if ( !interstitial )
+        {
+            [self log: @"Failed to set Amazon result - unable to find interstitial"];
+            return;
+        }
+
+        [interstitial setLocalExtraParameterForKey: key value: result];
+    }
+    else // MAAdFormat.banner or MAAdFormat.mrec
+    {
+        MAAdView *adView = [AppLovinMAXAdView sharedWithAdUnitIdentifier: adUnitIdentifier];
+
+        if ( !adView )
+        {
+            adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+        }
+        
+        if ( adView )
+        {
+            [adView setLocalExtraParameterForKey: key value: result];
+        }
+        else
+        {
+            [self log: @"Failed to set Amazon result - unable to find %@", adFormat];
+        }
+    }
+}
+
+- (NSString *)localExtraParameterKeyForAmazonResult:(id /* DTBAdResponse or DTBAdErrorInfo */)result
+{
+    NSString *className = NSStringFromClass([result class]);
+    return [@"DTBAdResponse" isEqualToString: className] ? @"amazon_ad_response" : @"amazon_ad_error";
+}
+
+#pragma mark - Utility Methods
 
 - (ALGender)toAppLovinGender:(nullable NSString *)gender
 {

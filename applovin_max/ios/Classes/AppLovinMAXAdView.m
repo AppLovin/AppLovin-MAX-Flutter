@@ -16,6 +16,19 @@
 
 @implementation AppLovinMAXAdView
 
+static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
+
++ (void)initialize
+{
+    [super initialize];
+    adViewInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
+}
+
++ (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier
+{
+    return adViewInstances[adUnitIdentifier];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
@@ -79,6 +92,8 @@
         {
             [self.adView stopAutoRefresh];
         }
+
+        adViewInstances[adUnitId] = self.adView;
     }
     return self;
 }
@@ -90,6 +105,8 @@
 
 - (void)dealloc
 {
+    [adViewInstances removeObjectForKey: self.adView.adUnitIdentifier];
+
     [self.channel setMethodCallHandler: nil];
     self.channel = nil;
 }

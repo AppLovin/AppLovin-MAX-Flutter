@@ -11,7 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MAAdView;
+
 @interface AppLovinMAXAdView : NSObject<FlutterPlatformView>
+
++ (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier;
 
 - (instancetype)initWithFrame:(CGRect)frame
                        viewId:(int64_t)viewId

@@ -11,6 +11,7 @@ import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinSdk;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -26,8 +27,15 @@ import io.flutter.plugin.platform.PlatformView;
 public class AppLovinMAXAdView
         implements PlatformView, MaxAdViewAdListener, MaxAdRevenueListener
 {
+    private static final Map<String, MaxAdView> adViewInstances = new HashMap<>( 2 );
+
     private final MethodChannel channel;
     private final MaxAdView     adView;
+
+    public static MaxAdView getInstance(final String adUnitId)
+    {
+        return adViewInstances.get( adUnitId );
+    }
 
     public AppLovinMAXAdView(final int viewId,
                              final String adUnitId,
@@ -96,6 +104,8 @@ public class AppLovinMAXAdView
         {
             adView.stopAutoRefresh();
         }
+
+        adViewInstances.put( adUnitId, adView );
     }
 
     /// Flutter Lifecycle Methods
@@ -118,6 +128,8 @@ public class AppLovinMAXAdView
     {
         if ( adView != null )
         {
+            adViewInstances.remove( adView.getAdUnitId() );
+
             adView.destroy();
             adView.setListener( null );
             adView.setRevenueListener( null );

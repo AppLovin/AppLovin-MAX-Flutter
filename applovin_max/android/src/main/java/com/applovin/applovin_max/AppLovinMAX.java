@@ -1678,6 +1678,76 @@ public class AppLovinMAX
         return networkResponseObject;
     }
 
+    // Amazon
+
+    public void setAmazonBannerResult(final Object result, final String adUnitId)
+    {
+        setAmazonResult( result, adUnitId, MaxAdFormat.BANNER );
+    }
+
+    public void setAmazonMRecResult(final Object result, final String adUnitId)
+    {
+        setAmazonResult( result, adUnitId, MaxAdFormat.MREC );
+    }
+
+    public void setAmazonInterstitialResult(final Object result, final String adUnitId)
+    {
+        setAmazonResult( result, adUnitId, MaxAdFormat.INTERSTITIAL );
+    }
+
+    private void setAmazonResult(final Object result, final String adUnitId, final MaxAdFormat adFormat)
+    {
+        if ( sdk == null )
+        {
+            logUninitializedAccessError( "Failed to set Amazon result - SDK not initialized: " + adUnitId );
+            return;
+        }
+
+        if ( result == null )
+        {
+            e( "Failed to set Amazon result - null value" );
+            return;
+        }
+
+        String key = getLocalExtraParameterKeyForAmazonResult( result );
+
+        if ( adFormat == MaxAdFormat.INTERSTITIAL )
+        {
+            MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
+            if ( interstitial == null )
+            {
+                e( "Failed to set Amazon result - unable to retrieve interstitial" );
+                return;
+            }
+
+            interstitial.setLocalExtraParameter( key, result );
+        }
+        else // MaxAdFormat.BANNER or MaxAdFormat.MREC
+        {
+            MaxAdView adView = AppLovinMAXAdView.getInstance( adUnitId );
+
+            if ( adView == null )
+            {
+                adView = retrieveAdView( adUnitId, adFormat );
+            }
+
+            if ( adView != null )
+            {
+                adView.setLocalExtraParameter( key, result );
+            }
+            else
+            {
+                e( "Failed to set Amazon result - unable to retrieve " + adFormat );
+            }
+        }
+    }
+
+    private String getLocalExtraParameterKeyForAmazonResult(final Object /* DTBAdResponse or AdError */ result)
+    {
+        String className = result.getClass().getSimpleName();
+        return "DTBAdResponse".equalsIgnoreCase( className ) ? "amazon_ad_response" : "amazon_ad_error";
+    }
+
     // Utility Methods
 
     public MaxAdFormat getDeviceSpecificBannerAdViewAdFormat()
