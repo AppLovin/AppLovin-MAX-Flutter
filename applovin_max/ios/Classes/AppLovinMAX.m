@@ -510,6 +510,39 @@ static FlutterMethodChannel *ALSharedChannel;
     self.debugUserGeographyToSet = userGeography;
 }
 
+- (void)showCmpForExistingUser:(FlutterResult)result
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"showCmpForExistingUser" withResult: result];
+        return;
+    }
+
+    ALCMPService *cmpService = self.sdk.cmpService;
+    [cmpService showCMPForExistingUserWithCompletion:^(ALCMPError * _Nullable error) {
+        
+        if ( !error )
+        {
+            result(nil);
+            return;
+        }
+
+        result(@(error.code));
+    }];
+}
+
+- (void)hasSupportedCmp:(FlutterResult)result
+{
+    if ( !self.sdk )
+    {
+        [self logUninitializedAccessError: @"hasSupportedCmp" withResult: result];
+        return;
+    }
+
+    ALCMPService *cmpService = self.sdk.cmpService;
+    result(@([cmpService hasSupportedCMP]));
+}
+
 #pragma mark - Data Passing
 
 - (void)setTargetingDataYearOfBirth:(nullable NSNumber *)yearOfBirth
@@ -1299,7 +1332,20 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logUninitializedAccessError:(NSString *)callingMethod
 {
-    [self log: @"ERROR: Failed to execute %@() - please ensure the AppLovin Flutter Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
+    [self logUninitializedAccessError: callingMethod withResult: nil];
+}
+
+- (void)logUninitializedAccessError:(NSString *)callingMethod withResult:(nullable FlutterResult)result
+{
+    NSString *message = [NSString stringWithFormat:@"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
+
+    if (!result)
+    {
+        NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
+        return;
+    }
+
+    result([FlutterError errorWithCode: TAG message: message details: nil]);
 }
 
 - (void)log:(NSString *)format, ...
@@ -1941,6 +1987,14 @@ static FlutterMethodChannel *ALSharedChannel;
         [self setConsentFlowDebugUserGeography: debugUserGeography];
         
         result(nil);
+    }
+    else if ( [@"showCmpForExistingUser" isEqualToString: call.method] )
+    {
+        [self showCmpForExistingUser: result];
+    }
+    else if ( [@"hasSupportedCmp" isEqualToString: call.method] )
+    {
+        [self hasSupportedCmp: result];
     }
     else if ( [@"createBanner" isEqualToString: call.method] )
     {
