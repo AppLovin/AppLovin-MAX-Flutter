@@ -1339,7 +1339,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     NSString *message = [NSString stringWithFormat:@"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
 
-    if (!result)
+    if ( !result )
     {
         NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
         return;
