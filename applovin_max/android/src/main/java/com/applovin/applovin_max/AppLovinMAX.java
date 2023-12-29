@@ -569,6 +569,7 @@ public class AppLovinMAX
 
         AppLovinCmpService cmpService = sdk.getCmpService();
         cmpService.showCmpForExistingUser( getCurrentActivity(), (@Nullable final AppLovinCmpError error) -> {
+
             if ( error == null )
             {
                 result.success( null );
