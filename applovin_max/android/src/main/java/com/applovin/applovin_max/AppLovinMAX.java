@@ -34,6 +34,8 @@ import com.applovin.mediation.ads.MaxAppOpenAd;
 import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.mediation.ads.MaxRewardedAd;
 import com.applovin.sdk.AppLovinAdContentRating;
+import com.applovin.sdk.AppLovinCmpError;
+import com.applovin.sdk.AppLovinCmpService;
 import com.applovin.sdk.AppLovinGender;
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
@@ -555,6 +557,39 @@ public class AppLovinMAX
     public void setConsentFlowDebugUserGeography(final String userGeography)
     {
         debugUserGeographyToSet = userGeography;
+    }
+
+    public void showCmpForExistingUser(final Result result)
+    {
+        if ( sdk == null )
+        {
+            logUninitializedAccessError( "showCmpForExistingUser", result );
+            return;
+        }
+
+        AppLovinCmpService cmpService = sdk.getCmpService();
+        cmpService.showCmpForExistingUser( getCurrentActivity(), (@Nullable final AppLovinCmpError error) -> {
+
+            if ( error == null )
+            {
+                result.success( null );
+                return;
+            }
+
+            result.success( error.getCmpCode() );
+        } );
+    }
+
+    public void hasSupportedCmp(final Result result)
+    {
+        if ( sdk == null )
+        {
+            logUninitializedAccessError( "hasSupportedCmp", result );
+            return;
+        }
+
+        AppLovinCmpService cmpService = sdk.getCmpService();
+        result.success( cmpService.hasSupportedCmp() );
     }
 
     // Data Passing
@@ -1426,7 +1461,20 @@ public class AppLovinMAX
 
     private static void logUninitializedAccessError(final String callingMethod)
     {
-        e( "ERROR: Failed to execute " + callingMethod + "() - please ensure the AppLovin MAX Flutter plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!" );
+        logUninitializedAccessError( callingMethod, null );
+    }
+
+    private static void logUninitializedAccessError(final String callingMethod, @Nullable final Result result)
+    {
+        final String message = "ERROR: Failed to execute " + callingMethod + "() - please ensure the AppLovin MAX Flutter plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!";
+
+        if ( result == null )
+        {
+            e( message );
+            return;
+        }
+
+        result.error( TAG, message, null );
     }
 
     public static void d(final String message)
@@ -2010,6 +2058,14 @@ public class AppLovinMAX
             setConsentFlowDebugUserGeography( value );
 
             result.success( null );
+        }
+        else if ( "showCmpForExistingUser".equals( call.method ) )
+        {
+            showCmpForExistingUser( result );
+        }
+        else if ( "hasSupportedCmp".equals( call.method ) )
+        {
+            hasSupportedCmp( result );
         }
         else if ( "createBanner".equals( call.method ) )
         {

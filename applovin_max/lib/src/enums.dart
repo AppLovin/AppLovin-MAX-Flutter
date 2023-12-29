@@ -125,3 +125,35 @@ enum AppTrackingStatus {
   /// @nodoc
   const AppTrackingStatus(this.value);
 }
+
+///
+/// Represents errors for CMP flow.
+///
+enum CmpError
+{
+  ///
+  /// Indicates that an unspecified error has occurred.
+  ///
+  unspecified(-1),
+
+  ///
+  /// Indicates that the CMP has not been integrated correctly.
+  ///
+  integrationError(1),
+
+  ///
+  /// Indicates that the CMP form is unavailable.
+  ///
+  formUnavailable(2),
+
+  ///
+  /// Indicates that the CMP form is not required.
+  ///
+  formNotRequired(3);
+
+  /// @nodoc
+  final int value;
+
+  /// @nodoc
+  const CmpError(this.value);
+}
