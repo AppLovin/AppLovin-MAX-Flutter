@@ -584,7 +584,7 @@ public class AppLovinMAX
     {
         if ( sdk == null )
         {
-            logUninitializedAccessError( "showCmpForExistingUser", result );
+            logUninitializedAccessError( "hasSupportedCmp", result );
             return;
         }
 
