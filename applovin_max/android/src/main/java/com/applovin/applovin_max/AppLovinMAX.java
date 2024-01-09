@@ -1764,11 +1764,22 @@ public class AppLovinMAX
             MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
             if ( interstitial == null )
             {
-                e( "Failed to set Amazon result - unable to retrieve interstitial" );
+                e( "Failed to set Amazon result - unable to find interstitial" );
                 return;
             }
 
             interstitial.setLocalExtraParameter( key, result );
+        }
+        else if ( adFormat == MaxAdFormat.REWARDED )
+        {
+            MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
+            if ( rewardedAd == null )
+            {
+                e( "Failed to set Amazon result - unable to find rewarded ad" );
+                return;
+            }
+
+            rewardedAd.setLocalExtraParameter( key, result );
         }
         else // MaxAdFormat.BANNER or MaxAdFormat.MREC
         {
@@ -1785,7 +1796,7 @@ public class AppLovinMAX
             }
             else
             {
-                e( "Failed to set Amazon result - unable to retrieve " + adFormat );
+                e( "Failed to set Amazon result - unable to find " + adFormat );
             }
         }
     }
