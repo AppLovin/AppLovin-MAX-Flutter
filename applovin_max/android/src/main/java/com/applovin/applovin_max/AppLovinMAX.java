@@ -1764,7 +1764,7 @@ public class AppLovinMAX
             MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
             if ( interstitial == null )
             {
-                e( "Failed to set Amazon result - unable to retrieve interstitial" );
+                e( "Failed to set Amazon result - unable to find interstitial" );
                 return;
             }
 
@@ -1775,7 +1775,7 @@ public class AppLovinMAX
             MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
             if ( rewardedAd == null )
             {
-                e( "Failed to set Amazon result - unable to retrieve rewarded" );
+                e( "Failed to set Amazon result - unable to find rewarded ad" );
                 return;
             }
 
@@ -1796,7 +1796,7 @@ public class AppLovinMAX
             }
             else
             {
-                e( "Failed to set Amazon result - unable to retrieve " + adFormat );
+                e( "Failed to set Amazon result - unable to find " + adFormat );
             }
         }
     }
