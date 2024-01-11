@@ -1743,6 +1743,11 @@ public class AppLovinMAX
         setAmazonResult( result, adUnitId, MaxAdFormat.INTERSTITIAL );
     }
 
+    public void setAmazonRewardedResult(final Object result, final String adUnitId)
+    {
+        setAmazonResult( result, adUnitId, MaxAdFormat.REWARDED );
+    }
+
     private void setAmazonResult(final Object result, final String adUnitId, final MaxAdFormat adFormat)
     {
         if ( sdk == null )
