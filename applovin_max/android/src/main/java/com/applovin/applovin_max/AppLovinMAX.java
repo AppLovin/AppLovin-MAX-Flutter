@@ -344,7 +344,7 @@ public class AppLovinMAX
 
     private Map<String, Object> getInitializationMessage()
     {
-        Map<String, Object> message = new HashMap<>( 8 );
+        Map<String, Object> message = new HashMap<>( 4 );
 
         if ( sdkConfiguration != null )
         {
@@ -357,10 +357,6 @@ public class AppLovinMAX
         {
             message.put( "consentDialogState", AppLovinSdkConfiguration.ConsentDialogState.UNKNOWN.ordinal() );
         }
-
-        message.put( "hasUserConsent", AppLovinPrivacySettings.hasUserConsent( applicationContext ) );
-        message.put( "isAgeRestrictedUser", AppLovinPrivacySettings.isAgeRestrictedUser( applicationContext ) );
-        message.put( "isDoNotSell", AppLovinPrivacySettings.isDoNotSell( applicationContext ) );
 
         return message;
     }

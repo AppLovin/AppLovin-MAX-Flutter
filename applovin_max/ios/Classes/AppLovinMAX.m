@@ -301,7 +301,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (NSDictionary<NSString *, id> *)initializationMessage
 {
-    NSMutableDictionary<NSString *, id> *message = [NSMutableDictionary dictionaryWithCapacity: 8];
+    NSMutableDictionary<NSString *, id> *message = [NSMutableDictionary dictionaryWithCapacity: 5];
     
     if ( self.sdkConfiguration )
     {
@@ -315,10 +315,6 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         message[@"consentDialogState"] = @(ALConsentDialogStateUnknown);
     }
-    
-    message[@"hasUserConsent"] = @([ALPrivacySettings hasUserConsent]);
-    message[@"isAgeRestrictedUser"] = @([ALPrivacySettings isAgeRestrictedUser]);
-    message[@"isDoNotSell"] = @([ALPrivacySettings isDoNotSell]);
     
     return message;
 }

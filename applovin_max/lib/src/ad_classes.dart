@@ -162,39 +162,23 @@ class MaxConfiguration {
   // used for tracking the user or the device.
   final AppTrackingStatus? appTrackingStatus;
 
-  /// Whether or not the user has set a consent flag.
-  final bool hasUserConsent;
+  /// @nodoc
+  MaxConfiguration(
+      {this.consentDialogState = ConsentDialogState.unknown, this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus});
 
-  /// Whether or not the user is age-restricted.
-  final bool isAgeRestrictedUser;
-
-  ///  Whether or not the user has opted out of interest-based advertising.
-  final bool isDoNotSell;
-
-  MaxConfiguration({
-    this.consentDialogState=ConsentDialogState.unknown,
-    this.countryCode,
-    this.isTestModeEnabled,
-    this.consentFlowUserGeography,
-    this.appTrackingStatus,
-    this.hasUserConsent=false,
-    this.isAgeRestrictedUser=false, 
-    this.isDoNotSell=false});
-
+  /// @nodoc
   MaxConfiguration.fromJson(Map<String, dynamic> json)
       : consentDialogState = ConsentDialogState.values[json['consentDialogState']],
         countryCode = json['countryCode'],
         isTestModeEnabled = bool.tryParse(json['isTestModeEnabled'].toString()),
-        consentFlowUserGeography = (json['consentFlowUserGeography'] is String) ? ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography']) : null,
-        appTrackingStatus = (json['appTrackingStatus'] is String) ? AppTrackingStatus.values.firstWhere((v) => v.value == json['appTrackingStatus']) : null,
-        hasUserConsent = json['hasUserConsent'],
-        isAgeRestrictedUser = json['isAgeRestrictedUser'],
-        isDoNotSell = json['isDoNotSell'];
+        consentFlowUserGeography = (json['consentFlowUserGeography'] is String)
+            ? ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography'])
+            : null,
+        appTrackingStatus = (json['appTrackingStatus'] is String) ? AppTrackingStatus.values.firstWhere((v) => v.value == json['appTrackingStatus']) : null;
 
   @override
   String toString() {
     return '[MaxConfiguration consentDialogState: $consentDialogState countryCode: $countryCode isTestModeEnabled: $isTestModeEnabled '
-        'consentFlowUserGeography: $consentFlowUserGeography appTrackingStatus: $appTrackingStatus hasUserConsent: $hasUserConsent '
-        'isAgeRestrictedUser: $isAgeRestrictedUser isDoNotSell: $isDoNotSell]';
+        'consentFlowUserGeography: $consentFlowUserGeography appTrackingStatus: $appTrackingStatus]';
   }
 }
