@@ -461,9 +461,9 @@
         nativeAdInfo[@"mediaContentAspectRatio"] = @(ad.mediaContentAspectRatio);
     }
     
-    nativeAdInfo[@"isIconImageAvailable"] = @(ad.icon != nil);
-    nativeAdInfo[@"isOptionsViewAvailable"] = @(ad.optionsView != nil);
-    nativeAdInfo[@"isMediaViewAvailable"] = @(ad.mediaView != nil);
+    nativeAdInfo[@"isIconImageAvailable"] = (ad.icon != nil) ? @YES : @NO;
+    nativeAdInfo[@"isOptionsViewAvailable"] = (ad.optionsView != nil) ? @YES : @NO;
+    nativeAdInfo[@"isMediaViewAvailable"] = (ad.mediaView != nil) ? @YES : @NO;
     
     NSMutableDictionary *adInfo = [[AppLovinMAX shared] adInfoForAd: self.nativeAd].mutableCopy;
     adInfo[@"nativeAd"] = nativeAdInfo;
