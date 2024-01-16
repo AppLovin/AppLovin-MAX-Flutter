@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Update `AppLovinMAX.showCmpForExistingUser()` to return `CmpError` instead of `int` raw value.
 * Add `MaxConfiguration` to encapsulate a return object of `AppLovinMAX.initialize(...)`.
 * Add support for Amazon bidding for rewarded ads.
 ## 3.5.0
