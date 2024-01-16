@@ -47,7 +47,6 @@ import com.applovin.sdk.AppLovinSdkUtils;
 import com.applovin.sdk.AppLovinUserService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -345,18 +344,21 @@ public class AppLovinMAX
 
     private Map<String, Object> getInitializationMessage()
     {
+        Map<String, Object> message = new HashMap<>( 4 );
+
         if ( sdkConfiguration != null )
         {
-            Map<String, Object> message = new HashMap<>( 2 );
             message.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
             message.put( "countryCode", sdkConfiguration.getCountryCode() );
             message.put( "isTestModeEnabled", sdkConfiguration.isTestModeEnabled() );
             message.put( "consentFlowUserGeography", getRawAppLovinConsentFlowUserGeography( sdkConfiguration.getConsentFlowUserGeography() ) );
-
-            return message;
+        }
+        else
+        {
+            message.put( "consentDialogState", AppLovinSdkConfiguration.ConsentDialogState.UNKNOWN.ordinal() );
         }
 
-        return Collections.emptyMap();
+        return message;
     }
 
     // General Public API

@@ -66,11 +66,11 @@ class _MyAppState extends State<MyApp> {
     AppLovinMAX.setPrivacyPolicyUrl("https://your_company_name.com/privacy");
     AppLovinMAX.setTermsOfServiceUrl("https://your_company_name.com/terms");
 
-    Map? configuration = await AppLovinMAX.initialize(_sdkKey);
+    MaxConfiguration? configuration = await AppLovinMAX.initialize(_sdkKey);
     if (configuration != null) {
       _isInitialized = true;
 
-      logStatus("SDK Initialized: $configuration");
+      logStatus("SDK Initialized: ${configuration.countryCode}");
 
       attachAdListeners();
     }
