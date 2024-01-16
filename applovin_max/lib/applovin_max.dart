@@ -36,7 +36,7 @@ class AppLovinMAX {
   /// Initializes the SDK.
   ///
   /// [Initialize the SDK](https://dash.applovin.com/documentation/mediation/flutter/getting-started/integration#initialize-the-sdk)
-  static Future<Map?> initialize(String sdkKey) {
+  static Future<MaxConfiguration?> initialize(String sdkKey) async {
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
@@ -128,10 +128,12 @@ class AppLovinMAX {
       }
     });
 
-    return channel.invokeMethod('initialize', {
+    var conf = await channel.invokeMethod('initialize', {
       'plugin_version': version,
       'sdk_key': sdkKey,
-    });
+    }) as Map;
+
+    return MaxConfiguration.fromJson(Map<String, dynamic>.from(conf));
   }
 
   /// @nodoc

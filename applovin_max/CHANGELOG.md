@@ -2,6 +2,7 @@
 
 ## x.x.x
 * Update `AppLovinMAX.showCmpForExistingUser()` to return `CmpError` instead of `int` raw value.
+* Add `MaxConfiguration` to encapsulate a return object of `AppLovinMAX.initialize(...)`.
 * Add support for Amazon bidding for rewarded ads.
 ## 3.5.0
 * Add support for showing Google UMP to existing users for integrations using our Google UMP Automation feature. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow#showing-gdpr-flow-to-existing-users).

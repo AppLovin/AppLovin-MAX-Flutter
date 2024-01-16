@@ -1,3 +1,5 @@
+import 'package:applovin_max/src/enums.dart';
+
 /// Represents an ad that has been served by AppLovin MAX.
 class MaxAd {
   /// The ad unit ID for which this ad was loaded.
@@ -138,5 +140,45 @@ class MaxError {
   @override
   String toString() {
     return '[MaxError code: $code, message: $message, waterfall: $waterfall]';
+  }
+}
+
+/// Encapsulates various flags related to the SDK configuration.
+class MaxConfiguration {
+  /// The state of the consent dialog.
+  @Deprecated("Use ConsentFlowUserGeography instead.")
+  final ConsentDialogState consentDialogState;
+
+  /// The country code for this user.
+  final String? countryCode;
+
+  /// Whether or not test mode is enabled for this session.
+  final bool? isTestModeEnabled;
+
+  /// The user's geography used to determine the type of consent flow shown to the user.
+  final ConsentFlowUserGeography? consentFlowUserGeography;
+
+  // Whether or not the user authorizes access to app-related data that can be
+  // used for tracking the user or the device.
+  final AppTrackingStatus? appTrackingStatus;
+
+  /// @nodoc
+  MaxConfiguration(
+      {this.consentDialogState = ConsentDialogState.unknown, this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus});
+
+  /// @nodoc
+  MaxConfiguration.fromJson(Map<String, dynamic> json)
+      : consentDialogState = ConsentDialogState.values[json['consentDialogState']],
+        countryCode = json['countryCode'],
+        isTestModeEnabled = bool.tryParse(json['isTestModeEnabled'].toString()),
+        consentFlowUserGeography = (json['consentFlowUserGeography'] is String)
+            ? ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography'])
+            : null,
+        appTrackingStatus = (json['appTrackingStatus'] is String) ? AppTrackingStatus.values.firstWhere((v) => v.value == json['appTrackingStatus']) : null;
+
+  @override
+  String toString() {
+    return '[MaxConfiguration consentDialogState: $consentDialogState countryCode: $countryCode isTestModeEnabled: $isTestModeEnabled '
+        'consentFlowUserGeography: $consentFlowUserGeography appTrackingStatus: $appTrackingStatus]';
   }
 }
