@@ -304,6 +304,8 @@ public class AppLovinMAXNativeAdView
 
     private void addTitleView(final MethodCall call)
     {
+        if ( nativeAd == null ) return;
+
         if ( nativeAd.getNativeAd().getTitle() == null ) return;
 
         if ( titleView == null )
@@ -320,6 +322,8 @@ public class AppLovinMAXNativeAdView
 
     private void addAdvertiserView(final MethodCall call)
     {
+        if ( nativeAd == null ) return;
+
         if ( nativeAd.getNativeAd().getAdvertiser() == null ) return;
 
         if ( advertiserView == null )
@@ -336,6 +340,8 @@ public class AppLovinMAXNativeAdView
 
     private void addBodyView(final MethodCall call)
     {
+        if ( nativeAd == null ) return;
+
         if ( nativeAd.getNativeAd().getBody() == null ) return;
 
         if ( bodyView == null )
@@ -352,6 +358,8 @@ public class AppLovinMAXNativeAdView
 
     private void addCallToActionView(final MethodCall call)
     {
+        if ( nativeAd == null ) return;
+
         if ( nativeAd.getNativeAd().getCallToAction() == null ) return;
 
         if ( callToActionView == null )
@@ -368,6 +376,8 @@ public class AppLovinMAXNativeAdView
 
     private void addIconView(final MethodCall call)
     {
+        if ( nativeAd == null ) return;
+
         MaxNativeAd.MaxNativeAdImage icon = nativeAd.getNativeAd().getIcon();
 
         if ( icon == null )
@@ -456,7 +466,7 @@ public class AppLovinMAXNativeAdView
 
     private void renderAd()
     {
-        if ( adLoader != null )
+        if ( adLoader != null && nativeAd != null )
         {
             adLoader.a( clickableViews, nativeAdView, nativeAd );
             adLoader.b( nativeAd );
