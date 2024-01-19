@@ -103,42 +103,42 @@ public class AppLovinMAXNativeAdView
 
             if ( "addTitleView".equals( call.method ) )
             {
-                addTitleView( call );
+                if ( nativeAd != null ) addTitleView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addAdvertiserView".equals( call.method ) )
             {
-                addAdvertiserView( call );
+                if ( nativeAd != null ) addAdvertiserView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addBodyView".equals( call.method ) )
             {
-                addBodyView( call );
+                if ( nativeAd != null ) addBodyView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addCallToActionView".equals( call.method ) )
             {
-                addCallToActionView( call );
+                if ( nativeAd != null ) addCallToActionView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addIconView".equals( call.method ) )
             {
-                addIconView( call );
+                if ( nativeAd != null ) addIconView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addOptionsView".equals( call.method ) )
             {
-                addOptionsView( call );
+                if ( nativeAd != null ) addOptionsView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addMediaView".equals( call.method ) )
             {
-                addMediaView( call );
+                if ( nativeAd != null ) addMediaView( call, nativeAd );
                 result.success( null );
             }
             else if ( "renderAd".equals( call.method ) )
             {
-                renderAd();
+                if ( nativeAd != null ) renderAd( nativeAd );
                 result.success( null );
             }
             else if ( "loadAd".equals( call.method ) )
@@ -302,9 +302,11 @@ public class AppLovinMAXNativeAdView
 
     /// Native Ad Component Methods
 
-    private void addTitleView(final MethodCall call)
+    private void addTitleView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd.getNativeAd().getTitle() == null ) return;
+        if ( ad == null ) return;
+
+        if ( ad.getNativeAd().getTitle() == null ) return;
 
         if ( titleView == null )
         {
@@ -318,9 +320,11 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, titleView, getRect( call ) );
     }
 
-    private void addAdvertiserView(final MethodCall call)
+    private void addAdvertiserView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd.getNativeAd().getAdvertiser() == null ) return;
+        if ( ad == null ) return;
+
+        if ( ad.getNativeAd().getAdvertiser() == null ) return;
 
         if ( advertiserView == null )
         {
@@ -334,9 +338,11 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, advertiserView, getRect( call ) );
     }
 
-    private void addBodyView(final MethodCall call)
+    private void addBodyView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd.getNativeAd().getBody() == null ) return;
+        if ( ad == null ) return;
+
+        if ( ad.getNativeAd().getBody() == null ) return;
 
         if ( bodyView == null )
         {
@@ -350,9 +356,11 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, bodyView, getRect( call ) );
     }
 
-    private void addCallToActionView(final MethodCall call)
+    private void addCallToActionView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd.getNativeAd().getCallToAction() == null ) return;
+        if ( ad == null ) return;
+
+        if ( ad.getNativeAd().getCallToAction() == null ) return;
 
         if ( callToActionView == null )
         {
@@ -366,9 +374,11 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, callToActionView, getRect( call ) );
     }
 
-    private void addIconView(final MethodCall call)
+    private void addIconView(final MethodCall call, final MaxAd ad)
     {
-        MaxNativeAd.MaxNativeAdImage icon = nativeAd.getNativeAd().getIcon();
+        if ( ad == null ) return;
+
+        MaxNativeAd.MaxNativeAdImage icon = ad.getNativeAd().getIcon();
 
         if ( icon == null )
         {
@@ -401,11 +411,11 @@ public class AppLovinMAXNativeAdView
         }
     }
 
-    private void addOptionsView(final MethodCall call)
+    private void addOptionsView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd == null ) return;
+        if ( ad == null ) return;
 
-        View optionsView = nativeAd.getNativeAd().getOptionsView();
+        View optionsView = ad.getNativeAd().getOptionsView();
         if ( optionsView == null ) return;
 
         if ( optionsViewContainer == null )
@@ -425,11 +435,11 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, optionsViewContainer, getRect( call ) );
     }
 
-    private void addMediaView(final MethodCall call)
+    private void addMediaView(final MethodCall call, final MaxAd ad)
     {
-        if ( nativeAd == null ) return;
+        if ( ad == null ) return;
 
-        View mediaView = nativeAd.getNativeAd().getMediaView();
+        View mediaView = ad.getNativeAd().getMediaView();
         if ( mediaView == null ) return;
 
         if ( mediaViewContainer == null )
@@ -454,12 +464,12 @@ public class AppLovinMAXNativeAdView
         updateViewLayout( nativeAdView, mediaViewContainer, rect );
     }
 
-    private void renderAd()
+    private void renderAd(final MaxAd ad)
     {
-        if ( adLoader != null )
+        if ( ad != null && adLoader != null )
         {
-            adLoader.a( clickableViews, nativeAdView, nativeAd );
-            adLoader.b( nativeAd );
+            adLoader.a( clickableViews, nativeAdView, ad );
+            adLoader.b( ad );
         }
         else
         {
