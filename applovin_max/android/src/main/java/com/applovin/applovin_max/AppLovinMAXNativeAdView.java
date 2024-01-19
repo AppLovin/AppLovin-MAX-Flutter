@@ -304,6 +304,8 @@ public class AppLovinMAXNativeAdView
 
     private void addTitleView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         if ( ad.getNativeAd().getTitle() == null ) return;
 
         if ( titleView == null )
@@ -320,6 +322,8 @@ public class AppLovinMAXNativeAdView
 
     private void addAdvertiserView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         if ( ad.getNativeAd().getAdvertiser() == null ) return;
 
         if ( advertiserView == null )
@@ -336,6 +340,8 @@ public class AppLovinMAXNativeAdView
 
     private void addBodyView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         if ( ad.getNativeAd().getBody() == null ) return;
 
         if ( bodyView == null )
@@ -352,6 +358,8 @@ public class AppLovinMAXNativeAdView
 
     private void addCallToActionView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         if ( ad.getNativeAd().getCallToAction() == null ) return;
 
         if ( callToActionView == null )
@@ -368,6 +376,8 @@ public class AppLovinMAXNativeAdView
 
     private void addIconView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         MaxNativeAd.MaxNativeAdImage icon = ad.getNativeAd().getIcon();
 
         if ( icon == null )
@@ -403,6 +413,8 @@ public class AppLovinMAXNativeAdView
 
     private void addOptionsView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         View optionsView = ad.getNativeAd().getOptionsView();
         if ( optionsView == null ) return;
 
@@ -425,6 +437,8 @@ public class AppLovinMAXNativeAdView
 
     private void addMediaView(final MethodCall call, final MaxAd ad)
     {
+        if ( ad == null ) return;
+
         View mediaView = ad.getNativeAd().getMediaView();
         if ( mediaView == null ) return;
 
@@ -452,7 +466,7 @@ public class AppLovinMAXNativeAdView
 
     private void renderAd(final MaxAd ad)
     {
-        if ( adLoader != null )
+        if ( ad != null && adLoader != null )
         {
             adLoader.a( clickableViews, nativeAdView, ad );
             adLoader.b( ad );
