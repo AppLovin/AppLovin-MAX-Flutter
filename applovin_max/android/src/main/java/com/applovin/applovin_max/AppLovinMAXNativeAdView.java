@@ -101,70 +101,44 @@ public class AppLovinMAXNativeAdView
         channel = new MethodChannel( messenger, uniqueChannelName );
         channel.setMethodCallHandler( (call, result) -> {
 
-            MaxAd currentNativeAd = nativeAd;
-
             if ( "addTitleView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addTitleView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addTitleView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addAdvertiserView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addAdvertiserView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addAdvertiserView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addBodyView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addBodyView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addBodyView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addCallToActionView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addCallToActionView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addCallToActionView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addIconView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addIconView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addIconView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addOptionsView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addOptionsView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addOptionsView( call, nativeAd );
                 result.success( null );
             }
             else if ( "addMediaView".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    addMediaView( call, currentNativeAd );
-                }
+                if ( nativeAd != null ) addMediaView( call, nativeAd );
                 result.success( null );
             }
             else if ( "renderAd".equals( call.method ) )
             {
-                if ( currentNativeAd != null )
-                {
-                    renderAd( currentNativeAd );
-                }
+                if ( nativeAd != null ) renderAd( nativeAd );
                 result.success( null );
             }
             else if ( "loadAd".equals( call.method ) )
