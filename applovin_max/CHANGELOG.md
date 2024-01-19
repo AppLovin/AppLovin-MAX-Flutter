@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.6.0
 * Fix NPE for accessing a null native ad on Android.
 * Update `AppLovinMAX.showCmpForExistingUser()` to return `CmpError` instead of `int` raw value.
 * Add `MaxConfiguration` to encapsulate a return object of `AppLovinMAX.initialize(...)`.
