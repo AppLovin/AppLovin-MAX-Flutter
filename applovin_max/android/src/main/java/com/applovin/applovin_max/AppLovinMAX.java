@@ -1497,6 +1497,7 @@ public class AppLovinMAX
         Log.e( SDK_TAG, fullMessage );
     }
 
+    // NOTE: Do not update signature as some integrations depend on it via Java reflection
     private MaxInterstitialAd retrieveInterstitial(String adUnitId)
     {
         MaxInterstitialAd result = mInterstitials.get( adUnitId );
@@ -1512,6 +1513,7 @@ public class AppLovinMAX
         return result;
     }
 
+    // NOTE: Do not update signature as some integrations depend on it via Java reflection
     private MaxRewardedAd retrieveRewardedAd(String adUnitId)
     {
         MaxRewardedAd result = mRewardedAds.get( adUnitId );
@@ -1527,6 +1529,7 @@ public class AppLovinMAX
         return result;
     }
 
+    // NOTE: Do not update signature as some integrations depend on it via Java reflection
     private MaxAppOpenAd retrieveAppOpenAd(String adUnitId)
     {
         MaxAppOpenAd result = mAppOpenAds.get( adUnitId );
@@ -1542,6 +1545,7 @@ public class AppLovinMAX
         return result;
     }
 
+    // NOTE: Do not update signature as some integrations depend on it via Java reflection
     private MaxAdView retrieveAdView(String adUnitId, MaxAdFormat adFormat)
     {
         return retrieveAdView( adUnitId, adFormat, null );

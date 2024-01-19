@@ -1364,6 +1364,7 @@ static FlutterMethodChannel *ALSharedChannel;
     NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
 }
 
+// NOTE: Do not update signature as some integrations depend on it via Objective-C runtime
 - (MAInterstitialAd *)retrieveInterstitialForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     MAInterstitialAd *result = self.interstitials[adUnitIdentifier];
@@ -1378,6 +1379,7 @@ static FlutterMethodChannel *ALSharedChannel;
     return result;
 }
 
+// NOTE: Do not update signature as some integrations depend on it via Objective-C runtime
 - (MARewardedAd *)retrieveRewardedAdForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     MARewardedAd *result = self.rewardedAds[adUnitIdentifier];
@@ -1392,6 +1394,7 @@ static FlutterMethodChannel *ALSharedChannel;
     return result;
 }
 
+// NOTE: Do not update signature as some integrations depend on it via Objective-C runtime
 - (MAAppOpenAd *)retrieveAppOpenAdForAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
     MAAppOpenAd *result = self.appOpenAds[adUnitIdentifier];
@@ -1406,6 +1409,7 @@ static FlutterMethodChannel *ALSharedChannel;
     return result;
 }
 
+// NOTE: Do not update signature as some integrations depend on it via Objective-C runtime
 - (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
     return [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: nil];
