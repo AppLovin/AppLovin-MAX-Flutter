@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Fix NPE for accessing a null native ad on Android.
 * Update `AppLovinMAX.showCmpForExistingUser()` to return `CmpError` instead of `int` raw value.
 * Add `MaxConfiguration` to encapsulate a return object of `AppLovinMAX.initialize(...)`.
 * Add support for Amazon bidding for rewarded ads.
