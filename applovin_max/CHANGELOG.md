@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix linter warnings.
 ## 3.6.0
 * Fix NPE for accessing a null native ad on Android.
 * Update `AppLovinMAX.showCmpForExistingUser()` to return `CmpError` instead of `int` raw value.
