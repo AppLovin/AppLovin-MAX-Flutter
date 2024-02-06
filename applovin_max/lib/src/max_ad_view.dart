@@ -105,9 +105,9 @@ class _MaxAdViewState extends State<MaxAdView> {
 
     if (oldWidget.isAutoRefreshEnabled != widget.isAutoRefreshEnabled) {
       if (widget.isAutoRefreshEnabled) {
-        _methodChannel!.invokeMethod('startAutoRefresh');
+        _methodChannel?.invokeMethod('startAutoRefresh');
       } else {
-        _methodChannel!.invokeMethod('stopAutoRefresh');
+        _methodChannel?.invokeMethod('stopAutoRefresh');
       }
     }
   }
