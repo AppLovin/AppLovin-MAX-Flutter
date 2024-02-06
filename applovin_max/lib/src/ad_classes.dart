@@ -170,7 +170,7 @@ class MaxConfiguration {
   MaxConfiguration.fromJson(Map<String, dynamic> json)
       : consentDialogState = ConsentDialogState.values[json['consentDialogState']],
         countryCode = json['countryCode'],
-        isTestModeEnabled = bool.tryParse(json['isTestModeEnabled'].toString()),
+        isTestModeEnabled = json['isTestModeEnabled'],
         consentFlowUserGeography = (json['consentFlowUserGeography'] is String)
             ? ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography'])
             : null,
