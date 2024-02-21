@@ -837,7 +837,7 @@ static FlutterMethodChannel *ALSharedChannel;
 {
     NSString *name;
     MAAdFormat *adFormat = ad.format;
-    if ( MAAdFormat.banner == adFormat || MAAdFormat.leader == adFormat || MAAdFormat.mrec == adFormat )
+    if ( [adFormat isAdViewAd] )
     {
         MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: ad.adUnitIdentifier adFormat: adFormat];
         // An ad is now being shown, enable user interaction.
@@ -1036,7 +1036,7 @@ static FlutterMethodChannel *ALSharedChannel;
 - (void)didExpandAd:(MAAd *)ad
 {
     MAAdFormat *adFormat = ad.format;
-    if ( adFormat != MAAdFormat.banner && adFormat != MAAdFormat.leader && adFormat != MAAdFormat.mrec )
+    if ( ![adFormat isAdViewAd] )
     {
         [self logInvalidAdFormat: adFormat];
         return;
@@ -1049,7 +1049,7 @@ static FlutterMethodChannel *ALSharedChannel;
 - (void)didCollapseAd:(MAAd *)ad
 {
     MAAdFormat *adFormat = ad.format;
-    if ( adFormat != MAAdFormat.banner && adFormat != MAAdFormat.leader && adFormat != MAAdFormat.mrec )
+    if ( ![adFormat isAdViewAd] )
     {
         [self logInvalidAdFormat: adFormat];
         return;
