@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Update the comment description for `AppLovinMAX.setTestDeviceAdvertisingIds(...)`.
 * Fix NPE for accessing a `null` `methodChannel` in `MaxAdView`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/176
 * Fix linter warnings.
 ## 3.6.0
