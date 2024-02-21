@@ -291,7 +291,9 @@ class AppLovinMAX {
     });
   }
 
-  /// @nodoc
+  /// Enables devices to receive test ads by passing in the advertising identifier (IDFA or IDFV) of
+  /// each test device. Refer to AppLovin logs for the IDFA or IDFV of your current device.
+  /// 
   static void setTestDeviceAdvertisingIds(List advertisingIdentifiers) {
     channel.invokeMethod('setTestDeviceAdvertisingIds', {
       'value': advertisingIdentifiers,
