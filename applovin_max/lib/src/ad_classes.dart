@@ -182,3 +182,33 @@ class MaxConfiguration {
         'consentFlowUserGeography: $consentFlowUserGeography appTrackingStatus: $appTrackingStatus]';
   }
 }
+
+/// Represents an error for CMP.
+class MaxCMPError {
+  /// The error code for this error.
+  final CMPErrorCode code;
+
+  /// The error message for this error.
+  final String message;
+
+  /// The error code returned by the CMP.
+  final int cmpCode;
+
+  /// The error message returned by the CMP.
+  final String cmpMessage;
+
+  /// @nodoc
+  MaxCMPError(this.code, this.message, this.cmpCode, this.cmpMessage);
+
+  /// @nodoc
+  MaxCMPError.fromJson(Map<String, dynamic> json)
+      : code = CMPErrorCode.values.firstWhere((v) => v.value == json['code']),
+        message = json['message'],
+        cmpCode = json['cmpCode'],
+        cmpMessage = json['cmpMessage'];
+
+  @override
+  String toString() {
+    return '[MaxCMPError code: $code, message: $message, cmpCode: $cmpCode, cmpMessage: $cmpMessage]';
+  }
+}

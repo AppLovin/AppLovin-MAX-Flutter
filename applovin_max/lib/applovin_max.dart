@@ -360,11 +360,11 @@ class AppLovinMAX {
   /// Note that this resets the user’s existing consent information.
   ///
   /// The function returns when the flow finishes showing. On success, returns
-  /// null. On failure, returns [CmpError].
-  static Future<CmpError?> showCmpForExistingUser() async {
-    int? error = await channel.invokeMethod('showCmpForExistingUser') as int?;
+  /// null. On failure, returns [MaxCMPError].
+  static Future<MaxCMPError?> showCmpForExistingUser() async {
+    Map? error = await channel.invokeMethod('showCmpForExistingUser') as Map?;
     if (error == null) return null;
-    return CmpError.values.firstWhere((v) => v.value == error);
+    return MaxCMPError.fromJson(Map<String, dynamic>.from(error));
   }
 
   /// Returns true if a supported CMP SDK is detected.
