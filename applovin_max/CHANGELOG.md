@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Fix banner/MREC background not hiding.
 * Update the comment description for `AppLovinMAX.setTestDeviceAdvertisingIds(...)`.
 * Fix NPE for accessing a `null` `methodChannel` in `MaxAdView`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/176
 * Fix linter warnings.
