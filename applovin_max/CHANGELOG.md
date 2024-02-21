@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.7.0
 * Add `MaxCMPError` to encapsulate a return object of `AppLovinMAX.showCmpForExistingUser()`. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow#showing-gdpr-flow-to-existing-users).
 * Fix banner/MREC background not hiding.
 * Update the comment description for `AppLovinMAX.setTestDeviceAdvertisingIds(...)`.
