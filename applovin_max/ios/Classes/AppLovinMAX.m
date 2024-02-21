@@ -508,14 +508,13 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)showCmpForExistingUser:(FlutterResult)result
 {
-    if ( !self.sdk )
+    if ( ![self isPluginInitialized] )
     {
         [self logUninitializedAccessError: @"showCmpForExistingUser" withResult: result];
         return;
     }
 
-    ALCMPService *cmpService = self.sdk.cmpService;
-    [cmpService showCMPForExistingUserWithCompletion:^(ALCMPError * _Nullable error) {
+    [self.sdk.cmpService showCMPForExistingUserWithCompletion:^(ALCMPError * _Nullable error) {
         
         if ( !error )
         {
@@ -523,20 +522,22 @@ static FlutterMethodChannel *ALSharedChannel;
             return;
         }
 
-        result(@(error.code));
+        result(@{@"code" : @(error.code),
+                 @"message" : error.message ?: @"",
+                 @"cmpCode" : @(error.cmpCode),
+                 @"cmpMessage" : error.cmpMessage ?: @""});
     }];
 }
 
 - (void)hasSupportedCmp:(FlutterResult)result
 {
-    if ( !self.sdk )
+    if ( ![self isPluginInitialized] )
     {
         [self logUninitializedAccessError: @"hasSupportedCmp" withResult: result];
         return;
     }
 
-    ALCMPService *cmpService = self.sdk.cmpService;
-    result(@([cmpService hasSupportedCMP]));
+    result(@([self.sdk.cmpService hasSupportedCMP]));
 }
 
 #pragma mark - Data Passing

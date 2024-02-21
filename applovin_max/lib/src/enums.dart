@@ -129,7 +129,7 @@ enum AppTrackingStatus {
 ///
 /// Represents errors for CMP flow.
 ///
-enum CmpError
+enum CMPErrorCode
 {
   ///
   /// Indicates that an unspecified error has occurred.
@@ -155,5 +155,5 @@ enum CmpError
   final int value;
 
   /// @nodoc
-  const CmpError(this.value);
+  const CMPErrorCode(this.value);
 }

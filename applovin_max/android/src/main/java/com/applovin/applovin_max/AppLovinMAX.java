@@ -35,7 +35,6 @@ import com.applovin.mediation.ads.MaxInterstitialAd;
 import com.applovin.mediation.ads.MaxRewardedAd;
 import com.applovin.sdk.AppLovinAdContentRating;
 import com.applovin.sdk.AppLovinCmpError;
-import com.applovin.sdk.AppLovinCmpService;
 import com.applovin.sdk.AppLovinGender;
 import com.applovin.sdk.AppLovinMediationProvider;
 import com.applovin.sdk.AppLovinPrivacySettings;
@@ -563,14 +562,13 @@ public class AppLovinMAX
 
     public void showCmpForExistingUser(final Result result)
     {
-        if ( sdk == null )
+        if ( !isPluginInitialized )
         {
             logUninitializedAccessError( "showCmpForExistingUser", result );
             return;
         }
 
-        AppLovinCmpService cmpService = sdk.getCmpService();
-        cmpService.showCmpForExistingUser( getCurrentActivity(), (@Nullable final AppLovinCmpError error) -> {
+        sdk.getCmpService().showCmpForExistingUser( getCurrentActivity(), (@Nullable final AppLovinCmpError error) -> {
 
             if ( error == null )
             {
@@ -578,20 +576,24 @@ public class AppLovinMAX
                 return;
             }
 
-            result.success( error.getCmpCode() );
+            Map<String, Object> params = new HashMap<>( 4 );
+            params.put( "code", error.getCode().getValue() );
+            params.put( "message", error.getMessage() );
+            params.put( "cmpCode", error.getCmpCode() );
+            params.put( "cmpMessage", error.getCmpMessage() );
+            result.success( params );
         } );
     }
 
     public void hasSupportedCmp(final Result result)
     {
-        if ( sdk == null )
+        if ( !isPluginInitialized )
         {
             logUninitializedAccessError( "hasSupportedCmp", result );
             return;
         }
 
-        AppLovinCmpService cmpService = sdk.getCmpService();
-        result.success( cmpService.hasSupportedCmp() );
+        result.success( sdk.getCmpService().hasSupportedCmp() );
     }
 
     // Data Passing

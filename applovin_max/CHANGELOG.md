@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Add `MaxCMPError` to encapsulate a return object of `AppLovinMAX.showCmpForExistingUser()`. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/terms-and-privacy-policy-flow#showing-gdpr-flow-to-existing-users).
 * Fix NPE for accessing a `null` `methodChannel` in `MaxAdView`. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/176
 * Fix linter warnings.
 ## 3.6.0
