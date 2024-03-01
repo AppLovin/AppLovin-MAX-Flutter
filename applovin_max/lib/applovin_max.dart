@@ -41,90 +41,88 @@ class AppLovinMAX {
       var method = call.method;
       var arguments = call.arguments;
 
-      var adUnitId = arguments["adUnitId"];
-
       /// Banner Ad Events
       if ("OnBannerAdLoadedEvent" == method) {
-        _bannerAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdLoadedCallback(createAd(arguments));
       } else if ("OnBannerAdLoadFailedEvent" == method) {
-        _bannerAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
+        _bannerAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       } else if ("OnBannerAdClickedEvent" == method) {
-        _bannerAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdClickedCallback(createAd(arguments));
       } else if ("OnBannerAdExpandedEvent" == method) {
-        _bannerAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdExpandedCallback(createAd(arguments));
       } else if ("OnBannerAdCollapsedEvent" == method) {
-        _bannerAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdCollapsedCallback(createAd(arguments));
       } else if ("OnBannerAdRevenuePaid" == method) {
-        _bannerAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+        _bannerAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
 
       /// MREC Ad Events
       else if ("OnMRecAdLoadedEvent" == method) {
-        _mrecAdListener?.onAdLoadedCallback(createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdLoadedCallback(createAd(arguments));
       } else if ("OnMRecAdLoadFailedEvent" == method) {
-        _mrecAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
+        _mrecAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       } else if ("OnMRecAdClickedEvent" == method) {
-        _mrecAdListener?.onAdClickedCallback(createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdClickedCallback(createAd(arguments));
       } else if ("OnMRecAdExpandedEvent" == method) {
-        _mrecAdListener?.onAdExpandedCallback(createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdExpandedCallback(createAd(arguments));
       } else if ("OnMRecAdCollapsedEvent" == method) {
-        _mrecAdListener?.onAdCollapsedCallback(createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdCollapsedCallback(createAd(arguments));
       } else if ("OnMRecAdRevenuePaid" == method) {
-        _mrecAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+        _mrecAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
 
       /// Interstitial Ad Events
       else if ("OnInterstitialLoadedEvent" == method) {
-        _interstitialListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
+        _interstitialListener?.onAdLoadedCallback.call(createAd(arguments));
       } else if ("OnInterstitialLoadFailedEvent" == method) {
-        _interstitialListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
+        _interstitialListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       } else if ("OnInterstitialClickedEvent" == method) {
-        _interstitialListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
+        _interstitialListener?.onAdClickedCallback.call(createAd(arguments));
       } else if ("OnInterstitialDisplayedEvent" == method) {
-        _interstitialListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
+        _interstitialListener?.onAdDisplayedCallback.call(createAd(arguments));
       } else if ("OnInterstitialAdFailedToDisplayEvent" == method) {
-        _interstitialListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
+        _interstitialListener?.onAdDisplayFailedCallback(createAd(arguments["ad"]), createError(arguments["error"]));
       } else if ("OnInterstitialHiddenEvent" == method) {
-        _interstitialListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
+        _interstitialListener?.onAdHiddenCallback.call(createAd(arguments));
       } else if ("OnInterstitialAdRevenuePaid" == method) {
-        _interstitialListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+        _interstitialListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
 
       /// Rewarded Ad Events
       else if ("OnRewardedAdLoadedEvent" == method) {
-        _rewardedAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdLoadedCallback.call(createAd(arguments));
       } else if ("OnRewardedAdLoadFailedEvent" == method) {
-        _rewardedAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
+        _rewardedAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       } else if ("OnRewardedAdClickedEvent" == method) {
-        _rewardedAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdClickedCallback.call(createAd(arguments));
       } else if ("OnRewardedAdDisplayedEvent" == method) {
-        _rewardedAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdDisplayedCallback.call(createAd(arguments));
       } else if ("OnRewardedAdFailedToDisplayEvent" == method) {
-        _rewardedAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
+        _rewardedAdListener?.onAdDisplayFailedCallback(createAd(arguments["ad"]), createError(arguments["error"]));
       } else if ("OnRewardedAdHiddenEvent" == method) {
-        _rewardedAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdHiddenCallback.call(createAd(arguments));
       } else if ("OnRewardedAdReceivedRewardEvent" == method) {
         var reward = MaxReward(arguments["rewardAmount"], arguments["rewardLabel"]);
-        _rewardedAdListener?.onAdReceivedRewardCallback(createAd(adUnitId, arguments), reward);
+        _rewardedAdListener?.onAdReceivedRewardCallback(createAd(arguments), reward);
       } else if ("OnRewardedAdRevenuePaid" == method) {
-        _rewardedAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+        _rewardedAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
 
       /// App Open Ad Events
       else if ("OnAppOpenAdLoadedEvent" == method) {
-        _appOpenAdListener?.onAdLoadedCallback.call(createAd(adUnitId, arguments));
+        _appOpenAdListener?.onAdLoadedCallback.call(createAd(arguments));
       } else if ("OnAppOpenAdLoadFailedEvent" == method) {
-        _appOpenAdListener?.onAdLoadFailedCallback(adUnitId, createError(arguments));
+        _appOpenAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       } else if ("OnAppOpenAdClickedEvent" == method) {
-        _appOpenAdListener?.onAdClickedCallback.call(createAd(adUnitId, arguments));
+        _appOpenAdListener?.onAdClickedCallback.call(createAd(arguments));
       } else if ("OnAppOpenAdDisplayedEvent" == method) {
-        _appOpenAdListener?.onAdDisplayedCallback.call(createAd(adUnitId, arguments));
+        _appOpenAdListener?.onAdDisplayedCallback.call(createAd(arguments));
       } else if ("OnAppOpenAdFailedToDisplayEvent" == method) {
-        _appOpenAdListener?.onAdDisplayFailedCallback(createAd(adUnitId, arguments), createError(arguments));
+        _appOpenAdListener?.onAdDisplayFailedCallback(createAd(arguments["ad"]), createError(arguments["error"]));
       } else if ("OnAppOpenAdHiddenEvent" == method) {
-        _appOpenAdListener?.onAdHiddenCallback.call(createAd(adUnitId, arguments));
+        _appOpenAdListener?.onAdHiddenCallback.call(createAd(arguments));
       } else if ("OnAppOpenAdRevenuePaid" == method) {
-        _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(adUnitId, arguments));
+        _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
     });
 
@@ -137,31 +135,13 @@ class AppLovinMAX {
   }
 
   /// @nodoc
-  static MaxAd createAd(String adUnitId, dynamic arguments) {
-    var rawNativeAd = arguments["nativeAd"];
-    var jsonNativeAd = (rawNativeAd != null) ? Map<String, dynamic>.from(rawNativeAd) : null;
-    var nativeAd = (jsonNativeAd != null) ? MaxNativeAd.fromJson(jsonNativeAd) : null;
-
-    return MaxAd(
-      adUnitId,
-      arguments["networkName"],
-      arguments["revenue"],
-      arguments["revenuePrecision"],
-      arguments["creativeId"],
-      arguments["dspName"],
-      arguments["placement"],
-      Map<String, dynamic>.from(arguments["waterfall"]),
-      nativeAd,
-    );
+  static MaxAd createAd(dynamic arguments) {
+    return MaxAd.fromJson(Map<String, dynamic>.from(arguments));
   }
 
   /// @nodoc
   static MaxError createError(dynamic arguments) {
-    return MaxError(
-      arguments["errorCode"],
-      arguments["errorMessage"],
-      Map<String, dynamic>.from(arguments["waterfall"]),
-    );
+    return MaxError.fromJson(Map<String, dynamic>.from(arguments));
   }
 
   /// Checks if the SDK has fully been initialized without errors.
@@ -293,7 +273,7 @@ class AppLovinMAX {
 
   /// Enables devices to receive test ads by passing in the advertising identifier (IDFA or IDFV) of
   /// each test device. Refer to AppLovin logs for the IDFA or IDFV of your current device.
-  /// 
+  ///
   static void setTestDeviceAdvertisingIds(List advertisingIdentifiers) {
     channel.invokeMethod('setTestDeviceAdvertisingIds', {
       'value': advertisingIdentifiers,

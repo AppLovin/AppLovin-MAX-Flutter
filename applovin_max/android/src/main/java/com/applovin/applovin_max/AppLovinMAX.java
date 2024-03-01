@@ -964,20 +964,8 @@ public class AppLovinMAX
     {
         try
         {
-            Map<String, Object> params = new HashMap<>( 5 );
+            Map<String, Object> params = getErrorInfo( error );
             params.put( "adUnitId", adUnitId );
-
-            if ( error != null )
-            {
-                params.put( "errorCode", error.getCode() );
-                params.put( "errorMessage", error.getMessage() );
-                params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
-            }
-            else
-            {
-                params.put( "errorCode", MaxErrorCode.UNSPECIFIED );
-            }
-
             fireCallback( name, params, channel );
         }
         catch ( Throwable ignored ) { }
@@ -1064,9 +1052,9 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = getAdInfo( ad );
-            params.put( "errorCode", error.getCode() );
-            params.put( "errorMessage", error.getMessage() );
+            Map<String, Object> params = new HashMap<>( 2 );
+            params.put( "ad", getAdInfo( ad ) );
+            params.put( "error", getErrorInfo( error ) );
             fireCallback( name, params );
         }
         catch ( Throwable ignored ) { }
@@ -1668,6 +1656,26 @@ public class AppLovinMAX
         return adInfo;
     }
 
+    // ERROR INFO
+
+    private Map<String, Object> getErrorInfo(@Nullable final MaxError error)
+    {
+        Map<String, Object> errorInfo = new HashMap<>( 4 );
+
+        if ( error != null )
+        {
+            errorInfo.put( "code", error.getCode() );
+            errorInfo.put( "message", error.getMessage() );
+            errorInfo.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+        }
+        else
+        {
+            errorInfo.put( "code", MaxErrorCode.UNSPECIFIED );
+        }
+
+        return errorInfo;
+    }
+
     // AD WATERFALL INFO
 
     private Map<String, Object> createAdWaterfallInfo(final MaxAdWaterfallInfo waterfallInfo)
@@ -1722,11 +1730,7 @@ public class AppLovinMAX
         MaxError error = response.getError();
         if ( error != null )
         {
-            Map<String, Object> errorObject = new HashMap<>( 2 );
-            errorObject.put( "message", error.getMessage() );
-            errorObject.put( "code", error.getCode() );
-
-            networkResponseObject.put( "error", errorObject );
+            networkResponseObject.put( "error", getErrorInfo( error ) );
         }
 
         networkResponseObject.put( "latencyMillis", response.getLatencyMillis() );

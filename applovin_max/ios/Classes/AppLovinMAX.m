@@ -916,14 +916,8 @@ static FlutterMethodChannel *ALSharedChannel;
                      withError:(MAError *)error
                        channel:(FlutterMethodChannel *)channel
 {
-    NSDictionary *body = ( error ) ?
-    @{@"adUnitId": adUnitIdentifier,
-      @"errorCode" : @(error.code),
-      @"errorMessage" : error.message,
-      @"waterfall": [self createAdWaterfallInfo: error.waterfall]}
-    :
-    @{@"adUnitId": adUnitIdentifier,
-      @"errorCode" : @(MAErrorCodeUnspecified)};
+    NSMutableDictionary *body = [@{@"adUnitId" : adUnitIdentifier} mutableCopy];
+    [body addEntriesFromDictionary: [self errorInfo: error]];
     [self sendEventWithName: name body: body channel: channel];
 }
 
@@ -1003,10 +997,10 @@ static FlutterMethodChannel *ALSharedChannel;
         name = @"OnAppOpenAdFailedToDisplayEvent";
     }
     
-    NSMutableDictionary *body = [@{@"errorCode" : @(error.code),
-                                   @"errorMessage" : error.message} mutableCopy];
-    [body addEntriesFromDictionary: [self adInfoForAd: ad]];
-    
+    NSMutableDictionary *body = [NSMutableDictionary dictionaryWithCapacity: 2];
+    body[@"ad"] = [self adInfoForAd: ad];
+    body[@"error"] = [self errorInfo: error];
+
     [self sendEventWithName: name body: body];
 }
 
@@ -1601,6 +1595,24 @@ static FlutterMethodChannel *ALSharedChannel;
              @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
 }
 
+- (NSDictionary<NSString *, id> *)errorInfo:(MAError *)error
+{
+    NSMutableDictionary<NSString *, id> *errorObject = [NSMutableDictionary dictionaryWithCapacity: 4];
+
+    if ( error )
+    {
+        errorObject[@"code"] = @(error.code);
+        errorObject[@"message"] = error.message;
+        errorObject[@"waterfall"] = [self createAdWaterfallInfo: error.waterfall];
+    }
+    else
+    {
+        errorObject[@"code"] = @(MAErrorCodeUnspecified);
+    }
+
+    return errorObject;
+}    
+
 - (NSDictionary<NSString *, id> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
 {
     NSMutableDictionary<NSString *, id> *waterfallInfoDict = [NSMutableDictionary dictionary];
@@ -1646,11 +1658,7 @@ static FlutterMethodChannel *ALSharedChannel;
     MAError *error = response.error;
     if ( error )
     {
-        NSMutableDictionary<NSString *, id> *errorObject = [NSMutableDictionary dictionary];
-        errorObject[@"message"] = error.message;
-        errorObject[@"code"] = @(error.code);
-        
-        networkResponseDict[@"error"] = errorObject;
+        networkResponseDict[@"error"] = [self errorInfo: error];
     }
     
     // Convert latency from seconds to milliseconds to match Android.

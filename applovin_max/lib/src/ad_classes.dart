@@ -39,6 +39,28 @@ class MaxAd {
   /// @nodoc
   MaxAd(this.adUnitId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
 
+  /// @nodoc
+  factory MaxAd.fromJson(Map<String, dynamic> json) {
+    double? revenue = double.tryParse(json['revenue'].toString());
+    revenue ??= 0;
+
+    dynamic nativeAd = json["nativeAd"];
+    nativeAd = (nativeAd != null) ? Map<String, dynamic>.from(nativeAd) : null;
+    nativeAd = (nativeAd != null) ? MaxNativeAd.fromJson(nativeAd) : null;
+
+    return MaxAd(
+      json['adUnitId'],
+      json["networkName"],
+      revenue,
+      json["revenuePrecision"],
+      json["creativeId"],
+      json["dspName"],
+      json["placement"],
+      Map<String, dynamic>.from(json["waterfall"]),
+      nativeAd,
+    );
+  }
+
   @override
   String toString() {
     return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
@@ -136,6 +158,12 @@ class MaxError {
 
   /// @nodoc
   MaxError(this.code, this.message, this.waterfall);
+
+  /// @nodoc
+  MaxError.fromJson(Map<String, dynamic> json)
+      : code = json['code'] ,
+        message = json['message'],
+        waterfall = Map<String, dynamic>.from(json["waterfall"]);
 
   @override
   String toString() {

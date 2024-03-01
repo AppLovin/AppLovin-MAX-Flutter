@@ -190,21 +190,19 @@ class _MaxAdViewState extends State<MaxAdView> {
       var method = call.method;
       var arguments = call.arguments;
 
-      var adUnitId = arguments["adUnitId"];
-
       if ("OnAdViewAdLoadedEvent" == method) {
         if (!_visible) _visible = true;
-        widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(adUnitId, arguments));
+        widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {
-        widget.listener?.onAdLoadFailedCallback(adUnitId, AppLovinMAX.createError(arguments));
+        widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createError(arguments));
       } else if ("OnAdViewAdClickedEvent" == method) {
-        widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(adUnitId, arguments));
+        widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(arguments));
       } else if ("OnAdViewAdExpandedEvent" == method) {
-        widget.listener?.onAdExpandedCallback(AppLovinMAX.createAd(adUnitId, arguments));
+        widget.listener?.onAdExpandedCallback(AppLovinMAX.createAd(arguments));
       } else if ("OnAdViewAdCollapsedEvent" == method) {
-        widget.listener?.onAdCollapsedCallback(AppLovinMAX.createAd(adUnitId, arguments));
+        widget.listener?.onAdCollapsedCallback(AppLovinMAX.createAd(arguments));
       } else if ("OnAdViewAdRevenuePaidEvent" == method) {
-        widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(adUnitId, arguments));
+        widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(arguments));
       }
     });
   }
