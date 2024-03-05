@@ -161,7 +161,7 @@ class MaxError {
 
   /// @nodoc
   MaxError.fromJson(Map<String, dynamic> json)
-      : code = json['code'] ,
+      : code = json['code'],
         message = json['message'],
         waterfall = Map<String, dynamic>.from(json["waterfall"]);
 

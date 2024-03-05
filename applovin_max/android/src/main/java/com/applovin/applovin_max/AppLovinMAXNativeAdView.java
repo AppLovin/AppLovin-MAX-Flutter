@@ -508,7 +508,9 @@ public class AppLovinMAXNativeAdView
         isLoading.set( false );
 
         AppLovinMAX.e( message );
-        AppLovinMAX.getInstance().fireErrorCallback( "OnNativeAdLoadFailedEvent", adUnitId, error, channel );
+
+        Map params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
+        AppLovinMAX.getInstance().fireCallback( "OnNativeAdLoadFailedEvent", params, channel );
     }
 
     private void sendAdLoadedReactNativeEventForAd(final MaxNativeAd ad)

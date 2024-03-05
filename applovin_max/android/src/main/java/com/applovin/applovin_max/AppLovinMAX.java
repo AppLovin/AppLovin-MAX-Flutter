@@ -957,16 +957,8 @@ public class AppLovinMAX
             return;
         }
 
-        fireErrorCallback( name, adUnitId, error, sharedChannel );
-    }
-
-    public void fireErrorCallback(final String name, final String adUnitId, final MaxError error, final MethodChannel channel)
-    {
-        try
-        {
-            Map<String, Object> params = getErrorInfo( error );
-            params.put( "adUnitId", adUnitId );
-            fireCallback( name, params, channel );
+        try {
+            fireCallback( name, getAdLoadFailedInfo( adUnitId, error ) );
         }
         catch ( Throwable ignored ) { }
     }
@@ -1052,10 +1044,7 @@ public class AppLovinMAX
 
         try
         {
-            Map<String, Object> params = new HashMap<>( 2 );
-            params.put( "ad", getAdInfo( ad ) );
-            params.put( "error", getErrorInfo( error ) );
-            fireCallback( name, params );
+            fireCallback( name, getAdDisplayFailedInfo( ad, error ) );
         }
         catch ( Throwable ignored ) { }
     }
@@ -1656,12 +1645,10 @@ public class AppLovinMAX
         return adInfo;
     }
 
-    // ERROR INFO
-
-    private Map<String, Object> getErrorInfo(@Nullable final MaxError error)
+    public Map<String, Object> getAdLoadFailedInfo(final String adUnitId, @Nullable final MaxError error)
     {
         Map<String, Object> errorInfo = new HashMap<>( 4 );
-
+        errorInfo.put( "adUnitId", adUnitId );
         if ( error != null )
         {
             errorInfo.put( "code", error.getCode() );
@@ -1672,8 +1659,15 @@ public class AppLovinMAX
         {
             errorInfo.put( "code", MaxErrorCode.UNSPECIFIED );
         }
-
         return errorInfo;
+    }
+
+    public Map<String, Object> getAdDisplayFailedInfo(final MaxAd ad, final MaxError error)
+    {
+        Map<String, Object> info = new HashMap<>( 2 );
+        info.put( "ad", getAdInfo( ad ) );
+        info.put( "error", getAdLoadFailedInfo( ad.getAdUnitId(), error ) );
+        return info;
     }
 
     // AD WATERFALL INFO
@@ -1730,7 +1724,7 @@ public class AppLovinMAX
         MaxError error = response.getError();
         if ( error != null )
         {
-            networkResponseObject.put( "error", getErrorInfo( error ) );
+            networkResponseObject.put( "error", getAdLoadFailedInfo( "", error ) );
         }
 
         networkResponseObject.put( "latencyMillis", response.getLatencyMillis() );
