@@ -440,7 +440,7 @@
     
     [AppLovinMAX log: message];
     
-    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAd: self.adUnitId withError: error];
+    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: self.adUnitId withError: error];
     [[AppLovinMAX shared] sendEventWithName: @"OnNativeAdLoadFailedEvent" body: body channel: self.channel];
 }
 

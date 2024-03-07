@@ -905,7 +905,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
     
-    [self sendEventWithName: name body: [self adLoadFailedInfoForAd: adUnitIdentifier withError: error]];
+    [self sendEventWithName: name body: [self adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error]];
 }
 
 - (void)didClickAd:(MAAd *)ad

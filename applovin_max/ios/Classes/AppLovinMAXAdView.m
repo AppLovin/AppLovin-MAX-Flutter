@@ -120,7 +120,7 @@ static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
 
 - (void)didFailToLoadAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
 {
-    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAd: adUnitIdentifier withError: error];
+    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error];
     [[AppLovinMAX shared] sendEventWithName: @"OnAdViewAdLoadFailedEvent" body: body channel: self.channel];
 }
 

@@ -23,7 +23,7 @@
 /**
  * Returns a dictionay value of adLoadFailedInfo for the specified error.
  */
-- (NSDictionary<NSString *, id> *)adLoadFailedInfoForAd:(NSString *)adUnitIdentifier withError:(MAError *)error;
+- (NSDictionary<NSString *, id> *)adLoadFailedInfoForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error;
 
 /**
  * Utility method for sending ad events through the Flutter channel into Dart.
