@@ -1578,7 +1578,7 @@ static FlutterMethodChannel *ALSharedChannel;
              @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
 }
 
-- (NSDictionary<NSString *, id> *)adLoadFailedInfoForAd:(NSString *)adUnitIdentifier withError:(MAError *)error
+- (NSDictionary<NSString *, id> *)adLoadFailedInfoForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
 {
     return ( error ) ?
     @{@"adUnitId": adUnitIdentifier,
@@ -1592,10 +1592,10 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (NSDictionary<NSString *, id> *)adDisplayFailedInfoForAd:(MAAd *)ad withError:(MAError *)error
 {
-    NSMutableDictionary *body = [NSMutableDictionary dictionaryWithCapacity: 2];
-    body[@"ad"] = [self adInfoForAd: ad];
-    body[@"error"] = [self adLoadFailedInfoForAd: ad.adUnitIdentifier withError: error];
-    return body;
+    return @{
+        @"ad" : [self adInfoForAd: ad],
+        @"error" : [self adLoadFailedInfoForAdUnitIdentifier: ad.adUnitIdentifier withError: error]
+    };
 }
 
 - (NSDictionary<NSString *, id> *)createAdWaterfallInfo:(MAAdWaterfallInfo *)waterfallInfo
@@ -1643,7 +1643,7 @@ static FlutterMethodChannel *ALSharedChannel;
     MAError *error = response.error;
     if ( error )
     {
-        networkResponseDict[@"error"] = [self adLoadFailedInfoForAd: @"" withError: error];
+        networkResponseDict[@"error"] = [self adLoadFailedInfoForAdUnitIdentifier: @"" withError: error];
     }
     
     // Convert latency from seconds to milliseconds to match Android.

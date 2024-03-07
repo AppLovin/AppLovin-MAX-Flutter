@@ -957,10 +957,7 @@ public class AppLovinMAX
             return;
         }
 
-        try {
-            fireCallback( name, getAdLoadFailedInfo( adUnitId, error ) );
-        }
-        catch ( Throwable ignored ) { }
+        fireCallback( name, getAdLoadFailedInfo( adUnitId, error ) );
     }
 
     @Override
@@ -1042,11 +1039,7 @@ public class AppLovinMAX
             name = "OnAppOpenAdFailedToDisplayEvent";
         }
 
-        try
-        {
-            fireCallback( name, getAdDisplayFailedInfo( ad, error ) );
-        }
-        catch ( Throwable ignored ) { }
+        fireCallback( name, getAdDisplayFailedInfo( ad, error ) );
     }
 
     @Override

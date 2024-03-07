@@ -45,8 +45,8 @@ class MaxAd {
     revenue ??= 0.0;
 
     dynamic nativeAd = json["nativeAd"];
-    nativeAd = (nativeAd != null) ? Map<String, dynamic>.from(nativeAd) : null;
-    nativeAd = (nativeAd != null) ? MaxNativeAd.fromJson(nativeAd) : null;
+    nativeAd = (nativeAd == Map) ? Map<String, dynamic>.from(nativeAd) : null;
+    nativeAd = (nativeAd == Map) ? MaxNativeAd.fromJson(nativeAd) : null;
 
     return MaxAd(
       json['adUnitId'],
@@ -194,9 +194,9 @@ class MaxConfiguration {
       consentDialogState = ConsentDialogState.unknown;
     }
 
-    String countryCode = json['countryCode'];
+    String? countryCode = json['countryCode'];
 
-    bool isTestModeEnabled = json['isTestModeEnabled'];
+    bool? isTestModeEnabled = json['isTestModeEnabled'];
 
     dynamic consentFlowUserGeography = json['consentFlowUserGeography'];
     if (consentFlowUserGeography != null) {
