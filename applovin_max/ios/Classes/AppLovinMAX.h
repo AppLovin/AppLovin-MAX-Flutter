@@ -21,6 +21,11 @@
 - (NSDictionary<NSString *, id> *)adInfoForAd:(MAAd *)ad;
 
 /**
+ * Returns a dictionay value of adLoadFailedInfo for the specified error.
+ */
+- (NSDictionary<NSString *, id> *)adLoadFailedInfoForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error;
+
+/**
  * Utility method for sending ad events through the Flutter channel into Dart.
  */
 - (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad channel:(FlutterMethodChannel *)channel;
@@ -29,14 +34,6 @@
  * Utility method for sending generic events through the Flutter channel into Dart.
  */
 - (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body channel:(FlutterMethodChannel *)channel;
-
-/**
- * Utility method for sending error events through the Flutter channel into Dart.
- */
-- (void)sendErrorEventWithName:(NSString *)name
-           forAdUnitIdentifier:(NSString *)adUnitIdentifier
-                     withError:(MAError *)error
-                       channel:(FlutterMethodChannel *)channel;
 
 + (void)log:(NSString *)format, ...;
 

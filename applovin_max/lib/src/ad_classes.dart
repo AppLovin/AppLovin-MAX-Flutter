@@ -39,6 +39,28 @@ class MaxAd {
   /// @nodoc
   MaxAd(this.adUnitId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
 
+  /// @nodoc
+  factory MaxAd.fromJson(Map<String, dynamic> json) {
+    double? revenue = double.tryParse(json['revenue'].toString());
+    revenue ??= 0.0;
+
+    dynamic nativeAd = json["nativeAd"];
+    nativeAd = (nativeAd == Map) ? Map<String, dynamic>.from(nativeAd) : null;
+    nativeAd = (nativeAd == Map) ? MaxNativeAd.fromJson(nativeAd) : null;
+
+    return MaxAd(
+      json['adUnitId'],
+      json["networkName"],
+      revenue,
+      json["revenuePrecision"],
+      json["creativeId"],
+      json["dspName"],
+      json["placement"],
+      Map<String, dynamic>.from(json["waterfall"]),
+      nativeAd,
+    );
+  }
+
   @override
   String toString() {
     return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
@@ -92,16 +114,8 @@ class MaxNativeAd {
   final bool isMediaViewAvailable;
 
   /// @nodoc
-  MaxNativeAd(
-      {this.title,
-      this.advertiser,
-      this.body,
-      this.callToAction,
-      this.starRating,
-      this.mediaContentAspectRatio,
-      this.isIconImageAvailable = false,
-      this.isMediaViewAvailable = false,
-      this.isOptionsViewAvailable = false});
+  MaxNativeAd(this.title, this.advertiser, this.body, this.callToAction, this.starRating, this.mediaContentAspectRatio, this.isIconImageAvailable,
+      this.isMediaViewAvailable, this.isOptionsViewAvailable);
 
   /// @nodoc
   MaxNativeAd.fromJson(Map<String, dynamic> json)
@@ -137,6 +151,12 @@ class MaxError {
   /// @nodoc
   MaxError(this.code, this.message, this.waterfall);
 
+  /// @nodoc
+  MaxError.fromJson(Map<String, dynamic> json)
+      : code = json['code'],
+        message = json['message'],
+        waterfall = Map<String, dynamic>.from(json["waterfall"]);
+
   @override
   String toString() {
     return '[MaxError code: $code, message: $message, waterfall: $waterfall]';
@@ -163,18 +183,34 @@ class MaxConfiguration {
   final AppTrackingStatus? appTrackingStatus;
 
   /// @nodoc
-  MaxConfiguration(
-      {this.consentDialogState = ConsentDialogState.unknown, this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus});
+  MaxConfiguration(this.consentDialogState, this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus);
 
   /// @nodoc
-  MaxConfiguration.fromJson(Map<String, dynamic> json)
-      : consentDialogState = ConsentDialogState.values[json['consentDialogState']],
-        countryCode = json['countryCode'],
-        isTestModeEnabled = json['isTestModeEnabled'],
-        consentFlowUserGeography = (json['consentFlowUserGeography'] is String)
-            ? ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography'])
-            : null,
-        appTrackingStatus = (json['appTrackingStatus'] is String) ? AppTrackingStatus.values.firstWhere((v) => v.value == json['appTrackingStatus']) : null;
+  factory MaxConfiguration.fromJson(Map<String, dynamic> json) {
+    dynamic consentDialogState = json['consentDialogState'];
+    try {
+      consentDialogState = ConsentDialogState.values.elementAt(consentDialogState);
+    } catch (_) {
+      consentDialogState = ConsentDialogState.unknown;
+    }
+
+    String? countryCode = json['countryCode'];
+
+    bool? isTestModeEnabled = json['isTestModeEnabled'];
+
+    dynamic consentFlowUserGeography = json['consentFlowUserGeography'];
+    if (consentFlowUserGeography != null) {
+      consentFlowUserGeography =
+          ConsentFlowUserGeography.values.firstWhere((v) => v.value == consentFlowUserGeography, orElse: () => ConsentFlowUserGeography.unknown);
+    }
+
+    dynamic appTrackingStatus = json['appTrackingStatus'];
+    if (appTrackingStatus != null) {
+      appTrackingStatus = AppTrackingStatus.values.firstWhere((v) => v.value == appTrackingStatus, orElse: () => AppTrackingStatus.unavailable);
+    }
+
+    return MaxConfiguration(consentDialogState, countryCode, isTestModeEnabled, consentFlowUserGeography, appTrackingStatus);
+  }
 
   @override
   String toString() {

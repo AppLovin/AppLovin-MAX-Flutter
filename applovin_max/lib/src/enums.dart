@@ -129,8 +129,7 @@ enum AppTrackingStatus {
 ///
 /// Represents errors for CMP flow.
 ///
-enum CMPErrorCode
-{
+enum CMPErrorCode {
   ///
   /// Indicates that an unspecified error has occurred.
   ///

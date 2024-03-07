@@ -957,30 +957,7 @@ public class AppLovinMAX
             return;
         }
 
-        fireErrorCallback( name, adUnitId, error, sharedChannel );
-    }
-
-    public void fireErrorCallback(final String name, final String adUnitId, final MaxError error, final MethodChannel channel)
-    {
-        try
-        {
-            Map<String, Object> params = new HashMap<>( 5 );
-            params.put( "adUnitId", adUnitId );
-
-            if ( error != null )
-            {
-                params.put( "errorCode", error.getCode() );
-                params.put( "errorMessage", error.getMessage() );
-                params.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
-            }
-            else
-            {
-                params.put( "errorCode", MaxErrorCode.UNSPECIFIED );
-            }
-
-            fireCallback( name, params, channel );
-        }
-        catch ( Throwable ignored ) { }
+        fireCallback( name, getAdLoadFailedInfo( adUnitId, error ) );
     }
 
     @Override
@@ -1062,14 +1039,7 @@ public class AppLovinMAX
             name = "OnAppOpenAdFailedToDisplayEvent";
         }
 
-        try
-        {
-            Map<String, Object> params = getAdInfo( ad );
-            params.put( "errorCode", error.getCode() );
-            params.put( "errorMessage", error.getMessage() );
-            fireCallback( name, params );
-        }
-        catch ( Throwable ignored ) { }
+        fireCallback( name, getAdDisplayFailedInfo( ad, error ) );
     }
 
     @Override
@@ -1668,6 +1638,31 @@ public class AppLovinMAX
         return adInfo;
     }
 
+    public Map<String, Object> getAdLoadFailedInfo(final String adUnitId, @Nullable final MaxError error)
+    {
+        Map<String, Object> errorInfo = new HashMap<>( 4 );
+        errorInfo.put( "adUnitId", adUnitId );
+        if ( error != null )
+        {
+            errorInfo.put( "code", error.getCode() );
+            errorInfo.put( "message", error.getMessage() );
+            errorInfo.put( "waterfall", createAdWaterfallInfo( error.getWaterfall() ) );
+        }
+        else
+        {
+            errorInfo.put( "code", MaxErrorCode.UNSPECIFIED );
+        }
+        return errorInfo;
+    }
+
+    public Map<String, Object> getAdDisplayFailedInfo(final MaxAd ad, final MaxError error)
+    {
+        Map<String, Object> info = new HashMap<>( 2 );
+        info.put( "ad", getAdInfo( ad ) );
+        info.put( "error", getAdLoadFailedInfo( ad.getAdUnitId(), error ) );
+        return info;
+    }
+
     // AD WATERFALL INFO
 
     private Map<String, Object> createAdWaterfallInfo(final MaxAdWaterfallInfo waterfallInfo)
@@ -1722,11 +1717,7 @@ public class AppLovinMAX
         MaxError error = response.getError();
         if ( error != null )
         {
-            Map<String, Object> errorObject = new HashMap<>( 2 );
-            errorObject.put( "message", error.getMessage() );
-            errorObject.put( "code", error.getCode() );
-
-            networkResponseObject.put( "error", errorObject );
+            networkResponseObject.put( "error", getAdLoadFailedInfo( "", error ) );
         }
 
         networkResponseObject.put( "latencyMillis", response.getLatencyMillis() );

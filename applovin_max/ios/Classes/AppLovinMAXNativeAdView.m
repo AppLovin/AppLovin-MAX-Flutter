@@ -440,10 +440,8 @@
     
     [AppLovinMAX log: message];
     
-    [[AppLovinMAX shared] sendErrorEventWithName: @"OnNativeAdLoadFailedEvent"
-                             forAdUnitIdentifier: self.adUnitId
-                                       withError: error
-                                         channel: self.channel];
+    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: self.adUnitId withError: error];
+    [[AppLovinMAX shared] sendEventWithName: @"OnNativeAdLoadFailedEvent" body: body channel: self.channel];
 }
 
 - (void)sendAdLoadedReactNativeEventForAd:(MANativeAd *)ad
