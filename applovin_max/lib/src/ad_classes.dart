@@ -31,7 +31,7 @@ class MaxAd {
   final String placement;
 
   /// The underlying waterfall of ad responses.
-  final Map<String, dynamic> waterfall;
+  final MaxAdWaterfallInfo waterfall;
 
   /// An instance of [MaxNativeAd], available only for native ads
   final MaxNativeAd? nativeAd;
@@ -44,26 +44,28 @@ class MaxAd {
     double? revenue = double.tryParse(json['revenue'].toString());
     revenue ??= 0.0;
 
-    dynamic nativeAd = json["nativeAd"];
-    nativeAd = (nativeAd == Map) ? Map<String, dynamic>.from(nativeAd) : null;
-    nativeAd = (nativeAd == Map) ? MaxNativeAd.fromJson(nativeAd) : null;
+    dynamic nativeAd = json['nativeAd'];
+    nativeAd = (nativeAd is Map) ? Map<String, dynamic>.from(nativeAd) : null;
+    nativeAd = (nativeAd is Map) ? MaxNativeAd.fromJson(nativeAd as Map<String, dynamic>) : null;
 
     return MaxAd(
       json['adUnitId'],
-      json["networkName"],
+      json['networkName'],
       revenue,
-      json["revenuePrecision"],
-      json["creativeId"],
-      json["dspName"],
-      json["placement"],
-      Map<String, dynamic>.from(json["waterfall"]),
+      json['revenuePrecision'],
+      json['creativeId'],
+      json['dspName'],
+      json['placement'],
+      MaxAdWaterfallInfo.fromJson(Map<String, dynamic>.from(json['waterfall'])),
       nativeAd,
     );
   }
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue, revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId, placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
+    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue'
+        ', revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId'
+        ', placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
   }
 }
 
@@ -131,9 +133,10 @@ class MaxNativeAd {
 
   @override
   String toString() {
-    return '[MaxNativeAd title: $title, advertiser: $advertiser, body: $body, callToAction: $callToAction, '
-        'starRating: $starRating, mediaContentAspectRatio: $mediaContentAspectRatio, '
-        'isIconImageAvailable: $isIconImageAvailable, isMediaViewAvailable: $isMediaViewAvailable, isOptionsViewAvailable: $isOptionsViewAvailable]';
+    return '[MaxNativeAd title: $title, advertiser: $advertiser, body: $body, callToAction: $callToAction'
+        ', starRating: $starRating, mediaContentAspectRatio: $mediaContentAspectRatio'
+        ', isIconImageAvailable: $isIconImageAvailable, isMediaViewAvailable: $isMediaViewAvailable'
+        ', isOptionsViewAvailable: $isOptionsViewAvailable]';
   }
 }
 
@@ -146,16 +149,21 @@ class MaxError {
   final String message;
 
   /// The underlying waterfall of ad responses.
-  final Map<String, dynamic> waterfall;
+  final MaxAdWaterfallInfo? waterfall;
 
   /// @nodoc
   MaxError(this.code, this.message, this.waterfall);
 
   /// @nodoc
-  MaxError.fromJson(Map<String, dynamic> json)
-      : code = json['code'],
-        message = json['message'],
-        waterfall = Map<String, dynamic>.from(json["waterfall"]);
+  factory MaxError.fromJson(Map<String, dynamic> json) {
+    MaxAdWaterfallInfo? waterfallInfo;
+    var waterfall = Map<String, dynamic>.from(json['waterfall']);
+    if (waterfall.isNotEmpty) {
+      waterfallInfo = MaxAdWaterfallInfo.fromJson(waterfall);
+    }
+
+    return MaxError(json['code'], json['message'], waterfallInfo);
+  }
 
   @override
   String toString() {
@@ -166,7 +174,7 @@ class MaxError {
 /// Encapsulates various flags related to the SDK configuration.
 class MaxConfiguration {
   /// The state of the consent dialog.
-  @Deprecated("Use ConsentFlowUserGeography instead.")
+  @Deprecated('Use ConsentFlowUserGeography instead.')
   final ConsentDialogState consentDialogState;
 
   /// The country code for this user.
@@ -187,9 +195,9 @@ class MaxConfiguration {
 
   /// @nodoc
   factory MaxConfiguration.fromJson(Map<String, dynamic> json) {
-    dynamic consentDialogState = json['consentDialogState'];
+    late ConsentDialogState consentDialogState;
     try {
-      consentDialogState = ConsentDialogState.values.elementAt(consentDialogState);
+      consentDialogState = ConsentDialogState.values.elementAt(json['consentDialogState']);
     } catch (_) {
       consentDialogState = ConsentDialogState.unknown;
     }
@@ -214,8 +222,9 @@ class MaxConfiguration {
 
   @override
   String toString() {
-    return '[MaxConfiguration consentDialogState: $consentDialogState countryCode: $countryCode isTestModeEnabled: $isTestModeEnabled '
-        'consentFlowUserGeography: $consentFlowUserGeography appTrackingStatus: $appTrackingStatus]';
+    return '[MaxConfiguration consentDialogState: $consentDialogState, countryCode: $countryCode'
+        ', isTestModeEnabled: $isTestModeEnabled, consentFlowUserGeography: $consentFlowUserGeography'
+        ', appTrackingStatus: $appTrackingStatus]';
   }
 }
 
@@ -246,5 +255,139 @@ class MaxCMPError {
   @override
   String toString() {
     return '[MaxCMPError code: $code, message: $message, cmpCode: $cmpCode, cmpMessage: $cmpMessage]';
+  }
+}
+
+/// Represents an ad waterfall, encapsulating various metadata such as total
+/// latency, underlying ad responses, etc.
+class MaxAdWaterfallInfo {
+  /// The ad waterfall name.
+  final String name;
+
+  /// The ad waterfall test name.
+  final String testName;
+
+  /// The list of [MAAdapterResponseInfo] info objects relating to each ad in
+  /// the waterfall, ordered by their position.
+  final List<MaxNetworkResponse> networkResponses;
+
+  /// The total latency in seconds for this waterfall to finish processing.
+  final double latency;
+
+  /// @nodoc
+  MaxAdWaterfallInfo(this.name, this.testName, this.networkResponses, this.latency);
+
+  /// @nodoc
+  factory MaxAdWaterfallInfo.fromJson(Map<String, dynamic> json) {
+    List<MaxNetworkResponse> networkResponseList = [];
+    var networkResponses = json['networkResponses'];
+    if (networkResponses is List) {
+      for (var networkResponse in networkResponses) {
+        if (networkResponse is Map) {
+          networkResponseList.add(MaxNetworkResponse.fromJson(Map<String, dynamic>.from(networkResponse)));
+        }
+      }
+    }
+
+    double? latency = double.tryParse(json['latencyMillis'].toString());
+    latency = latency ?? 0.0;
+
+    return MaxAdWaterfallInfo(json['name'] ?? "", json['testName'] ?? "", networkResponseList, latency);
+  }
+
+  @override
+  String toString() {
+    return '[MaxAdWaterfallInfo name: $name, testName: $testName, networkResponses: $networkResponses, latency: $latency]';
+  }
+}
+
+/// Represents an ad response in a waterfall.
+class MaxNetworkResponse {
+  /// The state of the ad that this [MAAdapterResponseInfo] object
+  /// represents. For more info, see the [AdLoadState] enum.
+  final AdLoadState adLoadState;
+
+  /// The mediated network that this adapter response info object represents.
+  final MaxMediatedNetworkInfo mediatedNetwork;
+
+  /// The credentials used to load an ad from this adapter, as entered in the AppLovin MAX dashboard.
+  final Map<String, dynamic> credentials;
+
+  /// The amount of time the network took to load (either successfully or not)
+  /// an ad, in seconds. If an attempt to load an ad has not been made (i.e. the
+  /// loadState is [AdLoadState.adLoadNotAttempted]), the value will be -1.
+  final double latency;
+
+  /// The ad load error this network response resulted in. Will be null if an
+  /// attempt to load an ad has not been made or an ad was loaded successfully
+  /// (i.e. the loadState is NOT [AdLoadState.adFailedToLoad]).
+  final MaxError? error;
+
+  /// @nodoc
+  MaxNetworkResponse(this.adLoadState, this.mediatedNetwork, this.credentials, this.latency, this.error);
+
+  /// @nodoc
+  factory MaxNetworkResponse.fromJson(Map<String, dynamic> json) {
+    late AdLoadState adLoadState;
+    try {
+      adLoadState = AdLoadState.values.elementAt(json['adLoadState']);
+    } catch (_) {
+      adLoadState = AdLoadState.adLoaded;
+    }
+
+    dynamic mediatedNetwork = json['mediatedNetwork'];
+    mediatedNetwork = (mediatedNetwork is Map) ? Map<String, dynamic>.from(mediatedNetwork) : null;
+    mediatedNetwork = (mediatedNetwork is Map) ? MaxMediatedNetworkInfo.fromJson(mediatedNetwork as Map<String, dynamic>) : null;
+    mediatedNetwork ??= MaxMediatedNetworkInfo.fromJson({});
+
+    dynamic credentials = json['credentials'];
+    credentials = (credentials is Map) ? Map<String, dynamic>.from(credentials) : null;
+    credentials ??= {};
+
+    double? latency = double.tryParse(json['latencyMillis'].toString());
+    latency ??= 0.0;
+
+    dynamic error = json['error'];
+    error = (error is Map) ? Map<String, dynamic>.from(error) : null;
+    error = (error is Map) ? MaxError.fromJson(error as Map<String, dynamic>) : null;
+
+    return MaxNetworkResponse(adLoadState, mediatedNetwork, credentials, latency, error);
+  }
+
+  @override
+  String toString() {
+    return '[MaxNetworkResponse adLoadState: $adLoadState, mediatedNetwork: $mediatedNetwork'
+        ', credentials: $credentials, latency: $latency, error: $error]';
+  }
+}
+
+/// Represents information for a mediated network.
+class MaxMediatedNetworkInfo {
+  /// The name of the mediated network.
+  final String name;
+
+  /// The class name of the adapter for the mediated network.
+  final String adapterClassName;
+
+  /// The version of the adapter for the mediated network.
+  final String adapterVersion;
+
+  /// The version of the mediated network’s SDK.
+  final String sdkVersion;
+
+  /// @nodoc
+  MaxMediatedNetworkInfo(this.name, this.adapterClassName, this.adapterVersion, this.sdkVersion);
+
+  /// @nodoc
+  MaxMediatedNetworkInfo.fromJson(Map<String, dynamic> json)
+      : name = json['name'] ?? "",
+        adapterClassName = json['adapterClassName'] ?? "",
+        adapterVersion = json['adapterVersion'] ?? "",
+        sdkVersion = json['sdkVersion'] ?? "";
+
+  @override
+  String toString() {
+    return '[MaxMediatedNetworkInfo name: $name, adapterClassName: $adapterClassName'
+        ', adapterVersion: $adapterVersion, sdkVersion: $sdkVersion]';
   }
 }

@@ -156,3 +156,21 @@ enum CMPErrorCode {
   /// @nodoc
   const CMPErrorCode(this.value);
 }
+
+///
+/// Represents load state of an ad in the waterfall.
+///
+/// This enum contains possible states of an ad in the waterfall the adapter
+/// response info could represent.
+enum AdLoadState {
+  /// The AppLovin MAX SDK did not attempt to load an ad from this network in
+  /// the waterfall because an ad higher in the waterfall loaded
+  /// successfully.
+  adLoadNotAttempted,
+
+  /// An ad successfully loaded from this network.
+  adLoaded,
+
+  /// An ad failed to load from this network.
+  adFailedToLoad,
+}
