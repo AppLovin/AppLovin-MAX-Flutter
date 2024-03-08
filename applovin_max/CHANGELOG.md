@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Depends on Android SDK v12.3.0 and iOS SDK v12.3.0.
 * Refactored error handling logic.
 ## 3.7.0
 * Depends on Android SDK v12.2.0 and iOS SDK v12.2.1.
