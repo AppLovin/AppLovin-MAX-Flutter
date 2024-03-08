@@ -44,9 +44,11 @@ class MaxAd {
     double? revenue = double.tryParse(json['revenue'].toString());
     revenue ??= 0.0;
 
-    dynamic nativeAd = json['nativeAd'];
-    nativeAd = (nativeAd is Map) ? Map<String, dynamic>.from(nativeAd) : null;
-    nativeAd = (nativeAd is Map) ? MaxNativeAd.fromJson(nativeAd as Map<String, dynamic>) : null;
+    MaxNativeAd? nativeAd;
+    var nativeAdData = json['nativeAd'];
+    if (nativeAdData is Map) {
+      nativeAd = MaxNativeAd.fromJson(Map<String, dynamic>.from(nativeAdData));
+    }
 
     return MaxAd(
       json['adUnitId'],
@@ -156,13 +158,13 @@ class MaxError {
 
   /// @nodoc
   factory MaxError.fromJson(Map<String, dynamic> json) {
-    MaxAdWaterfallInfo? waterfallInfo;
-    var waterfall = Map<String, dynamic>.from(json['waterfall']);
-    if (waterfall.isNotEmpty) {
-      waterfallInfo = MaxAdWaterfallInfo.fromJson(waterfall);
+    MaxAdWaterfallInfo? waterfall;
+    var waterfallData = Map<String, dynamic>.from(json['waterfall']);
+    if (waterfallData.isNotEmpty) {
+      waterfall = MaxAdWaterfallInfo.fromJson(waterfallData);
     }
 
-    return MaxError(json['code'], json['message'], waterfallInfo);
+    return MaxError(json['code'], json['message'], waterfall);
   }
 
   @override
@@ -335,21 +337,30 @@ class MaxNetworkResponse {
       adLoadState = AdLoadState.adLoaded;
     }
 
-    dynamic mediatedNetwork = json['mediatedNetwork'];
-    mediatedNetwork = (mediatedNetwork is Map) ? Map<String, dynamic>.from(mediatedNetwork) : null;
-    mediatedNetwork = (mediatedNetwork is Map) ? MaxMediatedNetworkInfo.fromJson(mediatedNetwork as Map<String, dynamic>) : null;
-    mediatedNetwork ??= MaxMediatedNetworkInfo.fromJson({});
+    late MaxMediatedNetworkInfo mediatedNetwork;
+    var mediatedNetworkData = json['mediatedNetwork'];
+    if (mediatedNetworkData is Map) {
+      mediatedNetwork = MaxMediatedNetworkInfo.fromJson(Map<String, dynamic>.from(mediatedNetworkData));
+    } else {
+      mediatedNetwork = MaxMediatedNetworkInfo.fromJson({});
+    }
 
-    dynamic credentials = json['credentials'];
-    credentials = (credentials is Map) ? Map<String, dynamic>.from(credentials) : null;
-    credentials ??= {};
+    late Map<String, dynamic> credentials;
+    var credentialsData = json['credentials'];
+    if (credentialsData is Map) {
+      credentials = Map<String, dynamic>.from(credentialsData);
+    } else {
+      credentials = {};
+    }
 
     double? latency = double.tryParse(json['latencyMillis'].toString());
     latency ??= 0.0;
 
-    dynamic error = json['error'];
-    error = (error is Map) ? Map<String, dynamic>.from(error) : null;
-    error = (error is Map) ? MaxError.fromJson(error as Map<String, dynamic>) : null;
+    MaxError? error;
+    var errorData = json['error'];
+    if (errorData is Map) {
+      error = MaxError.fromJson(Map<String, dynamic>.from(errorData));
+    }
 
     return MaxNetworkResponse(adLoadState, mediatedNetwork, credentials, latency, error);
   }
