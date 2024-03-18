@@ -1,6 +1,7 @@
 ## Versions
 
 ## 3.8.1
+* Depends on Android SDK v12.3.1 and iOS SDK v12.3.1.
 ## 3.8.0
 * Depends on Android SDK v12.3.0 and iOS SDK v12.3.0.
 * Add support to classify waterfall objects. For more info, check out our [docs](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#waterfall-information-api).
