@@ -1,5 +1,6 @@
 ## Versions
 
+## 3.9.0
 ## 3.8.1
 * Depends on Android SDK v12.3.1 and iOS SDK v12.3.1.
 ## 3.8.0
