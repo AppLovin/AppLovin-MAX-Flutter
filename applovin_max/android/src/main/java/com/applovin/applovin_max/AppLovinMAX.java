@@ -180,7 +180,6 @@ public class AppLovinMAX
         // Guard against running init logic multiple times
         if ( isPluginInitialized )
         {
-            result.success( getInitializationMessage() );
             return;
         }
 
