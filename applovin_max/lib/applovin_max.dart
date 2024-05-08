@@ -35,7 +35,13 @@ class AppLovinMAX {
 
   /// Initializes the SDK.
   ///
-  /// [Initialize the SDK](https://dash.applovin.com/documentation/mediation/flutter/getting-started/integration#initialize-the-sdk)
+  /// This method must be called only once. Calling it multiple times may
+  /// cause the returned future to never complete.
+  ///
+  /// For more information, see the [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration).
+  /// 
+  /// See [this GitHub issue](https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/210)
+  /// for more details on why calling `initialize` multiple times can lead to issues.
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
