@@ -162,7 +162,7 @@ class AppLovinMAX {
   /// You can use them to confirm the validity of network integrations.
   /// This ensures that you can successfully load and show ads, among other things.
   ///
-  /// [Mediation Debugger](https://dash.applovin.com/documentation/mediation/flutter/testing-networks/mediation-debugger)
+  /// [Mediation Debugger](https://developers.applovin.com/en/flutter/testing-networks/mediation-debugger)
   static void showMediationDebugger() {
     channel.invokeMethod('showMediationDebugger');
   }
@@ -175,7 +175,7 @@ class AppLovinMAX {
   ///
   /// To learn more about how this information is encoded in the integer, see [ConsentDialogState].
   ///
-  /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
+  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
   @Deprecated('Check consentFlowUserGeography in the return object of initialize() instead.')
   static Future<int?> getConsentDialogState() {
     return channel.invokeMethod('getConsentDialogState');
@@ -183,7 +183,7 @@ class AppLovinMAX {
 
   /// Sets whether or not the user has provided consent for interest-based advertising.
   ///
-  /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
+  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
   static void setHasUserConsent(bool hasUserConsent) {
     channel.invokeMethod('setHasUserConsent', {
       'value': hasUserConsent,
@@ -192,14 +192,14 @@ class AppLovinMAX {
 
   /// Checks if the user has set a consent flag.
   ///
-  /// [Consent Flags in GDPR and Other Regions](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#consent-flags-in-gdpr-and-other-regions)
+  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
   static Future<bool?> hasUserConsent() {
     return channel.invokeMethod('hasUserConsent');
   }
 
   /// Marks the user as age-restricted.
   ///
-  /// [Prohibition on Personal Information from Children](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#prohibition-on-personal-information-from-children)
+  /// [Prohibition on Personal Information from Children](https://developers.applovin.com/en/flutter/overview/privacy#prohibition-on-ads-to-and-personal-information-from-children-and-apps-exclusively-designed-for-or-exclusively-directed-to-children)
   static void setIsAgeRestrictedUser(bool isAgeRestrictedUser) {
     channel.invokeMethod('setIsAgeRestrictedUser', {
       'value': isAgeRestrictedUser,
@@ -208,7 +208,7 @@ class AppLovinMAX {
 
   /// Checks if the user is age-restricted.
   ///
-  /// [Prohibition on Personal Information from Children](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#prohibition-on-personal-information-from-children)
+  /// [Prohibition on Personal Information from Children](https://developers.applovin.com/en/flutter/overview/privacy#prohibition-on-ads-to-and-personal-information-from-children-and-apps-exclusively-designed-for-or-exclusively-directed-to-children)
   static Future<bool?> isAgeRestrictedUser() {
     return channel.invokeMethod('isAgeRestrictedUser');
   }
@@ -217,7 +217,7 @@ class AppLovinMAX {
   ///
   /// Or, sets false to indicate that the user has not opted out of interest-based advertising.
   ///
-  /// [California Consumer Privacy Act (“CCPA”)](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#california-consumer-privacy-act-(%E2%80%9Cccpa%E2%80%9D))
+  /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static void setDoNotSell(bool isDoNotSell) {
     channel.invokeMethod('setDoNotSell', {
       'value': isDoNotSell,
@@ -228,7 +228,7 @@ class AppLovinMAX {
   ///
   /// Or, returns false if the user has not opted out of interest-based advertising.
   ///
-  /// [California Consumer Privacy Act (“CCPA”)](https://dash.applovin.com/documentation/mediation/flutter/getting-started/privacy#california-consumer-privacy-act-(%E2%80%9Cccpa%E2%80%9D))
+  /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static Future<bool?> isDoNotSell() {
     return channel.invokeMethod('isDoNotSell');
   }
@@ -241,7 +241,7 @@ class AppLovinMAX {
   ///
   /// MAX passes this internal user ID back to you via the {USER_ID} macro in its MAX S2S Rewarded Callback requests.
   ///
-  /// [Setting an Internal User ID](https://dash.applovin.com/documentation/mediation/s2s-rewarded-callback-api#setting-an-internal-user-id)
+  /// [Setting an Internal User ID](https://developers.applovin.com/en/advanced-features/s2s-rewarded-callback-api#setting-an-internal-user-id)
   static void setUserId(String userId) {
     channel.invokeMethod('setUserId', {
       'value': userId,
@@ -252,7 +252,7 @@ class AppLovinMAX {
   ///
   /// Note that this functionality is not available for all networks.
   ///
-  /// [Mute Audio](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#mute-audio)
+  /// [Mute Audio](https://developers.applovin.com/en/flutter/overview/advanced-settings#mute-audio)
   static void setMuted(bool muted) {
     channel.invokeMethod('setMuted', {
       'value': muted,
@@ -261,7 +261,7 @@ class AppLovinMAX {
 
   /// Enables verbose logging for the SDK.
   ///
-  /// [Enable Verbose Logging](https://dash.applovin.com/documentation/mediation/flutter/getting-started/advanced-settings#enable-verbose-logging)
+  /// [Enable Verbose Logging](https://developers.applovin.com/en/flutter/overview/advanced-settings#enable-verbose-logging)
   static void setVerboseLogging(bool enabled) {
     channel.invokeMethod('setVerboseLogging', {
       'value': enabled,
@@ -270,7 +270,7 @@ class AppLovinMAX {
 
   /// Whether the creative debugger will be displayed on fullscreen ads after flipping the device screen down twice. Defaults to true.
   ///
-  /// [Enable Creative Debugger](https://dash.applovin.com/documentation/mediation/flutter/testing-networks/creative-debugger)
+  /// [Enable Creative Debugger](https://developers.applovin.com/en/flutter/testing-networks/creative-debugger)
   static void setCreativeDebuggerEnabled(bool enabled) {
     channel.invokeMethod('setCreativeDebuggerEnabled', {
       'value': enabled,
@@ -288,7 +288,7 @@ class AppLovinMAX {
 
   /// Whether or not the AppLovin SDK will collect the device location. Defaults to true.
   ///
-  /// [Location Passing](https://dash.applovin.com/documentation/mediation/flutter/getting-started/data-passing#location-passing)
+  /// [Location Passing](https://developers.applovin.com/en/flutter/overview/data-and-keyword-passing#location-passing)
   static void setLocationCollectionEnabled(bool enabled) {
     channel.invokeMethod('setLocationCollectionEnabled', {
       'value': enabled,
@@ -369,7 +369,7 @@ class AppLovinMAX {
 
   /// Creates a banner using your [adUnitId] at the specified [AdViewPosition] position.
   ///
-  /// [Creating a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#creating-a-banner)
+  /// [Creating a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads)
   static void createBanner(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('createBanner', {
       'ad_unit_id': adUnitId,
@@ -389,7 +389,7 @@ class AppLovinMAX {
 
   /// Sets an ad placement name for the banner with the specified [adUnitId].
   ///
-  /// [Setting an Ad Placement Name](https://dash.applovin.com/documentation/mediation/features/s2s-impression-revenue-api#setting-an-ad-placement-name)
+  /// [Setting an Ad Placement Name](https://developers.applovin.com/en/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
   static void setBannerPlacement(String adUnitId, String placement) {
     channel.invokeMethod('setBannerPlacement', {
       'ad_unit_id': adUnitId,
@@ -410,7 +410,7 @@ class AppLovinMAX {
   /// For example, pass "adaptive_banner" and "false" to this method as the key/value pair
   /// to disable Adaptive Banners for the specified [adUnitId.
   ///
-  /// [Adaptive Banners](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#adaptive-banners)
+  /// [Adaptive Banners](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#adaptive-banners)
   static void setBannerExtraParameter(String adUnitId, String key, String value) {
     channel.invokeMethod('setBannerExtraParameter', {
       'ad_unit_id': adUnitId,
@@ -421,7 +421,7 @@ class AppLovinMAX {
 
   /// Shows the banner with the specified [adUnitId].
   ///
-  /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
+  /// [Displaying a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#displaying-a-banner)
   static void showBanner(String adUnitId) {
     channel.invokeMethod('showBanner', {
       'ad_unit_id': adUnitId,
@@ -430,7 +430,7 @@ class AppLovinMAX {
 
   /// Hides the banner with the specified [adUnitId].
   ///
-  /// [Displaying a Banner](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#displaying-a-banner)
+  /// [Displaying a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#displaying-a-banner)
   static void hideBanner(String adUnitId) {
     channel.invokeMethod('hideBanner', {
       'ad_unit_id': adUnitId,
@@ -485,7 +485,7 @@ class AppLovinMAX {
 
   /// Creates an MREC using your [adUnitId] at the specified [AdViewPosition] position.
   ///
-  /// [Programmatic Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#programmatic-method)
+  /// [Programmatic Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#loading-a-banner-or-mrec)
   static void createMRec(String adUnitId, AdViewPosition position) {
     channel.invokeMethod('createMRec', {
       'ad_unit_id': adUnitId,
@@ -495,7 +495,7 @@ class AppLovinMAX {
 
   /// Sets an ad placement name for the MREC with the specified [adUnitId].
   ///
-  /// [Setting an Ad Placement Name](https://dash.applovin.com/documentation/mediation/features/s2s-impression-revenue-api#setting-an-ad-placement-name)
+  /// [Setting an Ad Placement Name](https://developers.applovin.com/en/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
   static void setMRecPlacement(String adUnitId, String placement) {
     channel.invokeMethod('setMRecPlacement', {
       'ad_unit_id': adUnitId,
@@ -575,7 +575,7 @@ class AppLovinMAX {
 
   /// Loads an interstitial ad using your [adUnitId].
   ///
-  /// [Loading an Interstitial Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/interstitials#loading-an-interstitial-ad)
+  /// [Loading an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#loading-an-interstitial-ad)
   static void loadInterstitial(String adUnitId) {
     channel.invokeMethod('loadInterstitial', {
       'ad_unit_id': adUnitId,
@@ -591,7 +591,7 @@ class AppLovinMAX {
 
   /// Shows the interstitial ad with the specified [adUnitId].
   ///
-  /// [Showing an Interstitial Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/interstitials#showing-an-interstitial-ad)
+  /// [Showing an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#showing-an-interstitial-ad)
   static void showInterstitial(String adUnitId, {placement, customData}) {
     channel.invokeMethod('showInterstitial', {
       'ad_unit_id': adUnitId,
@@ -620,7 +620,7 @@ class AppLovinMAX {
 
   /// Loads a rewarded ad using your [adUnitId].
   ///
-  /// [Loading a Rewarded Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/rewarded-ads#loading-a-rewarded-ad)
+  /// [Loading a Rewarded Ad](https://developers.applovin.com/en/flutter/ad-formats/rewarded-ads/#loading-a-rewarded-ad)
   static void loadRewardedAd(String adUnitId) {
     channel.invokeMethod('loadRewardedAd', {
       'ad_unit_id': adUnitId,
@@ -636,7 +636,7 @@ class AppLovinMAX {
 
   /// Shows the rewarded ad with the specified [adUnitId].
   ///
-  /// [Showing a Rewarded Ad](https://dash.applovin.com/documentation/mediation/flutter/getting-started/rewarded-ads#showing-a-rewarded-ad)
+  /// [Showing a Rewarded Ad](https://developers.applovin.com/en/flutter/ad-formats/rewarded-ads#showing-a-rewarded-ad)
   static void showRewardedAd(String adUnitId, {placement, customData}) {
     channel.invokeMethod('showRewardedAd', {
       'ad_unit_id': adUnitId,

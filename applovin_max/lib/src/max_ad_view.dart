@@ -62,8 +62,7 @@ class MaxAdView extends StatefulWidget {
 
   /// Creates a new ad view directly in the user's widget tree.
   ///
-  /// * [Banner Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/banners#widget-method)
-  /// * [MREC Widget Method](https://dash.applovin.com/documentation/mediation/flutter/getting-started/mrecs#widget-method)
+  /// * [Widget Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#widget-method)
   const MaxAdView({
     Key? key,
     required this.adUnitId,

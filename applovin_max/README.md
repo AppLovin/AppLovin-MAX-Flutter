@@ -2,7 +2,7 @@
 AppLovin MAX Flutter Plugin for Android and iOS.
 
 ## Documentation
-Check out our integration docs [here](https://dash.applovin.com/documentation/mediation/flutter/getting-started/integration).
+Check out our integration docs [here](https://developers.applovin.com/en/flutter/overview/integration).
 
 ## License
 MIT
