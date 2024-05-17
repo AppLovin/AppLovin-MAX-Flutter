@@ -1,5 +1,6 @@
 ## Versions
 
+## 3.10.0
 ## 3.9.2
 * Fix crash on `AppLovinMAX.initialize()` with `java.lang.IllegalStateException: Reply already submitted`.
 ## 3.9.1
