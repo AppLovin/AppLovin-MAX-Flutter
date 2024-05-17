@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Depends on Android SDK v12.5.0 and iOS SDK v12.5.0.
 ## 3.9.2
 * Fix crash on `AppLovinMAX.initialize()` with `java.lang.IllegalStateException: Reply already submitted`.
 ## 3.9.1
