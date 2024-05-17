@@ -14,7 +14,7 @@ export 'package:applovin_max/src/targeting_data.dart';
 /// Represents the AppLovin SDK.
 class AppLovinMAX {
   /// The current version of the SDK.
-  static const version = "3.9.2";
+  static const version = "3.10.0";
 
   /// @nodoc
   static MethodChannel channel = const MethodChannel('applovin_max');
