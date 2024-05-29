@@ -451,8 +451,6 @@ public class AppLovinMAXNativeAdView
             nativeAdView.addView( mediaViewContainer );
         }
 
-        Rect rect = getRect( call );
-
         if ( mediaView.getParent() == null )
         {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -461,7 +459,9 @@ public class AppLovinMAXNativeAdView
             mediaViewContainer.addView( mediaView, layoutParams );
         }
 
-        updateViewLayout( nativeAdView, mediaViewContainer, rect );
+        clickableViews.add( mediaViewContainer );
+
+        updateViewLayout( nativeAdView, mediaViewContainer, getRect( call ) );
     }
 
     private void renderAd(final MaxAd ad)

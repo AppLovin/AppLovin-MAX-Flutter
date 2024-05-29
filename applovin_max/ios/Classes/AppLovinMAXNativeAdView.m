@@ -382,23 +382,25 @@
 
 - (void)addMediaViewForCall:(FlutterMethodCall *)call
 {
-    UIView *mediaView = self.nativeAd.nativeAd.mediaView;
-    if ( !mediaView ) return;
-    
     if ( !self.mediaViewContainer )
     {
         self.mediaViewContainer = [[UIView alloc] init];
         self.mediaViewContainer.tag = MEDIA_VIEW_CONTAINER_TAG;
         [self.nativeAdView addSubview: self.mediaViewContainer];
     }
+
+    [self.clickableViews addObject: self.mediaViewContainer];
+    
+    self.mediaViewContainer.frame = [self frameForCall: call];
+
+    UIView *mediaView = self.nativeAd.nativeAd.mediaView;
+    if ( !mediaView ) return;
     
     if ( !mediaView.superview )
     {
         [self.mediaViewContainer addSubview: mediaView];
         [mediaView al_pinToSuperview];
     }
-    
-    self.mediaViewContainer.frame = [self frameForCall: call];
 }
 
 - (void)renderAd
