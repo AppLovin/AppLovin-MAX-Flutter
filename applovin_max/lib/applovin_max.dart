@@ -43,6 +43,12 @@ class AppLovinMAX {
   /// See [this GitHub issue](https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/210)
   /// for more details on why calling `initialize` multiple times can lead to issues.
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
+    bool? isPlatformSDKInitialized = await isInitialized();
+    if (isPlatformSDKInitialized ?? false) {
+      Map conf = await channel.invokeMethod('getMaxConfiguration');
+      return MaxConfiguration.fromJson(Map<String, dynamic>.from(conf));
+    }
+
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
