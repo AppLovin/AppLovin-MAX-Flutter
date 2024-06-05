@@ -10,20 +10,6 @@ import 'scrolled_adview.dart';
 
 enum AdLoadState { notLoaded, loading, loaded }
 
-void main() {
-  runApp(const MaterialApp(
-    title: 'AppLovin MAX Demo',
-    home: MyApp(),
-  ));
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
 // Create constants
 const String _sdkKey = "YOUR_SDK_KEY";
 
@@ -32,6 +18,31 @@ final String _rewardedAdUnitId = Platform.isAndroid ? "ANDROID_REWARDED_AD_UNIT_
 final String _bannerAdUnitId = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "IOS_BANNER_AD_UNIT_ID";
 final String _mrecAdUnitId = Platform.isAndroid ? "ANDROID_MREC_AD_UNIT_ID" : "IOS_MREC_AD_UNIT_ID";
 final String _nativeAdUnitId = Platform.isAndroid ? "ANDROID_NATIVE_AD_UNIT_ID" : "IOS_NATIVE_AD_UNIT_ID";
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // MAX Consent Flow - https://developers.applovin.com/en/flutter/overview/terms-and-privacy-policy-flow
+  AppLovinMAX.setTermsAndPrivacyPolicyFlowEnabled(true);
+  AppLovinMAX.setPrivacyPolicyUrl("https://your_company_name.com/privacy");
+  AppLovinMAX.setTermsOfServiceUrl("https://your_company_name.com/terms");
+
+  MaxConfiguration? conf = await AppLovinMAX.initialize(_sdkKey);
+
+  runApp(MaterialApp(
+    title: 'AppLovin MAX Demo',
+    home: MyApp(configuration: conf),
+  ));
+}
+
+class MyApp extends StatefulWidget {
+  final MaxConfiguration? configuration;
+
+  const MyApp({Key? key, this.configuration}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
 const int _maxExponentialRetryCount = 6;
 
@@ -54,24 +65,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initializePlugin();
-  }
 
-  // NOTE: Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initializePlugin() async {
-    logStatus("Initializing SDK...");
-
-    // MAX Consent Flow - https://developers.applovin.com/en/flutter/overview/terms-and-privacy-policy-flow
-    AppLovinMAX.setTermsAndPrivacyPolicyFlowEnabled(true);
-    AppLovinMAX.setPrivacyPolicyUrl("https://your_company_name.com/privacy");
-    AppLovinMAX.setTermsOfServiceUrl("https://your_company_name.com/terms");
-
-    MaxConfiguration? configuration = await AppLovinMAX.initialize(_sdkKey);
-    if (configuration != null) {
+    if (widget.configuration != null) {
       _isInitialized = true;
-
-      logStatus("SDK Initialized: ${configuration.countryCode}");
-
+      logStatus("SDK Initialized: ${widget.configuration?.countryCode}");
       attachAdListeners();
     }
   }
