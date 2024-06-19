@@ -299,7 +299,7 @@ static FlutterMethodChannel *ALSharedChannel;
     }];
 }
 
-- (void)getMaxConfiguration:(FlutterResult)result
+- (void)getConfiguration:(FlutterResult)result
 {
     result([self initializationMessage]);
 }
@@ -1871,9 +1871,9 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         [self isInitialized: result];
     }
-    else if ( [@"getMaxConfiguration" isEqualToString: call.method] )
+    else if ( [@"getConfiguration" isEqualToString: call.method] )
     {
-        [self getMaxConfiguration: result];
+        [self getConfiguration: result];
     }
     else if ( [@"isTablet" isEqualToString: call.method] )
     {

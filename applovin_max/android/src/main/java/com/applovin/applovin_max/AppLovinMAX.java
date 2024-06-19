@@ -340,7 +340,7 @@ public class AppLovinMAX
         } );
     }
 
-    private void getMaxConfiguration(final Result result)
+    private void getConfiguration(final Result result)
     {
         result.success( getInitializationMessage() );
     }
@@ -1946,9 +1946,9 @@ public class AppLovinMAX
         {
             isInitialized( result );
         }
-        else if ( "getMaxConfiguration".equals( call.method ) )
+        else if ( "getConfiguration".equals( call.method ) )
         {
-            getMaxConfiguration( result );
+            getConfiguration( result );
         }
         else if ( "isTablet".equals( call.method ) )
         {
