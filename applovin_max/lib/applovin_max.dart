@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:applovin_max/src/ad_classes.dart';
 import 'package:applovin_max/src/ad_listeners.dart';
 import 'package:applovin_max/src/enums.dart';
@@ -19,6 +21,9 @@ class AppLovinMAX {
   /// @nodoc
   static MethodChannel channel = const MethodChannel('applovin_max');
 
+  static bool _hasInitializeInvoked = false;
+  static final Completer<MaxConfiguration> _initializeCompleter = Completer<MaxConfiguration>();
+
   /// The targeting data object for you to provide user or app data that will improve how we target ads.
   static final TargetingData targetingData = TargetingData(channel);
 
@@ -39,10 +44,25 @@ class AppLovinMAX {
   /// cause the returned future to never complete.
   ///
   /// For more information, see the [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration).
-  /// 
+  ///
   /// See [this GitHub issue](https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/210)
   /// for more details on why calling `initialize` multiple times can lead to issues.
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
+    if (_hasInitializeInvoked) {
+      // Return a future object even when the actual value is not ready.
+      return _initializeCompleter.future;
+    }
+
+    _hasInitializeInvoked = true;
+
+    // isInitialized() returns true when Flutter is performing hot restart
+    bool isPlatformSDKInitialized = await isInitialized() ?? false;
+    if (isPlatformSDKInitialized) {
+      Map conf = await channel.invokeMethod('getConfiguration');
+      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+      return _initializeCompleter.future;
+    }
+
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
@@ -137,7 +157,9 @@ class AppLovinMAX {
       'sdk_key': sdkKey,
     }) as Map;
 
-    return MaxConfiguration.fromJson(Map<String, dynamic>.from(conf));
+    _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+
+    return _initializeCompleter.future;
   }
 
   /// @nodoc

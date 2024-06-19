@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Update `AppLovinMAX.initialize()` to return a `Future` on hot restart.
 ## 3.10.0
 * Depends on Android SDK v12.5.0 and iOS SDK v12.5.0.
 ## 3.9.2

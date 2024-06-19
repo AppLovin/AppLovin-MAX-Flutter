@@ -340,6 +340,11 @@ public class AppLovinMAX
         } );
     }
 
+    private void getConfiguration(final Result result)
+    {
+        result.success( getInitializationMessage() );
+    }
+
     private Map<String, Object> getInitializationMessage()
     {
         Map<String, Object> message = new HashMap<>( 4 );
@@ -1940,6 +1945,10 @@ public class AppLovinMAX
         else if ( "isInitialized".equals( call.method ) )
         {
             isInitialized( result );
+        }
+        else if ( "getConfiguration".equals( call.method ) )
+        {
+            getConfiguration( result );
         }
         else if ( "isTablet".equals( call.method ) )
         {

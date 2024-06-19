@@ -299,6 +299,11 @@ static FlutterMethodChannel *ALSharedChannel;
     }];
 }
 
+- (void)getConfiguration:(FlutterResult)result
+{
+    result([self initializationMessage]);
+}
+
 - (NSDictionary<NSString *, id> *)initializationMessage
 {
     NSMutableDictionary<NSString *, id> *message = [NSMutableDictionary dictionaryWithCapacity: 5];
@@ -1865,6 +1870,10 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( [@"isInitialized" isEqualToString: call.method] )
     {
         [self isInitialized: result];
+    }
+    else if ( [@"getConfiguration" isEqualToString: call.method] )
+    {
+        [self getConfiguration: result];
     }
     else if ( [@"isTablet" isEqualToString: call.method] )
     {
