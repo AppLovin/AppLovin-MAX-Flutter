@@ -115,7 +115,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
   @override
   void dispose() {
-    widget.controller!.removeListener(_handleControllerChanged);
+    widget.controller?.removeListener(_handleControllerChanged);
     super.dispose();
   }
 
