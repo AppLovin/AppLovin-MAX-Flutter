@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix `Null check operator used on a null value` warning in `MaxNativeAdView.dispose()`.
 ## 3.10.1
 * Update `AppLovinMAX.initialize()` to return a `Future` on hot restart.
 ## 3.10.0
