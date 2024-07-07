@@ -41,23 +41,19 @@ class MaxAd {
 
   /// @nodoc
   factory MaxAd.fromJson(Map<String, dynamic> json) {
-    double? revenue = double.tryParse(json['revenue'].toString());
-    revenue ??= 0.0;
-
     MaxNativeAd? nativeAd;
-    var nativeAdData = json['nativeAd'];
-    if (nativeAdData is Map) {
-      nativeAd = MaxNativeAd.fromJson(Map<String, dynamic>.from(nativeAdData));
+    if (json['nativeAd'] is Map) {
+      nativeAd = MaxNativeAd.fromJson(Map<String, dynamic>.from(json['nativeAd']));
     }
 
     return MaxAd(
-      json['adUnitId'],
-      json['networkName'],
-      revenue,
-      json['revenuePrecision'],
-      json['creativeId'],
-      json['dspName'],
-      json['placement'],
+      json['adUnitId'] as String,
+      json['networkName'] as String,
+      double.tryParse(json['revenue']?.toString() ?? '0.0') ?? 0.0,
+      json['revenuePrecision'] as String,
+      json['creativeId'] as String,
+      json['dspName'] as String,
+      json['placement'] as String,
       MaxAdWaterfallInfo.fromJson(Map<String, dynamic>.from(json['waterfall'])),
       nativeAd,
     );
@@ -65,9 +61,15 @@ class MaxAd {
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId, networkName: $networkName, revenue: $revenue'
-        ', revenuePrecision: $revenuePrecision, dspName: $dspName, creativeId: $creativeId'
-        ', placement: $placement, waterfall: $waterfall, nativeAd: $nativeAd]';
+    return '[MaxAd adUnitId: $adUnitId'
+        ', networkName: $networkName'
+        ', revenue: $revenue'
+        ', revenuePrecision: $revenuePrecision'
+        ', creativeId: $creativeId'
+        ', dspName: $dspName'
+        ', placement: $placement'
+        ', waterfall: $waterfall'
+        ', nativeAd: $nativeAd]';
   }
 }
 
@@ -123,22 +125,27 @@ class MaxNativeAd {
 
   /// @nodoc
   MaxNativeAd.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        advertiser = json['advertiser'],
-        body = json['body'],
-        callToAction = json['callToAction'],
+      : title = json['title'] as String?,
+        advertiser = json['advertiser'] as String?,
+        body = json['body'] as String?,
+        callToAction = json['callToAction'] as String?,
         starRating = double.tryParse(json['starRating'].toString()),
         mediaContentAspectRatio = double.tryParse(json['mediaContentAspectRatio'].toString()),
-        isIconImageAvailable = json['isIconImageAvailable'],
-        isOptionsViewAvailable = json['isOptionsViewAvailable'],
-        isMediaViewAvailable = json['isMediaViewAvailable'];
+        isIconImageAvailable = json['isIconImageAvailable'] as bool,
+        isOptionsViewAvailable = json['isOptionsViewAvailable'] as bool,
+        isMediaViewAvailable = json['isMediaViewAvailable'] as bool;
 
   @override
   String toString() {
-    return '[MaxNativeAd title: $title, advertiser: $advertiser, body: $body, callToAction: $callToAction'
-        ', starRating: $starRating, mediaContentAspectRatio: $mediaContentAspectRatio'
-        ', isIconImageAvailable: $isIconImageAvailable, isMediaViewAvailable: $isMediaViewAvailable'
-        ', isOptionsViewAvailable: $isOptionsViewAvailable]';
+    return '[MaxNativeAd title: $title'
+        ', advertiser: $advertiser'
+        ', body: $body'
+        ', callToAction: $callToAction'
+        ', starRating: $starRating'
+        ', mediaContentAspectRatio: $mediaContentAspectRatio'
+        ', isIconImageAvailable: $isIconImageAvailable'
+        ', isOptionsViewAvailable: $isOptionsViewAvailable'
+        ', isMediaViewAvailable: $isMediaViewAvailable]';
   }
 }
 
@@ -159,12 +166,14 @@ class MaxError {
   /// @nodoc
   factory MaxError.fromJson(Map<String, dynamic> json) {
     MaxAdWaterfallInfo? waterfall;
-    var waterfallData = Map<String, dynamic>.from(json['waterfall']);
-    if (waterfallData.isNotEmpty) {
-      waterfall = MaxAdWaterfallInfo.fromJson(waterfallData);
+    if (json['waterfall'] != null) {
+      var waterfallData = Map<String, dynamic>.from(json['waterfall']);
+      if (waterfallData.isNotEmpty) {
+        waterfall = MaxAdWaterfallInfo.fromJson(waterfallData);
+      }
     }
 
-    return MaxError(json['code'], json['message'], waterfall);
+    return MaxError(json['code'] as int, json['message'] as String, waterfall);
   }
 
   @override
@@ -175,10 +184,6 @@ class MaxError {
 
 /// Encapsulates various flags related to the SDK configuration.
 class MaxConfiguration {
-  /// The state of the consent dialog.
-  @Deprecated('Use ConsentFlowUserGeography instead.')
-  final ConsentDialogState consentDialogState;
-
   /// The country code for this user.
   final String? countryCode;
 
@@ -193,39 +198,29 @@ class MaxConfiguration {
   final AppTrackingStatus? appTrackingStatus;
 
   /// @nodoc
-  MaxConfiguration(this.consentDialogState, this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus);
+  MaxConfiguration(this.countryCode, this.isTestModeEnabled, this.consentFlowUserGeography, this.appTrackingStatus);
 
   /// @nodoc
   factory MaxConfiguration.fromJson(Map<String, dynamic> json) {
-    late ConsentDialogState consentDialogState;
-    try {
-      consentDialogState = ConsentDialogState.values.elementAt(json['consentDialogState']);
-    } catch (_) {
-      consentDialogState = ConsentDialogState.unknown;
-    }
-
-    String? countryCode = json['countryCode'];
-
-    bool? isTestModeEnabled = json['isTestModeEnabled'];
-
-    dynamic consentFlowUserGeography = json['consentFlowUserGeography'];
-    if (consentFlowUserGeography != null) {
+    ConsentFlowUserGeography? consentFlowUserGeography;
+    if (json['consentFlowUserGeography'] != null) {
       consentFlowUserGeography =
-          ConsentFlowUserGeography.values.firstWhere((v) => v.value == consentFlowUserGeography, orElse: () => ConsentFlowUserGeography.unknown);
+          ConsentFlowUserGeography.values.firstWhere((v) => v.value == json['consentFlowUserGeography'], orElse: () => ConsentFlowUserGeography.unknown);
     }
 
-    dynamic appTrackingStatus = json['appTrackingStatus'];
-    if (appTrackingStatus != null) {
-      appTrackingStatus = AppTrackingStatus.values.firstWhere((v) => v.value == appTrackingStatus, orElse: () => AppTrackingStatus.unavailable);
+    AppTrackingStatus? appTrackingStatus;
+    if (json['appTrackingStatus'] != null) {
+      appTrackingStatus = AppTrackingStatus.values.firstWhere((v) => v.value == json['appTrackingStatus'], orElse: () => AppTrackingStatus.unavailable);
     }
 
-    return MaxConfiguration(consentDialogState, countryCode, isTestModeEnabled, consentFlowUserGeography, appTrackingStatus);
+    return MaxConfiguration(json['countryCode'] as String?, json['isTestModeEnabled'] as bool?, consentFlowUserGeography, appTrackingStatus);
   }
 
   @override
   String toString() {
-    return '[MaxConfiguration consentDialogState: $consentDialogState, countryCode: $countryCode'
-        ', isTestModeEnabled: $isTestModeEnabled, consentFlowUserGeography: $consentFlowUserGeography'
+    return '[MaxConfiguration countryCode: $countryCode'
+        ', isTestModeEnabled: $isTestModeEnabled'
+        ', consentFlowUserGeography: $consentFlowUserGeography'
         ', appTrackingStatus: $appTrackingStatus]';
   }
 }
@@ -249,10 +244,10 @@ class MaxCMPError {
 
   /// @nodoc
   MaxCMPError.fromJson(Map<String, dynamic> json)
-      : code = CMPErrorCode.values.firstWhere((v) => v.value == json['code']),
-        message = json['message'],
-        cmpCode = json['cmpCode'],
-        cmpMessage = json['cmpMessage'];
+      : code = CMPErrorCode.values.firstWhere((v) => v.value == json['code'], orElse: () => CMPErrorCode.unspecified),
+        message = json['message'] as String,
+        cmpCode = json['cmpCode'] as int,
+        cmpMessage = json['cmpMessage'] as String;
 
   @override
   String toString() {
@@ -281,20 +276,13 @@ class MaxAdWaterfallInfo {
 
   /// @nodoc
   factory MaxAdWaterfallInfo.fromJson(Map<String, dynamic> json) {
-    List<MaxNetworkResponse> networkResponseList = [];
-    var networkResponses = json['networkResponses'];
-    if (networkResponses is List) {
-      for (var networkResponse in networkResponses) {
-        if (networkResponse is Map) {
-          networkResponseList.add(MaxNetworkResponse.fromJson(Map<String, dynamic>.from(networkResponse)));
-        }
-      }
-    }
+    var networkResponses = json['networkResponses'] as List<dynamic>? ?? [];
+    List<MaxNetworkResponse> networkResponseList =
+        networkResponses.map((response) => MaxNetworkResponse.fromJson(Map<String, dynamic>.from(response))).toList();
 
-    double? latency = double.tryParse(json['latencyMillis'].toString());
-    latency = latency ?? 0.0;
+    double latency = double.tryParse(json['latencyMillis']?.toString() ?? '0.0') ?? 0.0;
 
-    return MaxAdWaterfallInfo(json['name'] ?? "", json['testName'] ?? "", networkResponseList, latency);
+    return MaxAdWaterfallInfo(json['name'] as String? ?? "", json['testName'] as String? ?? "", networkResponseList, latency);
   }
 
   @override
@@ -330,36 +318,24 @@ class MaxNetworkResponse {
 
   /// @nodoc
   factory MaxNetworkResponse.fromJson(Map<String, dynamic> json) {
-    late AdLoadState adLoadState;
+    AdLoadState adLoadState;
     try {
       adLoadState = AdLoadState.values.elementAt(json['adLoadState']);
     } catch (_) {
       adLoadState = AdLoadState.adLoaded;
     }
 
-    late MaxMediatedNetworkInfo mediatedNetwork;
-    var mediatedNetworkData = json['mediatedNetwork'];
-    if (mediatedNetworkData is Map) {
-      mediatedNetwork = MaxMediatedNetworkInfo.fromJson(Map<String, dynamic>.from(mediatedNetworkData));
-    } else {
-      mediatedNetwork = MaxMediatedNetworkInfo.fromJson({});
-    }
+    MaxMediatedNetworkInfo mediatedNetwork = (json['mediatedNetwork'] is Map)
+        ? MaxMediatedNetworkInfo.fromJson(Map<String, dynamic>.from(json['mediatedNetwork']))
+        : MaxMediatedNetworkInfo.fromJson({});
 
-    late Map<String, dynamic> credentials;
-    var credentialsData = json['credentials'];
-    if (credentialsData is Map) {
-      credentials = Map<String, dynamic>.from(credentialsData);
-    } else {
-      credentials = {};
-    }
+    Map<String, dynamic> credentials = (json['credentials'] is Map) ? Map<String, dynamic>.from(json['credentials']) : {};
 
-    double? latency = double.tryParse(json['latencyMillis'].toString());
-    latency ??= 0.0;
+    double latency = double.tryParse(json['latencyMillis']?.toString() ?? '0.0') ?? 0.0;
 
     MaxError? error;
-    var errorData = json['error'];
-    if (errorData is Map) {
-      error = MaxError.fromJson(Map<String, dynamic>.from(errorData));
+    if (json['error'] is Map) {
+      error = MaxError.fromJson(Map<String, dynamic>.from(json['error']));
     }
 
     return MaxNetworkResponse(adLoadState, mediatedNetwork, credentials, latency, error);
@@ -367,8 +343,11 @@ class MaxNetworkResponse {
 
   @override
   String toString() {
-    return '[MaxNetworkResponse adLoadState: $adLoadState, mediatedNetwork: $mediatedNetwork'
-        ', credentials: $credentials, latency: $latency, error: $error]';
+    return '[MaxNetworkResponse adLoadState: $adLoadState'
+        ', mediatedNetwork: $mediatedNetwork'
+        ', credentials: $credentials'
+        ', latency: $latency'
+        ', error: $error]';
   }
 }
 
@@ -391,14 +370,16 @@ class MaxMediatedNetworkInfo {
 
   /// @nodoc
   MaxMediatedNetworkInfo.fromJson(Map<String, dynamic> json)
-      : name = json['name'] ?? "",
-        adapterClassName = json['adapterClassName'] ?? "",
-        adapterVersion = json['adapterVersion'] ?? "",
-        sdkVersion = json['sdkVersion'] ?? "";
+      : name = json['name'] as String? ?? "",
+        adapterClassName = json['adapterClassName'] as String? ?? "",
+        adapterVersion = json['adapterVersion'] as String? ?? "",
+        sdkVersion = json['sdkVersion'] as String? ?? "";
 
   @override
   String toString() {
-    return '[MaxMediatedNetworkInfo name: $name, adapterClassName: $adapterClassName'
-        ', adapterVersion: $adapterVersion, sdkVersion: $sdkVersion]';
+    return '[MaxMediatedNetworkInfo name: $name'
+        ', adapterClassName: $adapterClassName'
+        ', adapterVersion: $adapterVersion'
+        ', sdkVersion: $sdkVersion]';
   }
 }

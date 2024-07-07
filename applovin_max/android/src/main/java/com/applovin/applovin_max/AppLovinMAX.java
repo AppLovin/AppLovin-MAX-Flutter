@@ -40,7 +40,6 @@ import com.applovin.sdk.AppLovinSdkConfiguration;
 import com.applovin.sdk.AppLovinSdkConfiguration.ConsentFlowUserGeography;
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration;
 import com.applovin.sdk.AppLovinSdkUtils;
-import com.applovin.sdk.AppLovinUserService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,9 +81,9 @@ public class AppLovinMAX
     private AppLovinSdkConfiguration sdkConfiguration;
 
     // Store these values if pub attempts to set it before initializing
-    private List<String>                 initializationAdUnitIdsToSet;
-    private List<String>                 testDeviceAdvertisingIdsToSet;
-    private MaxSegmentCollection.Builder segmentCollectionBuilder = MaxSegmentCollection.builder();
+    private       List<String>                 initializationAdUnitIdsToSet;
+    private       List<String>                 testDeviceAdvertisingIdsToSet;
+    private final MaxSegmentCollection.Builder segmentCollectionBuilder = MaxSegmentCollection.builder();
 
     // Fullscreen Ad Fields
     private final Map<String, MaxInterstitialAd> mInterstitials = new HashMap<>( 2 );
@@ -139,12 +138,7 @@ public class AppLovinMAX
         sharedChannel.setMethodCallHandler( null );
     }
 
-    private boolean isInitialized()
-    {
-        return isInitialized( null );
-    }
-
-    private boolean isInitialized(@Nullable final Result result)
+    private void isInitialized(@Nullable final Result result)
     {
         boolean isInitialized = isPluginInitialized && isSdkInitialized;
 
@@ -152,8 +146,6 @@ public class AppLovinMAX
         {
             result.success( isInitialized );
         }
-
-        return isInitialized;
     }
 
     private void initialize(final String pluginVersion, final String sdkKey, final Result result)
@@ -210,14 +202,9 @@ public class AppLovinMAX
 
         if ( sdkConfiguration != null )
         {
-            message.put( "consentDialogState", sdkConfiguration.getConsentDialogState().ordinal() );
             message.put( "countryCode", sdkConfiguration.getCountryCode() );
             message.put( "isTestModeEnabled", sdkConfiguration.isTestModeEnabled() );
             message.put( "consentFlowUserGeography", getRawAppLovinConsentFlowUserGeography( sdkConfiguration.getConsentFlowUserGeography() ) );
-        }
-        else
-        {
-            message.put( "consentDialogState", AppLovinSdkConfiguration.ConsentDialogState.UNKNOWN.ordinal() );
         }
 
         return message;
@@ -239,24 +226,6 @@ public class AppLovinMAX
         }
 
         sdk.showMediationDebugger();
-    }
-
-    public void showConsentDialog(final Result result)
-    {
-        if ( sdk == null )
-        {
-            logUninitializedAccessError( "showConsentDialog" );
-            return;
-        }
-
-        sdk.getUserService().showConsentDialog( getCurrentActivity(), (AppLovinUserService.OnConsentDialogDismissListener) () -> result.success( null ) );
-    }
-
-    public void getConsentDialogState(final Result result)
-    {
-        if ( !isInitialized() ) result.success( AppLovinSdkConfiguration.ConsentDialogState.UNKNOWN.ordinal() );
-
-        result.success( sdkConfiguration.getConsentDialogState().ordinal() );
     }
 
     public void setHasUserConsent(boolean hasUserConsent)
@@ -297,13 +266,6 @@ public class AppLovinMAX
     public void setMuted(final boolean muted)
     {
         sdk.getSettings().setMuted( muted );
-    }
-
-    public boolean isMuted()
-    {
-        if ( !isPluginInitialized ) return false;
-
-        return sdk.getSettings().isMuted();
     }
 
     public void setVerboseLogging(final boolean enabled)
@@ -674,7 +636,7 @@ public class AppLovinMAX
     }
 
     @Override
-    public void onAdLoadFailed(final String adUnitId, final MaxError error)
+    public void onAdLoadFailed(@NonNull final String adUnitId, @NonNull final MaxError error)
     {
         if ( TextUtils.isEmpty( adUnitId ) )
         {
@@ -767,7 +729,7 @@ public class AppLovinMAX
     }
 
     @Override
-    public void onAdDisplayFailed(final MaxAd ad, final MaxError error)
+    public void onAdDisplayFailed(final MaxAd ad, @NonNull final MaxError error)
     {
         // BMLs do not support [DISPLAY] events
         final MaxAdFormat adFormat = ad.getFormat();
@@ -875,19 +837,19 @@ public class AppLovinMAX
     }
 
     @Override
-    public void onRewardedVideoCompleted(final MaxAd ad)
+    public void onRewardedVideoCompleted(@NonNull final MaxAd ad)
     {
         // This event is not forwarded
     }
 
     @Override
-    public void onRewardedVideoStarted(final MaxAd ad)
+    public void onRewardedVideoStarted(@NonNull final MaxAd ad)
     {
         // This event is not forwarded
     }
 
     @Override
-    public void onUserRewarded(final MaxAd ad, final MaxReward reward)
+    public void onUserRewarded(final MaxAd ad, @NonNull final MaxReward reward)
     {
         final MaxAdFormat adFormat = ad.getFormat();
         if ( adFormat != MaxAdFormat.REWARDED )
@@ -896,8 +858,8 @@ public class AppLovinMAX
             return;
         }
 
-        final String rewardLabel = reward != null ? reward.getLabel() : "";
-        final int rewardAmount = reward != null ? reward.getAmount() : 0;
+        final String rewardLabel = reward.getLabel();
+        final int rewardAmount = reward.getAmount();
 
         try
         {
@@ -1502,23 +1464,11 @@ public class AppLovinMAX
         if ( adFormat == MaxAdFormat.INTERSTITIAL )
         {
             MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
-            if ( interstitial == null )
-            {
-                e( "Failed to set Amazon result - unable to find interstitial" );
-                return;
-            }
-
             interstitial.setLocalExtraParameter( key, result );
         }
         else if ( adFormat == MaxAdFormat.REWARDED )
         {
             MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
-            if ( rewardedAd == null )
-            {
-                e( "Failed to set Amazon result - unable to find rewarded ad" );
-                return;
-            }
-
             rewardedAd.setLocalExtraParameter( key, result );
         }
         else // MaxAdFormat.BANNER or MaxAdFormat.MREC
@@ -1571,7 +1521,7 @@ public class AppLovinMAX
         }
     }
 
-    public static AdViewSize getAdViewSize(final MaxAdFormat format)
+    private static AdViewSize getAdViewSize(final MaxAdFormat format)
     {
         if ( MaxAdFormat.LEADER == format )
         {
@@ -1647,10 +1597,6 @@ public class AppLovinMAX
             showMediationDebugger();
 
             result.success( null );
-        }
-        else if ( "getConsentDialogState".equals( call.method ) )
-        {
-            getConsentDialogState( result );
         }
         else if ( "setHasUserConsent".equals( call.method ) )
         {

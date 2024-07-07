@@ -57,9 +57,9 @@ public class AppLovinMAXNativeAdView
     @Nullable
     private final String              customData;
     @Nullable
-    private       Map<String, Object> extraParameters;
+    private final Map<String, Object> extraParameters;
     @Nullable
-    private       Map<String, Object> localExtraParameters;
+    private final Map<String, Object> localExtraParameters;
 
     private final FrameLayout    nativeAdView;
     @Nullable
@@ -260,7 +260,7 @@ public class AppLovinMAXNativeAdView
             extends MaxNativeAdListener
     {
         @Override
-        public void onNativeAdLoaded(@Nullable final MaxNativeAdView nativeAdView, final MaxAd ad)
+        public void onNativeAdLoaded(@Nullable final MaxNativeAdView nativeAdView, @NonNull final MaxAd ad)
         {
             AppLovinMAX.d( "Native ad loaded: " + ad );
 
@@ -280,13 +280,13 @@ public class AppLovinMAXNativeAdView
         }
 
         @Override
-        public void onNativeAdLoadFailed(final String adUnitId, final MaxError error)
+        public void onNativeAdLoadFailed(@NonNull final String adUnitId, @NonNull final MaxError error)
         {
             handleAdLoadFailed( "Failed to load native ad for Ad Unit ID " + adUnitId + " with error: " + error, error );
         }
 
         @Override
-        public void onNativeAdClicked(final MaxAd ad)
+        public void onNativeAdClicked(@NonNull final MaxAd ad)
         {
             sendEvent( "OnNativeAdClickedEvent", ad );
         }
@@ -295,7 +295,7 @@ public class AppLovinMAXNativeAdView
     /// Ad Revenue Listener
 
     @Override
-    public void onAdRevenuePaid(final MaxAd ad)
+    public void onAdRevenuePaid(@NonNull final MaxAd ad)
     {
         sendEvent( "OnNativeAdRevenuePaidEvent", ad );
     }
@@ -509,7 +509,7 @@ public class AppLovinMAXNativeAdView
 
         AppLovinMAX.e( message );
 
-        Map params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
+        Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
         AppLovinMAX.getInstance().fireCallback( "OnNativeAdLoadFailedEvent", params, channel );
     }
 

@@ -31,11 +31,6 @@ public class AppLovinMAXNativeAdViewFactory
     {
         // Ensure plugin has been initialized
         AppLovinSdk sdk = AppLovinMAX.getInstance().getSdk();
-        if ( sdk == null )
-        {
-            AppLovinMAX.e( "Failed to create MaxNativeAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!" );
-            return null;
-        }
 
         Map<String, Object> params = (Map<String, Object>) args;
 

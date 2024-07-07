@@ -182,16 +182,6 @@ class AppLovinMAX {
   // PRIVACY APIs
   //
 
-  /// Returns an integer that encodes the state of the consent dialog.
-  ///
-  /// To learn more about how this information is encoded in the integer, see [ConsentDialogState].
-  ///
-  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
-  @Deprecated('Check consentFlowUserGeography in the return object of initialize() instead.')
-  static Future<int?> getConsentDialogState() {
-    return channel.invokeMethod('getConsentDialogState');
-  }
-
   /// Sets whether or not the user has provided consent for interest-based advertising.
   ///
   /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
