@@ -40,13 +40,7 @@ class AppLovinMAX {
 
   /// Initializes the SDK.
   ///
-  /// This method must be called only once. Calling it multiple times may
-  /// cause the returned future to never complete.
-  ///
   /// For more information, see the [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration).
-  ///
-  /// See [this GitHub issue](https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/210)
-  /// for more details on why calling `initialize` multiple times can lead to issues.
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
     if (_hasInitializeInvoked) {
       // Return a future object even when the actual value is not ready.
@@ -54,14 +48,6 @@ class AppLovinMAX {
     }
 
     _hasInitializeInvoked = true;
-
-    // isInitialized() returns true when Flutter is performing hot restart
-    bool isPlatformSDKInitialized = await isInitialized() ?? false;
-    if (isPlatformSDKInitialized) {
-      Map conf = await channel.invokeMethod('getConfiguration');
-      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
-      return _initializeCompleter.future;
-    }
 
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
@@ -151,6 +137,14 @@ class AppLovinMAX {
         _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
     });
+
+    // isInitialized() returns true when Flutter is performing hot restart
+    bool isPlatformSDKInitialized = await isInitialized() ?? false;
+    if (isPlatformSDKInitialized) {
+      Map conf = await channel.invokeMethod('getConfiguration');
+      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+      return _initializeCompleter.future;
+    }
 
     var conf = await channel.invokeMethod('initialize', {
       'plugin_version': version,
