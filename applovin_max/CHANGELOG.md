@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Fix ad callbacks not firing after hot restart. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/229
 * Fix `Null check operator used on a null value` warning in `MaxNativeAdView.dispose()`.
 ## 3.10.1
 * Update `AppLovinMAX.initialize()` to return a `Future` on hot restart.
