@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:applovin_max/src/ad_classes.dart';
 import 'package:applovin_max/src/ad_listeners.dart';
 import 'package:applovin_max/src/enums.dart';
-import 'package:applovin_max/src/targeting_data.dart';
 import 'package:flutter/services.dart';
 
 export 'package:applovin_max/src/ad_classes.dart';
@@ -11,7 +10,6 @@ export 'package:applovin_max/src/ad_listeners.dart';
 export 'package:applovin_max/src/enums.dart';
 export 'package:applovin_max/src/max_ad_view.dart';
 export 'package:applovin_max/src/max_native_ad_view.dart';
-export 'package:applovin_max/src/targeting_data.dart';
 
 /// Represents the AppLovin SDK.
 class AppLovinMAX {
@@ -23,9 +21,6 @@ class AppLovinMAX {
 
   static bool _hasInitializeInvoked = false;
   static final Completer<MaxConfiguration> _initializeCompleter = Completer<MaxConfiguration>();
-
-  /// The targeting data object for you to provide user or app data that will improve how we target ads.
-  static final TargetingData targetingData = TargetingData(channel);
 
   static AdViewAdListener? _bannerAdListener;
   static AdViewAdListener? _mrecAdListener;
@@ -709,5 +704,31 @@ class AppLovinMAX {
       'key': key,
       'value': value,
     });
+  }
+
+  /// Adds a segment.
+  static void addSegment(int key, List<int> values) {
+    channel.invokeMethod('addSegment', {
+      'key': key,
+      'values': values,
+    });
+  }
+
+  /// Returns a list of the segments.
+  static Future<Map<int, List<int>>?> getSegments() async {
+    Map? untypedSegments = await channel.invokeMethod('getSegments');
+    if (untypedSegments == null) return null;
+
+    Map<int, List<int>> typedSegments = {};
+    untypedSegments.forEach((key, value) {
+      if (key is int && value is List) {
+        bool areAllInt = value.every((element) => element is int);
+        if (areAllInt) {
+          typedSegments[key] = List<int>.from(value);
+        }
+      }
+    });
+
+    return typedSegments;
   }
 }

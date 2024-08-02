@@ -24,26 +24,8 @@
 
 // Store these values if pub attempts to set it before initializing
 @property (nonatomic, strong, nullable) NSArray<NSString *> *initializationAdUnitIdentifiersToSet;
-@property (nonatomic,   copy, nullable) NSString *userIdentifierToSet;
-@property (nonatomic, strong, nullable) NSNumber *mutedToSet;
 @property (nonatomic, strong, nullable) NSArray<NSString *> *testDeviceIdentifiersToSet;
-@property (nonatomic, strong, nullable) NSNumber *verboseLoggingToSet;
-@property (nonatomic, strong, nullable) NSNumber *creativeDebuggerEnabledToSet;
-@property (nonatomic, strong, nullable) NSNumber *locationCollectionEnabledToSet;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *extraParametersToSet;
-
-@property (nonatomic, strong, nullable) NSNumber *termsAndPrivacyPolicyFlowEnabledToSet;
-@property (nonatomic, strong, nullable) NSURL *privacyPolicyURLToSet;
-@property (nonatomic, strong, nullable) NSURL *termsOfServiceURLToSet;
-@property (nonatomic,   copy, nullable) NSString *debugUserGeographyToSet;
-
-@property (nonatomic, strong, nullable) NSNumber *targetingYearOfBirthToSet;
-@property (nonatomic,   copy, nullable) NSString *targetingGenderToSet;
-@property (nonatomic, strong, nullable) NSNumber *targetingMaximumAdContentRatingToSet;
-@property (nonatomic,   copy, nullable) NSString *targetingEmailToSet;
-@property (nonatomic,   copy, nullable) NSString *targetingPhoneNumberToSet;
-@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingKeywordsToSet;
-@property (nonatomic, strong, nullable) NSArray<NSString *> *targetingInterestsToSet;
+@property (nonatomic, strong) MASegmentCollectionBuilder *segmentCollectionBuilder;
 
 // Fullscreen Ad Fields
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAInterstitialAd *> *interstitials;
@@ -105,6 +87,9 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         AppLovinMAXShared = self;
         
+        self.sdk = [ALSdk shared];
+        self.segmentCollectionBuilder = [MASegmentCollection builder];
+        
         self.interstitials = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.rewardedAds = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.appOpenAds = [NSMutableDictionary dictionaryWithCapacity: 2];
@@ -114,7 +99,6 @@ static FlutterMethodChannel *ALSharedChannel;
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
         self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
-        self.extraParametersToSet = [NSMutableDictionary dictionaryWithCapacity: 8];
 
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
@@ -159,137 +143,31 @@ static FlutterMethodChannel *ALSharedChannel;
     // If SDK key passed in is empty, check Info.plist
     if ( ![sdkKey al_isValidString] )
     {
-        if ( [[NSBundle mainBundle].infoDictionary al_containsValueForKey: @"AppLovinSdkKey"] )
+        [NSException raise: NSInternalInconsistencyException
+                    format: @"Unable to initialize AppLovin SDK - no SDK key provided!"];
+    }
+    
+    ALSdkInitializationConfiguration *initConfig = [ALSdkInitializationConfiguration configurationWithSdkKey: sdkKey builderBlock:^(ALSdkInitializationConfigurationBuilder *builder) {
+
+        builder.mediationProvider = ALMediationProviderMAX;
+        builder.pluginVersion = [@"Flutter-" stringByAppendingString: pluginVersion];
+        builder.segmentCollection = [self.segmentCollectionBuilder build];
+        if ( self.initializationAdUnitIdentifiersToSet )
         {
-            sdkKey = [NSBundle mainBundle].infoDictionary[@"AppLovinSdkKey"];
+            builder.adUnitIdentifiers = self.initializationAdUnitIdentifiersToSet;
+            self.initializationAdUnitIdentifiersToSet = nil;
         }
-        else
+        if ( self.testDeviceIdentifiersToSet )
         {
-            [NSException raise: NSInternalInconsistencyException
-                        format: @"Unable to initialize AppLovin SDK - no SDK key provided and not found in Info.plist!"];
+            builder.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
+            self.testDeviceIdentifiersToSet = nil;
         }
-    }
-    
-    ALSdkSettings *settings = [[ALSdkSettings alloc] init];
+    }];
 
-    // Selective init
-    if ( self.initializationAdUnitIdentifiersToSet )
-    {
-        settings.initializationAdUnitIdentifiers = self.initializationAdUnitIdentifiersToSet;
-        self.initializationAdUnitIdentifiersToSet = nil;
-    }
-
-    if ( self.termsAndPrivacyPolicyFlowEnabledToSet )
-    {
-        settings.termsAndPrivacyPolicyFlowSettings.enabled = self.termsAndPrivacyPolicyFlowEnabledToSet.boolValue;
-        self.termsAndPrivacyPolicyFlowEnabledToSet = nil;
-    }
-
-    if ( self.privacyPolicyURLToSet )
-    {
-        settings.termsAndPrivacyPolicyFlowSettings.privacyPolicyURL = self.privacyPolicyURLToSet;
-        self.privacyPolicyURLToSet = nil;
-    }
-
-    if ( self.termsOfServiceURLToSet )
-    {
-        settings.termsAndPrivacyPolicyFlowSettings.termsOfServiceURL = self.termsOfServiceURLToSet;
-        self.termsOfServiceURLToSet = nil;
-    }
-
-    if ( self.debugUserGeographyToSet )
-    {
-        settings.termsAndPrivacyPolicyFlowSettings.debugUserGeography = [self toAppLovinConsentFlowUserGeography: self.debugUserGeographyToSet];
-        self.debugUserGeographyToSet = nil;
-    }
-    
-    if ( self.mutedToSet )
-    {
-        settings.muted = self.mutedToSet;
-        self.mutedToSet = nil;
-    }
-
-    if ( self.testDeviceIdentifiersToSet )
-    {
-        settings.testDeviceAdvertisingIdentifiers = self.testDeviceIdentifiersToSet;
-        self.testDeviceIdentifiersToSet = nil;
-    }
-    
-    if ( self.verboseLoggingToSet )
-    {
-        settings.verboseLoggingEnabled = self.verboseLoggingToSet.boolValue;
-        self.verboseLoggingToSet = nil;
-    }
-    
-    if ( self.creativeDebuggerEnabledToSet )
-    {
-        settings.creativeDebuggerEnabled = self.creativeDebuggerEnabledToSet.boolValue;
-        self.creativeDebuggerEnabledToSet = nil;
-    }
-    
-    if ( self.locationCollectionEnabledToSet )
-    {
-        settings.locationCollectionEnabled = self.locationCollectionEnabledToSet.boolValue;
-        self.locationCollectionEnabledToSet = nil;
-    }
-    
-    [self setPendingExtraParametersIfNeeded: settings];
 
     // Initialize SDK
-    self.sdk = [ALSdk sharedWithKey: sdkKey settings: settings];
-    [self.sdk setPluginVersion: [@"Flutter-" stringByAppendingString: pluginVersion]];
-    [self.sdk setMediationProvider: ALMediationProviderMAX];
-    
-    if ( [self.userIdentifierToSet al_isValidString] )
-    {
-        self.sdk.userIdentifier = self.userIdentifierToSet;
-        self.userIdentifierToSet = nil;
-    }
-    
-    if ( self.targetingYearOfBirthToSet )
-    {
-        self.sdk.targetingData.yearOfBirth = self.targetingYearOfBirthToSet.intValue <= 0 ? nil : self.targetingYearOfBirthToSet;
-        self.targetingYearOfBirthToSet = nil;
-    }
-    
-    if ( self.targetingGenderToSet )
-    {
-        self.sdk.targetingData.gender = [self toAppLovinGender: self.targetingGenderToSet];
-        self.targetingGenderToSet = nil;
-    }
-    
-    if ( self.targetingMaximumAdContentRatingToSet )
-    {
-        self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: self.targetingMaximumAdContentRatingToSet];
-        self.targetingMaximumAdContentRatingToSet = nil;
-    }
-    
-    if ( self.targetingEmailToSet )
-    {
-        self.sdk.targetingData.email = self.targetingEmailToSet;
-        self.targetingEmailToSet = nil;
-    }
-    
-    if ( self.targetingPhoneNumberToSet )
-    {
-        self.sdk.targetingData.phoneNumber = self.targetingPhoneNumberToSet;
-        self.targetingPhoneNumberToSet = nil;
-    }
-    
-    if ( self.targetingKeywordsToSet )
-    {
-        self.sdk.targetingData.keywords = self.targetingKeywordsToSet;
-        self.targetingKeywordsToSet = nil;
-    }
-    
-    if ( self.targetingInterestsToSet )
-    {
-        self.sdk.targetingData.interests = self.targetingInterestsToSet;
-        self.targetingInterestsToSet = nil;
-    }
+    [self.sdk initializeWithConfiguration:initConfig completionHandler:^(ALSdkConfiguration *configuration) {
 
-    [self.sdk initializeSdkWithCompletionHandler:^(ALSdkConfiguration *configuration)
-     {
         [self log: @"SDK initialized"];
         
         self.sdkConfiguration = configuration;
@@ -388,80 +266,27 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)setUserId:(NSString *)userId
 {
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.userIdentifier = userId;
-        self.userIdentifierToSet = nil;
-    }
-    else
-    {
-        self.userIdentifierToSet = userId;
-    }
+    self.sdk.settings.userIdentifier = userId;
 }
 
 - (void)setMuted:(BOOL)muted
 {
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.settings.muted = muted;
-        self.mutedToSet = nil;
-    }
-    else
-    {
-        self.mutedToSet = @(muted);
-    }
+    self.sdk.settings.muted = muted;
 }
 
 - (void)setVerboseLogging:(BOOL)enabled
 {
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.settings.verboseLoggingEnabled = enabled;
-        self.verboseLoggingToSet = nil;
-    }
-    else
-    {
-        self.verboseLoggingToSet = @(enabled);
-    }
+    self.sdk.settings.verboseLoggingEnabled = enabled;
 }
 
 - (void)setCreativeDebuggerEnabled:(BOOL)enabled
 {
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.settings.creativeDebuggerEnabled = enabled;
-        self.creativeDebuggerEnabledToSet = nil;
-    }
-    else
-    {
-        self.creativeDebuggerEnabledToSet = @(enabled);
-    }
+    self.sdk.settings.creativeDebuggerEnabled = enabled;
 }
 
 - (void)setTestDeviceAdvertisingIds:(NSArray<NSString *> *)testDeviceAdvertisingIds
 {
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.settings.testDeviceAdvertisingIdentifiers = testDeviceAdvertisingIds;
-        self.testDeviceIdentifiersToSet = nil;
-    }
-    else
-    {
-        self.testDeviceIdentifiersToSet = testDeviceAdvertisingIds;
-    }
-}
-
-- (void)setLocationCollectionEnabled:(BOOL)enabled
-{
-    if ( [self isPluginInitialized] )
-    {
-        self.sdk.settings.locationCollectionEnabled = enabled;
-        self.locationCollectionEnabledToSet = nil;
-    }
-    else
-    {
-        self.locationCollectionEnabledToSet = @(enabled);
-    }
+    self.testDeviceIdentifiersToSet = testDeviceAdvertisingIds;
 }
 
 - (void)setExtraParameter:(NSString *)key value:(NSString *)value
@@ -472,16 +297,7 @@ static FlutterMethodChannel *ALSharedChannel;
         return;
     }
 
-    if ( self.sdk )
-    {
-        ALSdkSettings *settings = self.sdk.settings;
-        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
-        [self setPendingExtraParametersIfNeeded: settings];
-    }
-    else
-    {
-        self.extraParametersToSet[key] = value;
-    }
+    [self.sdk.settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
 }
 
 - (void)setInitializationAdUnitIds:(NSArray<NSString *> *)adUnitIds
@@ -493,22 +309,22 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)setTermsAndPrivacyPolicyFlowEnabled:(BOOL)enabled
 {
-    self.termsAndPrivacyPolicyFlowEnabledToSet = @(enabled);
+    self.sdk.settings.termsAndPrivacyPolicyFlowSettings.enabled = enabled;
 }
 
 - (void)setPrivacyPolicyUrl:(NSString *)urlString
 {
-    self.privacyPolicyURLToSet = [NSURL URLWithString: urlString];
+    self.sdk.settings.termsAndPrivacyPolicyFlowSettings.privacyPolicyURL = [NSURL URLWithString: urlString];
 }
 
 - (void)setTermsOfServiceUrl:(NSString *)urlString
 {
-    self.termsOfServiceURLToSet = [NSURL URLWithString: urlString];
+    self.sdk.settings.termsAndPrivacyPolicyFlowSettings.termsOfServiceURL = [NSURL URLWithString: urlString];
 }
 
 - (void)setConsentFlowDebugUserGeography:(NSString *)userGeography
 {
-    self.debugUserGeographyToSet = userGeography;
+    self.sdk.settings.termsAndPrivacyPolicyFlowSettings.debugUserGeography = [self toAppLovinConsentFlowUserGeography: userGeography];
 }
 
 - (void)showCmpForExistingUser:(FlutterResult)result
@@ -545,101 +361,44 @@ static FlutterMethodChannel *ALSharedChannel;
     result(@([self.sdk.cmpService hasSupportedCMP]));
 }
 
-#pragma mark - Data Passing
+#pragma mark - Segment Targeting
 
-- (void)setTargetingDataYearOfBirth:(nullable NSNumber *)yearOfBirth
+- (void)addSegment:(nonnull NSNumber *)key values:(NSArray<NSNumber *> *)values
 {
-    if ( !self.sdk )
+    if ( [self isPluginInitialized] )
     {
-        self.targetingYearOfBirthToSet = yearOfBirth;
+        [self log: @"A segment must be added before calling 'AppLovinMAX.initialize(...);'"];
         return;
     }
     
-    if ( yearOfBirth )
-    {
-        self.sdk.targetingData.yearOfBirth = yearOfBirth.intValue <= 0 ? nil : yearOfBirth;
-    }
-    else
-    {
-        self.sdk.targetingData.yearOfBirth = nil;
-    }
+    [self.segmentCollectionBuilder addSegment: [[MASegment alloc] initWithKey: key values: values]];
 }
 
-- (void)setTargetingDataGender:(nullable NSString *)gender
+- (void)getSegments:(FlutterResult)result
 {
-    if ( !self.sdk )
+    if ( ![self isSDKInitialized] )
     {
-        self.targetingGenderToSet = gender;
+        result([FlutterError errorWithCode: TAG message: @"Segments cannot be retrieved before calling 'AppLovinMAX.initialize(...).'" details: nil]);
         return;
     }
     
-    self.sdk.targetingData.gender = [self toAppLovinGender: gender];
-}
+    NSArray<MASegment *> *segments = self.sdk.segmentCollection.segments;
 
-- (void)setTargetingDataMaximumAdContentRating:(nullable NSNumber *)maximumAdContentRating
-{
-    if ( !self.sdk )
+    if ( ![segments count] )
     {
-        self.targetingMaximumAdContentRatingToSet = maximumAdContentRating;
+        result(nil);
         return;
     }
     
-    self.sdk.targetingData.maximumAdContentRating = [self toAppLovinAdContentRating: maximumAdContentRating];
-}
+    NSMutableDictionary<NSNumber *, NSArray<NSNumber *> *> *map = [NSMutableDictionary dictionaryWithCapacity: [segments count]];
+    
+    for ( MASegment *segment in segments )
+    {
 
-- (void)setTargetingDataEmail:(nullable NSString *)email
-{
-    if ( !self.sdk )
-    {
-        self.targetingEmailToSet = email;
-        return;
+        map[segment.key] = segment.values;
     }
-    
-    self.sdk.targetingData.email = email;
-}
 
-- (void)setTargetingDataPhoneNumber:(nullable NSString *)phoneNumber
-{
-    if ( !self.sdk )
-    {
-        self.targetingPhoneNumberToSet = phoneNumber;
-        return;
-    }
-    
-    self.sdk.targetingData.phoneNumber = phoneNumber;
-}
-
-- (void)setTargetingDataKeywords:(nullable NSArray<NSString *> *)keywords
-{
-    if ( !self.sdk )
-    {
-        self.targetingKeywordsToSet = keywords;
-        return;
-    }
-    
-    self.sdk.targetingData.keywords = keywords;
-}
-
-- (void)setTargetingDataInterests:(nullable NSArray<NSString *> *)interests
-{
-    if ( !self.sdk )
-    {
-        self.targetingInterestsToSet = interests;
-        return;
-    }
-    
-    self.sdk.targetingData.interests = interests;
-}
-
-- (void)clearAllTargetingData
-{
-    if ( !self.sdk )
-    {
-        [self logUninitializedAccessError: @"clearAllTargetingData"];
-        return;
-    }
-    
-    [self.sdk.targetingData clearAll];
+    result(map);
 }
 
 #pragma mark - Banners
@@ -1291,19 +1050,6 @@ static FlutterMethodChannel *ALSharedChannel;
     [self.adViewAdFormats removeObjectForKey: adUnitIdentifier];
 }
 
-- (void)setPendingExtraParametersIfNeeded:(ALSdkSettings *)settings
-{
-    if ( self.extraParametersToSet.count <= 0 ) return;
-    
-    for ( NSString *key in self.extraParametersToSet )
-    {
-        NSString *value = self.extraParametersToSet[key];
-        [settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
-    }
-    
-    [self.extraParametersToSet removeAllObjects];
-}
-
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat
 {
     [self log: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
@@ -1748,50 +1494,6 @@ static FlutterMethodChannel *ALSharedChannel;
 
 #pragma mark - Utility Methods
 
-- (ALGender)toAppLovinGender:(nullable NSString *)gender
-{
-    if ( gender )
-    {
-        if ( [@"F" al_isEqualToStringIgnoringCase: gender] )
-        {
-            return ALGenderFemale;
-        }
-        else if ( [@"M" al_isEqualToStringIgnoringCase: gender] )
-        {
-            return ALGenderMale;
-        }
-        else if ( [@"O" al_isEqualToStringIgnoringCase: gender] )
-        {
-            return ALGenderOther;
-        }
-    }
-    
-    return ALGenderUnknown;
-}
-
-- (ALAdContentRating)toAppLovinAdContentRating:(nullable NSNumber *)maximumAdContentRating
-{
-    if ( maximumAdContentRating )
-    {
-        int intVal = maximumAdContentRating.intValue;
-        
-        if ( intVal == 1 )
-        {
-            return ALAdContentRatingAllAudiences;
-        }
-        else if ( intVal == 2 )
-        {
-            return ALAdContentRatingEveryoneOverTwelve;
-        }
-        else if ( intVal == 3 )
-        {
-            return ALAdContentRatingMatureAudiences;
-        }
-    }
-    
-    return ALAdContentRatingNone;
-}
-
 - (ALConsentFlowUserGeography)toAppLovinConsentFlowUserGeography:(NSString *)userGeography
 {
     if ( [USER_GEOGRAPHY_GDPR al_isEqualToStringIgnoringCase: userGeography] )
@@ -1954,13 +1656,6 @@ static FlutterMethodChannel *ALSharedChannel;
     {
         NSArray<NSString *> *testDeviceAdvertisingIds = call.arguments[@"value"];
         [self setTestDeviceAdvertisingIds: testDeviceAdvertisingIds];
-        
-        result(nil);
-    }
-    else if ( [@"setLocationCollectionEnabled" isEqualToString: call.method] )
-    {
-        BOOL isLocationCollectionEnabled = ((NSNumber *)call.arguments[@"value"]).boolValue;
-        [self setLocationCollectionEnabled: isLocationCollectionEnabled];
         
         result(nil);
     }
@@ -2277,76 +1972,18 @@ static FlutterMethodChannel *ALSharedChannel;
         
         result(nil);
     }
-    else if ( [@"setAppOpenAdExtraParameter" isEqualToString: call.method] )
+    else if ( [@"addSegment" isEqualToString: call.method] )
     {
-        NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        NSString *key = call.arguments[@"key"];
-        NSString *value = call.arguments[@"value"];
-        [self setAppOpenAdExtraParameterForAdUnitIdentifier: adUnitId key: key value: value];
-        
+        NSNumber *key = call.arguments[@"key"];
+        NSArray<NSNumber *> *values = call.arguments[@"values"];
+
+        [self addSegment: key values: values];
+
         result(nil);
     }
-    else if ( [@"setTargetingDataYearOfBirth" isEqualToString: call.method] )
+    else if ( [@"getSegments" isEqualToString: call.method] )
     {
-        id rawValue = call.arguments[@"value"];
-        NSNumber *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataYearOfBirth: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataGender" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataGender: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataMaximumAdContentRating" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSNumber *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataMaximumAdContentRating: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataEmail" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataEmail: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataPhoneNumber" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSString *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataPhoneNumber: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataKeywords" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self setTargetingDataKeywords: value];
-        
-        result(nil);
-    }
-    else if ( [@"setTargetingDataInterests" isEqualToString: call.method] )
-    {
-        id rawValue = call.arguments[@"value"];
-        NSArray<NSString *> *value = ( rawValue != [NSNull null] ) ? rawValue : nil;
-        [self  setTargetingDataInterests: value];
-        
-        result(nil);
-    }
-    else if ( [@"clearAllTargetingData" isEqualToString: call.method] )
-    {
-        [self clearAllTargetingData];
-        
-        result(nil);
+        [self getSegments: result];
     }
     else
     {
