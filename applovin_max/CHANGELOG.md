@@ -1,6 +1,8 @@
 ## Versions
 
 ## x.x.x
+* Replace targeting data APIs with new numeric segments targeting APIs. For migration instructions, please see [here](https://developers.applovin.com/en/flutter/overview/data-and-keyword-passing/#segment-targeting).
+* Depends on Android SDK v12.6.0 and iOS SDK v12.6.0.
 * Fix ad callbacks not firing after hot restart. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/229
 * Fix `Null check operator used on a null value` warning in `MaxNativeAdView.dispose()`.
 ## 3.10.1
