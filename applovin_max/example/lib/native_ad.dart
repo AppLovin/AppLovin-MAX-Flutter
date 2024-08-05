@@ -137,8 +137,8 @@ class NativeAdViewState extends State<NativeAdView> {
                       width: double.infinity,
                       child: MaxNativeAdCallToActionView(
                         style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff2d545e)),
-                          textStyle: MaterialStatePropertyAll<TextStyle>(TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          backgroundColor: WidgetStatePropertyAll<Color>(Colors.white),
+                          textStyle: WidgetStatePropertyAll<TextStyle>(TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ),
