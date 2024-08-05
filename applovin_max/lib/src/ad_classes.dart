@@ -61,7 +61,7 @@ class MaxAd {
 
   @override
   String toString() {
-    return '[MaxAd adUnitId: $adUnitId'
+    return '{MaxAd: {adUnitId: $adUnitId'
         ', networkName: $networkName'
         ', revenue: $revenue'
         ', revenuePrecision: $revenuePrecision'
@@ -69,7 +69,7 @@ class MaxAd {
         ', dspName: $dspName'
         ', placement: $placement'
         ', waterfall: $waterfall'
-        ', nativeAd: $nativeAd]';
+        ', nativeAd: $nativeAd}}';
   }
 }
 
@@ -86,7 +86,7 @@ class MaxReward {
 
   @override
   String toString() {
-    return '[MaxReward amount: $amount, label: $label]';
+    return '{MaxReward: {amount: $amount, label: $label}}';
   }
 }
 
@@ -137,7 +137,7 @@ class MaxNativeAd {
 
   @override
   String toString() {
-    return '[MaxNativeAd title: $title'
+    return '{MaxNativeAd: {title: $title'
         ', advertiser: $advertiser'
         ', body: $body'
         ', callToAction: $callToAction'
@@ -145,7 +145,7 @@ class MaxNativeAd {
         ', mediaContentAspectRatio: $mediaContentAspectRatio'
         ', isIconImageAvailable: $isIconImageAvailable'
         ', isOptionsViewAvailable: $isOptionsViewAvailable'
-        ', isMediaViewAvailable: $isMediaViewAvailable]';
+        ', isMediaViewAvailable: $isMediaViewAvailable}}';
   }
 }
 
@@ -178,7 +178,7 @@ class MaxError {
 
   @override
   String toString() {
-    return '[MaxError code: $code, message: $message, waterfall: $waterfall]';
+    return '{MaxError: {code: $code, message: $message, waterfall: $waterfall}}';
   }
 }
 
@@ -218,10 +218,10 @@ class MaxConfiguration {
 
   @override
   String toString() {
-    return '[MaxConfiguration countryCode: $countryCode'
+    return '{MaxConfiguration: {countryCode: $countryCode'
         ', isTestModeEnabled: $isTestModeEnabled'
         ', consentFlowUserGeography: $consentFlowUserGeography'
-        ', appTrackingStatus: $appTrackingStatus]';
+        ', appTrackingStatus: $appTrackingStatus}}';
   }
 }
 
@@ -251,7 +251,7 @@ class MaxCMPError {
 
   @override
   String toString() {
-    return '[MaxCMPError code: $code, message: $message, cmpCode: $cmpCode, cmpMessage: $cmpMessage]';
+    return '{MaxCMPError: {code: $code, message: $message, cmpCode: $cmpCode, cmpMessage: $cmpMessage}}';
   }
 }
 
@@ -287,7 +287,10 @@ class MaxAdWaterfallInfo {
 
   @override
   String toString() {
-    return '[MaxAdWaterfallInfo name: $name, testName: $testName, networkResponses: $networkResponses, latency: $latency]';
+    return '{MaxAdWaterfallInfo: {name: $name'
+        ', testName: $testName'
+        ', networkResponses: $networkResponses'
+        ', latency: $latency}}';
   }
 }
 
@@ -343,11 +346,11 @@ class MaxNetworkResponse {
 
   @override
   String toString() {
-    return '[MaxNetworkResponse adLoadState: $adLoadState'
+    return '{MaxNetworkResponse: {adLoadState: $adLoadState'
         ', mediatedNetwork: $mediatedNetwork'
         ', credentials: $credentials'
         ', latency: $latency'
-        ', error: $error]';
+        ', error: $error}}';
   }
 }
 
@@ -377,9 +380,9 @@ class MaxMediatedNetworkInfo {
 
   @override
   String toString() {
-    return '[MaxMediatedNetworkInfo name: $name'
+    return '{MaxMediatedNetworkInfo: {name: $name'
         ', adapterClassName: $adapterClassName'
         ', adapterVersion: $adapterVersion'
-        ', sdkVersion: $sdkVersion]';
+        ', sdkVersion: $sdkVersion}}';
   }
 }
