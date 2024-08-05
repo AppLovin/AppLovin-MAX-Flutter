@@ -14,7 +14,7 @@ export 'package:applovin_max/src/max_native_ad_view.dart';
 /// Represents the AppLovin SDK.
 class AppLovinMAX {
   /// The current version of the SDK.
-  static const version = "3.10.1";
+  static const version = "3.11.0";
 
   /// @nodoc
   static MethodChannel channel = const MethodChannel('applovin_max');
