@@ -18,11 +18,7 @@ class _NativeAdViewScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_NativeAdViewScope oldWidget) {
-    return _scope._nativeAd?.title != oldWidget._scope._nativeAd?.title ||
-        _scope._nativeAd?.advertiser != oldWidget._scope._nativeAd?.advertiser ||
-        _scope._nativeAd?.body != oldWidget._scope._nativeAd?.body ||
-        _scope._nativeAd?.callToAction != oldWidget._scope._nativeAd?.callToAction ||
-        _scope._nativeAd?.starRating != oldWidget._scope._nativeAd?.starRating;
+    return true;
   }
 }
 
