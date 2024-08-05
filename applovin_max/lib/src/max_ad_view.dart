@@ -95,7 +95,7 @@ class _MaxAdViewState extends State<MaxAdView> {
   void initState() {
     super.initState();
     _visible = widget.visible;
-    _adaptiveBannerEnabled = (widget.extraParameters?['adaptive_banner'] == 'true');
+    _adaptiveBannerEnabled = widget.extraParameters?['adaptive_banner'] == 'true';
   }
 
   @override
@@ -113,7 +113,7 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<Size>(
         future: _getAdViewSize(),
         builder: (BuildContext context, AsyncSnapshot<Size> snapshot) {
           if (snapshot.hasData) {
@@ -216,14 +216,11 @@ class _MaxAdViewState extends State<MaxAdView> {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecWidth;
     } else if (widget.adFormat == AdFormat.banner) {
-      if (_adaptiveBannerEnabled) {
-        if (widget.adaptiveBannerWidth != null) {
-          return widget.adaptiveBannerWidth!;
-        }
+      if (_adaptiveBannerEnabled && widget.adaptiveBannerWidth != null) {
+        return widget.adaptiveBannerWidth!;
       }
       return _isTablet() ? _leaderWidth : _bannerWidth;
     }
-
     return -1;
   }
 
@@ -236,7 +233,6 @@ class _MaxAdViewState extends State<MaxAdView> {
       }
       return _isTablet() ? _leaderHeight : _bannerHeight;
     }
-
     return -1;
   }
 

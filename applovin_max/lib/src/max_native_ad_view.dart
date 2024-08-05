@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// An inherited widget for [MaxNativeAdView] to propagate information down the tree.
+/// An inherited widget for [MaxNativeAdView] to propagate information down the tree.
 class _NativeAdViewScope extends InheritedWidget {
   const _NativeAdViewScope({
     required _MaxNativeAdViewState nativeAdViewState,
@@ -18,11 +18,7 @@ class _NativeAdViewScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_NativeAdViewScope oldWidget) {
-    return _scope._nativeAd?.title == oldWidget._scope._nativeAd?.title ||
-        _scope._nativeAd?.advertiser == oldWidget._scope._nativeAd?.advertiser ||
-        _scope._nativeAd?.body == oldWidget._scope._nativeAd?.body ||
-        _scope._nativeAd?.callToAction == oldWidget._scope._nativeAd?.callToAction ||
-        _scope._nativeAd?.starRating == oldWidget._scope._nativeAd?.starRating;
+    return true;
   }
 }
 
@@ -36,7 +32,7 @@ class MaxNativeAdViewController extends ChangeNotifier {
 
 /// Represents a native ad.
 class MaxNativeAdView extends StatefulWidget {
-  /// Creates a native ad view with the native ad components.  The user needs to
+  /// Creates a native ad view with the native ad components. The user needs to
   /// lay out a native ad view with the native ad components using the standard
   /// Flutter widgets.
   const MaxNativeAdView({
@@ -176,12 +172,12 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   }
 
   void _handleControllerChanged() {
-    _methodChannel!.invokeMethod("loadAd");
+    _methodChannel?.invokeMethod("loadAd");
   }
 
   void _onMaxNativeAdViewCreated(int id) {
     _methodChannel = MethodChannel('applovin_max/nativeadview_$id');
-    _methodChannel!.setMethodCallHandler(_handleNativeMethodCall);
+    _methodChannel?.setMethodCallHandler(_handleNativeMethodCall);
   }
 
   Future<dynamic> _handleNativeMethodCall(MethodCall call) async {
@@ -202,7 +198,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
       _addNativeAdComponent(_callToActionViewKey, "addCallToActionView");
 
       // register clickable views and render the ad in the platform
-      _methodChannel!.invokeMethod("renderAd");
+      _methodChannel?.invokeMethod("renderAd");
 
       // update the all native ad components with the native ad
       _applyNativeAdToComponents(maxAd);
@@ -221,14 +217,14 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     Rect rect = _getViewSize(key, _nativeAdViewKey);
     if (defaultTargetPlatform == TargetPlatform.android) {
       double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-      _methodChannel!.invokeMethod(method, <String, dynamic>{
+      _methodChannel?.invokeMethod(method, <String, dynamic>{
         'x': (rect.left * devicePixelRatio).round(),
         'y': (rect.top * devicePixelRatio).round(),
         'width': (rect.width * devicePixelRatio).round(),
         'height': (rect.height * devicePixelRatio).round(),
       });
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      _methodChannel!.invokeMethod(method, <String, dynamic>{
+      _methodChannel?.invokeMethod(method, <String, dynamic>{
         'x': rect.left,
         'y': rect.top,
         'width': rect.width,
@@ -256,7 +252,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
 /// Represents the title text of a native ad.
 class MaxNativeAdTitleView extends StatelessWidget {
-  /// Creates [Text] for the title text.  The platform native ad loader
+  /// Creates [Text] for the title text. The platform native ad loader
   /// provides a title text.
   const MaxNativeAdTitleView({
     super.key,
@@ -311,7 +307,7 @@ class MaxNativeAdTitleView extends StatelessWidget {
 
 /// Represents the advertiser text of a native ad.
 class MaxNativeAdAdvertiserView extends StatelessWidget {
-  /// Creates [Text] for the advertiser text.  The platform native ad loader
+  /// Creates [Text] for the advertiser text. The platform native ad loader
   /// provides an advertiser text.
   const MaxNativeAdAdvertiserView({
     super.key,
@@ -366,7 +362,7 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
 
 /// Represents the body text of a native ad.
 class MaxNativeAdBodyView extends StatelessWidget {
-  /// Creates [Text] for the body text.  The platform native ad loader provides
+  /// Creates [Text] for the body text. The platform native ad loader provides
   /// a body text.
   const MaxNativeAdBodyView({
     super.key,
@@ -421,7 +417,7 @@ class MaxNativeAdBodyView extends StatelessWidget {
 
 /// Represents the CTA button text of a native ad.
 class MaxNativeAdCallToActionView extends StatelessWidget {
-  /// Creates [ElevatedButton] for the CTA button text.  The platform native ad
+  /// Creates [ElevatedButton] for the CTA button text. The platform native ad
   /// loader provides a CTA button text.
   const MaxNativeAdCallToActionView({
     super.key,
@@ -457,7 +453,7 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
 
 /// Represents the icon image view of a native ad.
 class MaxNativeAdIconView extends StatelessWidget {
-  /// Creates [Container] for the icon view.  The platform native ad loader
+  /// Creates [Container] for the icon view. The platform native ad loader
   /// overlays the container with the platform view that contains an icon image.
   const MaxNativeAdIconView({
     super.key,
@@ -495,7 +491,7 @@ class MaxNativeAdIconView extends StatelessWidget {
 
 /// Represents the options view of a native ad.
 class MaxNativeAdOptionsView extends StatelessWidget {
-  /// Creates [Container] for the options view.  The platform native ad loader
+  /// Creates [Container] for the options view. The platform native ad loader
   /// overlays the container with the platform view that contains an options
   /// view.
   const MaxNativeAdOptionsView({
@@ -534,7 +530,7 @@ class MaxNativeAdOptionsView extends StatelessWidget {
 
 /// Represents the ad media view of a native ad.
 class MaxNativeAdMediaView extends StatelessWidget {
-  /// Creates [Container] for the media view.  The platform native ad loader
+  /// Creates [Container] for the media view. The platform native ad loader
   /// overlays the container with the platform view that contains a media view.
   /// The aspect ratio for the media view needs to be adjusted with
   /// [mediaContentAspectRatio] of [MaxNativeAd].
@@ -620,8 +616,8 @@ class _StarRating extends StatelessWidget {
 
 /// Represents the star rating view of a native ad.
 class MaxNativeAdStarRatingView extends StatelessWidget {
-  /// Creates [Container] with an internal star rating widget.  The platform
-  /// native ad loader provides a star rating.  If not available, the container
+  /// Creates [Container] with an internal star rating widget. The platform
+  /// native ad loader provides a star rating. If not available, the container
   /// will be empty.
   const MaxNativeAdStarRatingView({
     super.key,
@@ -637,10 +633,10 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
   /// If non-null, requires the child to have exactly this height.
   final double? height;
 
-  /// The color of each star.  The default value is 0xffffe234.
+  /// The color of each star. The default value is 0xffffe234.
   final Color? color;
 
-  /// The size of each star.  The default value is 8.0.
+  /// The size of each star. The default value is 8.0.
   final double? size;
 
   @override

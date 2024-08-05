@@ -142,47 +142,47 @@ public class AppLovinMAXAdView
     }
 
     @Override
-    public void onAdLoaded(final MaxAd ad)
+    public void onAdLoaded(@NonNull final MaxAd ad)
     {
         sendEvent( "OnAdViewAdLoadedEvent", ad );
     }
 
     @Override
-    public void onAdLoadFailed(final String adUnitId, final MaxError error)
+    public void onAdLoadFailed(@NonNull final String adUnitId, @NonNull final MaxError error)
     {
-        Map params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
+        Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
         AppLovinMAX.getInstance().fireCallback( "OnAdViewAdLoadFailedEvent", params, channel );
     }
 
     @Override
-    public void onAdClicked(final MaxAd ad)
+    public void onAdClicked(@NonNull final MaxAd ad)
     {
         sendEvent( "OnAdViewAdClickedEvent", ad );
     }
 
     @Override
-    public void onAdExpanded(final MaxAd ad)
+    public void onAdExpanded(@NonNull final MaxAd ad)
     {
         sendEvent( "OnAdViewAdExpandedEvent", ad );
     }
 
     @Override
-    public void onAdCollapsed(final MaxAd ad)
+    public void onAdCollapsed(@NonNull final MaxAd ad)
     {
         sendEvent( "OnAdViewAdCollapsedEvent", ad );
     }
 
     @Override
-    public void onAdDisplayed(final MaxAd ad) { }
+    public void onAdDisplayed(@NonNull final MaxAd ad) { }
 
     @Override
-    public void onAdDisplayFailed(final MaxAd ad, final MaxError error) { }
+    public void onAdDisplayFailed(@NonNull final MaxAd ad, @NonNull final MaxError error) { }
 
     @Override
-    public void onAdHidden(final MaxAd ad) { }
+    public void onAdHidden(@NonNull final MaxAd ad) { }
 
     @Override
-    public void onAdRevenuePaid(final MaxAd ad)
+    public void onAdRevenuePaid(@NonNull final MaxAd ad)
     {
         sendEvent( "OnAdViewAdRevenuePaidEvent", ad );
     }

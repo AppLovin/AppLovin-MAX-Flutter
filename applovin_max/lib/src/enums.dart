@@ -17,29 +17,6 @@ enum AdViewPosition {
 }
 
 ///
-/// Represents whether or not the consent dialog should be shown for this user.
-///
-/// The state where no such determination could be made is represented by [ConsentDialogState.unknown].
-///
-@Deprecated('Use ConsentFlowUserGeography instead.')
-enum ConsentDialogState {
-  ///
-  /// The consent dialog state could not be determined. This is likely due to the SDK failing to initialize.
-  ///
-  unknown,
-
-  ///
-  /// This user should be shown a consent dialog.
-  ///
-  applies,
-
-  ///
-  /// This user should not be shown a consent dialog.
-  ///
-  doesNotApply
-}
-
-///
 /// Represents content ratings for the ads shown to users.
 ///
 /// They correspond to IQG Media Ratings.

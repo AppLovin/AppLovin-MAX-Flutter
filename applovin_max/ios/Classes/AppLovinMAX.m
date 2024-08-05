@@ -188,15 +188,10 @@ static FlutterMethodChannel *ALSharedChannel;
     
     if ( self.sdkConfiguration )
     {
-        message[@"consentDialogState"] = @(self.sdkConfiguration.consentDialogState);
         message[@"countryCode"] = self.sdkConfiguration.countryCode;
         message[@"isTestModeEnabled"] = @(self.sdkConfiguration.isTestModeEnabled);
         message[@"consentFlowUserGeography"] = [self fromAppLovinConsentFlowUserGeography: self.sdkConfiguration.consentFlowUserGeography];
         message[@"appTrackingStatus"] = [self fromAppLovinAppTrackingStatus: self.sdkConfiguration.appTrackingTransparencyStatus];
-    }
-    else
-    {
-        message[@"consentDialogState"] = @(ALConsentDialogStateUnknown);
     }
     
     return message;
@@ -220,18 +215,6 @@ static FlutterMethodChannel *ALSharedChannel;
     }
     
     [self.sdk showMediationDebugger];
-}
-
-- (void)getConsentDialogState:(FlutterResult)result
-{
-    if ( ![self isInitialized] )
-    {
-        result(@(ALConsentDialogStateUnknown));
-        
-        return;
-    }
-    
-    result(@(self.sdkConfiguration.consentDialogState));
 }
 
 - (void)setHasUserConsent:(BOOL)hasUserConsent
@@ -1586,10 +1569,6 @@ static FlutterMethodChannel *ALSharedChannel;
         [self showMediationDebugger];
         
         result(nil);
-    }
-    else if ( [@"getConsentDialogState" isEqualToString: call.method] )
-    {
-        [self getConsentDialogState: result];
     }
     else if ( [@"setHasUserConsent" isEqualToString: call.method] )
     {
