@@ -35,6 +35,11 @@
  */
 - (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body channel:(FlutterMethodChannel *)channel;
 
+/**
+ * Utility method for sending generic events through the default Flutter channel into Dart.
+ */
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
+
 + (void)log:(NSString *)format, ...;
 
 @end

@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier;
 
++ (void)preloadNativeUIComponentAdView:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat placement:(NSString *)placement  customData:(NSString *)customData extraParameters:(NSDictionary<NSString *, NSString *> *)extraParameters localExtraParameters:(NSDictionary<NSString *, id> *)localExtraParameters withResult:(FlutterResult)result;
+
++ (void)destroyNativeUIComponentAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result;
+
 - (instancetype)initWithFrame:(CGRect)frame
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
@@ -28,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
          localExtraParameters:(nullable NSDictionary *)localExtraParameters
                     messenger:(id<FlutterBinaryMessenger>)messenger
                           sdk:(ALSdk *)sdk;
+
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
 
 @end
 
