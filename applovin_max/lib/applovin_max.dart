@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applovin_max/src/ad_classes.dart';
 import 'package:applovin_max/src/ad_listeners.dart';
 import 'package:applovin_max/src/enums.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 export 'package:applovin_max/src/ad_classes.dart';
@@ -33,7 +34,7 @@ class AppLovinMAX {
   /// Disabled dartdoc.
   AppLovinMAX();
 
-  /// Initializes the SDK.
+  /// Initializes the SDK with the provided [sdkKey].
   ///
   /// For more information, see the [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration).
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
@@ -44,6 +45,27 @@ class AppLovinMAX {
 
     _hasInitializeInvoked = true;
 
+    setupListeners();
+
+    // isInitialized() returns true when Flutter is performing hot restart
+    bool isPlatformSDKInitialized = await isInitialized() ?? false;
+    if (isPlatformSDKInitialized) {
+      Map conf = await channel.invokeMethod('getConfiguration');
+      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+      return _initializeCompleter.future;
+    }
+
+    var conf = await channel.invokeMethod('initialize', {
+      'plugin_version': version,
+      'sdk_key': sdkKey,
+    }) as Map;
+
+    _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+
+    return _initializeCompleter.future;
+  }
+
+  static void setupListeners() {
     channel.setMethodCallHandler((MethodCall call) async {
       var method = call.method;
       var arguments = call.arguments;
@@ -132,23 +154,6 @@ class AppLovinMAX {
         _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
     });
-
-    // isInitialized() returns true when Flutter is performing hot restart
-    bool isPlatformSDKInitialized = await isInitialized() ?? false;
-    if (isPlatformSDKInitialized) {
-      Map conf = await channel.invokeMethod('getConfiguration');
-      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
-      return _initializeCompleter.future;
-    }
-
-    var conf = await channel.invokeMethod('initialize', {
-      'plugin_version': version,
-      'sdk_key': sdkKey,
-    }) as Map;
-
-    _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
-
-    return _initializeCompleter.future;
   }
 
   /// @nodoc
@@ -162,8 +167,13 @@ class AppLovinMAX {
   }
 
   /// Checks if the SDK has fully been initialized without errors.
-  static Future<bool?> isInitialized() {
-    return channel.invokeMethod('isInitialized');
+  static Future<bool?> isInitialized() async {
+    try {
+      return channel.invokeMethod('isInitialized');
+    } catch (e) {
+      debugPrint('Error checking if initialized: $e');
+      return null;
+    }
   }
 
   /// Displays the Mediation Debugger.
@@ -281,7 +291,7 @@ class AppLovinMAX {
   /// Enables devices to receive test ads by passing in the advertising identifier (IDFA or IDFV) of
   /// each test device. Refer to AppLovin logs for the IDFA or IDFV of your current device.
   ///
-  static void setTestDeviceAdvertisingIds(List advertisingIdentifiers) {
+  static void setTestDeviceAdvertisingIds(List<String> advertisingIdentifiers) {
     channel.invokeMethod('setTestDeviceAdvertisingIds', {
       'value': advertisingIdentifiers,
     });
@@ -306,7 +316,7 @@ class AppLovinMAX {
 
   /// Sets a list of the ad units for the SDK to initialize only those networks.
   /// Should be set before initializing the SDK.
-  static void setInitializationAdUnitIds(List adUnitIds) {
+  static void setInitializationAdUnitIds(List<String> adUnitIds) {
     channel.invokeMethod('setInitializationAdUnitIds', {
       'value': adUnitIds,
     });
@@ -593,7 +603,7 @@ class AppLovinMAX {
   /// Shows the interstitial ad with the specified [adUnitId].
   ///
   /// [Showing an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#showing-an-interstitial-ad)
-  static void showInterstitial(String adUnitId, {placement, customData}) {
+  static void showInterstitial(String adUnitId, {String? placement, String? customData}) {
     channel.invokeMethod('showInterstitial', {
       'ad_unit_id': adUnitId,
       'placement': placement,
@@ -638,7 +648,7 @@ class AppLovinMAX {
   /// Shows the rewarded ad with the specified [adUnitId].
   ///
   /// [Showing a Rewarded Ad](https://developers.applovin.com/en/flutter/ad-formats/rewarded-ads#showing-a-rewarded-ad)
-  static void showRewardedAd(String adUnitId, {placement, customData}) {
+  static void showRewardedAd(String adUnitId, {String? placement, String? customData}) {
     channel.invokeMethod('showRewardedAd', {
       'ad_unit_id': adUnitId,
       'placement': placement,
@@ -679,7 +689,7 @@ class AppLovinMAX {
   }
 
   /// Shows the app open ad with the specified [adUnitId].
-  static void showAppOpenAd(String adUnitId, {placement, customData}) {
+  static void showAppOpenAd(String adUnitId, {String? placement, String? customData}) {
     channel.invokeMethod('showAppOpenAd', {
       'ad_unit_id': adUnitId,
       'placement': placement,

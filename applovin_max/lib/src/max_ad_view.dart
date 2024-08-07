@@ -4,7 +4,6 @@ import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 /// Represents an ad format.
 enum AdFormat {
@@ -27,6 +26,8 @@ const double _leaderWidth = 728;
 const double _leaderHeight = 90;
 const double _mrecWidth = 300;
 const double _mrecHeight = 250;
+
+const String _viewType = "applovin_max/adview";
 
 /// Represents an AdView ad (Banner / MREC).
 class MaxAdView extends StatefulWidget {
@@ -57,9 +58,6 @@ class MaxAdView extends StatefulWidget {
   /// A boolean value to switch between showing the widget or hiding it until an initial ad is loaded.  Defaults to true.
   final bool visible;
 
-  /// The width of the banner for adaptive banners.
-  final double? adaptiveBannerWidth;
-
   /// Creates a new ad view directly in the user's widget tree.
   ///
   /// * [Widget Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#widget-method)
@@ -74,7 +72,6 @@ class MaxAdView extends StatefulWidget {
     this.listener,
     this.isAutoRefreshEnabled = true,
     this.visible = true,
-    this.adaptiveBannerWidth,
   }) : super(key: key);
 
   /// @nodoc
@@ -88,14 +85,12 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   late double _width;
   late double _height;
-  late bool _visible;
-  late bool _adaptiveBannerEnabled;
 
   @override
   void initState() {
     super.initState();
-    _visible = widget.visible;
-    _adaptiveBannerEnabled = widget.extraParameters?['adaptive_banner'] == 'true';
+    _width = _getWidth();
+    _height = _getHeight();
   }
 
   @override
@@ -113,127 +108,105 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Size>(
-        future: _getAdViewSize(),
-        builder: (BuildContext context, AsyncSnapshot<Size> snapshot) {
-          if (snapshot.hasData) {
-            _width = snapshot.data!.width;
-            _height = snapshot.data!.height;
-            return buildAdView(context);
-          }
-          return Container();
-        });
+    return SizedBox(
+      width: _width,
+      height: _height,
+      child: OverflowBox(
+        alignment: Alignment.bottomCenter,
+        child: defaultTargetPlatform == TargetPlatform.android
+            ? _buildPlatformView(
+                AndroidView(
+                  viewType: _viewType,
+                  creationParams: _createParams(),
+                  creationParamsCodec: const StandardMessageCodec(),
+                  onPlatformViewCreated: _onMaxAdViewCreated,
+                ),
+              )
+            : defaultTargetPlatform == TargetPlatform.iOS
+                ? _buildPlatformView(
+                    UiKitView(
+                      viewType: _viewType,
+                      creationParams: _createParams(),
+                      creationParamsCodec: const StandardMessageCodec(),
+                      onPlatformViewCreated: _onMaxAdViewCreated,
+                    ),
+                  )
+                : Container(),
+      ),
+    );
   }
 
-  Widget buildAdView(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return Visibility(
-          maintainState: true,
-          maintainAnimation: true,
-          visible: _visible,
-          child: SizedBox(
-            width: _width,
-            height: _height,
-            child: OverflowBox(
-              alignment: Alignment.bottomCenter,
-              child: AndroidView(
-                viewType: "applovin_max/adview",
-                creationParams: <String, dynamic>{
-                  "ad_unit_id": widget.adUnitId,
-                  "ad_format": widget.adFormat.value,
-                  "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-                  "custom_data": widget.customData,
-                  "placement": widget.placement,
-                  "extra_parameters": widget.extraParameters,
-                  "local_extra_parameters": widget.localExtraParameters,
-                },
-                creationParamsCodec: const StandardMessageCodec(),
-                onPlatformViewCreated: _onMaxAdViewCreated,
-              ),
-            ),
-          ));
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return Visibility(
-          maintainState: true,
-          maintainAnimation: true,
-          visible: _visible,
-          child: SizedBox(
-            width: _width,
-            height: _height,
-            child: OverflowBox(
-              alignment: Alignment.bottomCenter,
-              child: UiKitView(
-                viewType: "applovin_max/adview",
-                creationParams: <String, dynamic>{
-                  "ad_unit_id": widget.adUnitId,
-                  "ad_format": widget.adFormat.value,
-                  "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
-                  "custom_data": widget.customData,
-                  "placement": widget.placement,
-                  "extra_parameters": widget.extraParameters,
-                  "local_extra_parameters": widget.localExtraParameters,
-                },
-                creationParamsCodec: const StandardMessageCodec(),
-                onPlatformViewCreated: _onMaxAdViewCreated,
-              ),
-            ),
-          ));
-    }
+  Widget _buildPlatformView(Widget platformView) {
+    return platformView;
+  }
 
-    return Container();
+  Map<String, dynamic> _createParams() {
+    return {
+      "ad_unit_id": widget.adUnitId,
+      "ad_format": widget.adFormat.value,
+      "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+      "custom_data": widget.customData,
+      "placement": widget.placement,
+      "extra_parameters": widget.extraParameters,
+      "local_extra_parameters": widget.localExtraParameters,
+    };
   }
 
   void _onMaxAdViewCreated(int id) {
-    _methodChannel = MethodChannel('applovin_max/adview_$id');
-    _methodChannel!.setMethodCallHandler((call) async {
+    _methodChannel = MethodChannel('${_viewType}_$id');
+    _methodChannel?.setMethodCallHandler(_handleMethodCall);
+  }
+
+  Future<void> _handleMethodCall(MethodCall call) async {
+    try {
       var method = call.method;
       var arguments = call.arguments;
 
-      if ("OnAdViewAdLoadedEvent" == method) {
-        if (!_visible) _visible = true;
-        widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(arguments));
-      } else if ("OnAdViewAdLoadFailedEvent" == method) {
-        widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createError(arguments));
-      } else if ("OnAdViewAdClickedEvent" == method) {
-        widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(arguments));
-      } else if ("OnAdViewAdExpandedEvent" == method) {
-        widget.listener?.onAdExpandedCallback(AppLovinMAX.createAd(arguments));
-      } else if ("OnAdViewAdCollapsedEvent" == method) {
-        widget.listener?.onAdCollapsedCallback(AppLovinMAX.createAd(arguments));
-      } else if ("OnAdViewAdRevenuePaidEvent" == method) {
-        widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(arguments));
-      }
-    });
-  }
+      switch (method) {
+        case "OnAdViewAdLoadedEvent":
+          widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(arguments));
+          break;
 
-  Future<Size> _getAdViewSize() async {
-    double width = _getWidth();
-    double height = (await _getHeight(width))!;
-    return Size(width, height);
+        case "OnAdViewAdLoadFailedEvent":
+          widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createError(arguments));
+          break;
+
+        case "OnAdViewAdClickedEvent":
+          widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(arguments));
+          break;
+
+        case "OnAdViewAdExpandedEvent":
+          widget.listener?.onAdExpandedCallback(AppLovinMAX.createAd(arguments));
+          break;
+
+        case "OnAdViewAdCollapsedEvent":
+          widget.listener?.onAdCollapsedCallback(AppLovinMAX.createAd(arguments));
+          break;
+
+        case "OnAdViewAdRevenuePaidEvent":
+          widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(arguments));
+          break;
+
+        default:
+          throw MissingPluginException('No handler for method $method');
+      }
+    } catch (e) {
+      debugPrint('Error handling method call: $e');
+    }
   }
 
   double _getWidth() {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecWidth;
-    } else if (widget.adFormat == AdFormat.banner) {
-      if (_adaptiveBannerEnabled && widget.adaptiveBannerWidth != null) {
-        return widget.adaptiveBannerWidth!;
-      }
-      return _isTablet() ? _leaderWidth : _bannerWidth;
     }
-    return -1;
+    return _isTablet() ? _leaderWidth : _bannerWidth;
   }
 
-  Future<double?> _getHeight(double width) async {
+  double _getHeight() {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecHeight;
-    } else if (widget.adFormat == AdFormat.banner) {
-      if (_adaptiveBannerEnabled) {
-        return await AppLovinMAX.getAdaptiveBannerHeightForWidth(width);
-      }
-      return _isTablet() ? _leaderHeight : _bannerHeight;
     }
-    return -1;
+    return _isTablet() ? _leaderHeight : _bannerHeight;
   }
 
   bool _isTablet() {
@@ -242,12 +215,6 @@ class _MaxAdViewState extends State<MaxAdView> {
     final double width = size.width;
     final double height = size.height;
 
-    if (devicePixelRatio < 2 && (width >= 1000 || height >= 1000)) {
-      return true;
-    } else if (devicePixelRatio == 2 && (width >= 1920 || height >= 1920)) {
-      return true;
-    } else {
-      return false;
-    }
+    return (devicePixelRatio < 2 && (width >= 1000 || height >= 1000)) || (devicePixelRatio == 2 && (width >= 1920 || height >= 1920));
   }
 }
