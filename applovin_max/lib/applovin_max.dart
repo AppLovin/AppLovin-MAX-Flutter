@@ -27,6 +27,7 @@ class AppLovinMAX {
   static InterstitialListener? _interstitialListener;
   static RewardedAdListener? _rewardedAdListener;
   static AppOpenAdListener? _appOpenAdListener;
+  static NativeUIComponentAdViewAdListener? _nativeUIComponentAdViewAdListener;
 
   /// @nodoc
   ///
@@ -131,10 +132,17 @@ class AppLovinMAX {
       } else if ("OnAppOpenAdRevenuePaid" == method) {
         _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
+
+      /// Native UI Component AdView Ad Events
+      else if ("OnNativeUIComponentAdViewAdLoadedEvent" == method) {
+        _nativeUIComponentAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
+      } else if ("OnNativeUIComponentAdViewAdLoadFailedEvent" == method) {
+        _nativeUIComponentAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
+      }
     });
 
     // isInitialized() returns true when Flutter is performing hot restart
-    bool isPlatformSDKInitialized = await isInitialized() ?? false;
+    bool isPlatformSDKInitialized = (await isInitialized()) ?? false;
     if (isPlatformSDKInitialized) {
       Map conf = await channel.invokeMethod('getConfiguration');
       _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
@@ -695,6 +703,44 @@ class AppLovinMAX {
       'value': value,
     });
   }
+
+  //
+  // AdView Preloading
+  //
+
+  /// Sets an [NativeUIComponentAdViewAdListener] listener with which you can
+  /// receive notifications about [AdView] ad events.
+  static void setNativeUIComponentAdViewAdListener(NativeUIComponentAdViewAdListener listener) {
+    _nativeUIComponentAdViewAdListener = listener;
+  }
+
+  /// Preloads a native UI Component for [AdView].
+  static Future<void> preloadNativeUIComponentAdView(String adUnitId, AdFormat adFormat, {
+      String? placement,
+      String? customData,
+      Map<String, String>? extraParameters,
+      Map<String, dynamic>? localExtraParameters,
+  }) {
+    return channel.invokeMethod('preloadNativeUIComponentAdView', {
+      'ad_unit_id': adUnitId,
+      'ad_format': adFormat.value,
+      'placement': placement,
+      'custom_data': customData,
+      'extra_parameters': extraParameters,
+      'local_extra_parameters': localExtraParameters,
+    });
+  }
+
+  /// Destroys a native UI component for the specified [adUnitId].
+  static Future<void> destroyNativeUIComponentAdView(String adUnitId) {
+    return channel.invokeMethod('destroyNativeUIComponentAdView', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  //
+  // Segment Targeting
+  //
 
   /// Adds a segment.
   static void addSegment(int key, List<int> values) {

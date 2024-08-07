@@ -5,28 +5,79 @@
 //  Created by Thomas So on 7/17/22.
 //
 
-#import "AppLovinMAXAdView.h"
-#import "AppLovinMAX.h"
 #import <AppLovinSDK/AppLovinSDK.h>
+#import "AppLovinMAX.h"
+#import "AppLovinMAXAdView.h"
+#import "AppLovinMAXAdViewUIComponent.h"
 
-@interface AppLovinMAXAdView()<MAAdViewAdDelegate, MAAdRevenueDelegate>
+
+@interface AppLovinMAXAdView()
 @property (nonatomic, strong) FlutterMethodChannel *channel;
-@property (nonatomic, strong) MAAdView *adView;
+@property (nonatomic, strong, nullable) AppLovinMAXAdViewUIComponent *uiComponent;
 @end
 
 @implementation AppLovinMAXAdView
 
-static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
+static NSMutableDictionary<NSString *, AppLovinMAXAdViewUIComponent *> *uiComponentInstances;
+static NSMutableDictionary<NSString *, AppLovinMAXAdViewUIComponent *> *preloadedUIComponentInstances;
 
 + (void)initialize
 {
     [super initialize];
-    adViewInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
+    uiComponentInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
+    preloadedUIComponentInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
 }
 
 + (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
-    return adViewInstances[adUnitIdentifier];
+    AppLovinMAXAdViewUIComponent *uiComponent = preloadedUIComponentInstances[adUnitIdentifier];
+    if ( !uiComponent ) uiComponent = uiComponentInstances[adUnitIdentifier];
+    return uiComponent ? uiComponent.adView : nil;
+}
+
++ (void)preloadNativeUIComponentAdView:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat placement:(NSString *)placement  customData:(NSString *)customData extraParameters:(NSDictionary<NSString *, NSString *> *)extraParameters localExtraParameters:(NSDictionary<NSString *, id> *)localExtraParameters withResult:(FlutterResult)result
+{
+    AppLovinMAXAdViewUIComponent *preloadedUIComponent = preloadedUIComponentInstances[adUnitIdentifier];
+    if ( preloadedUIComponent )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot preload more than one for a single Ad Unit ID." details: nil]);
+        return;
+    }
+    
+    preloadedUIComponent = [[AppLovinMAXAdViewUIComponent alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+    preloadedUIComponentInstances[adUnitIdentifier] = preloadedUIComponent;
+    
+    preloadedUIComponent.placement = placement;
+    preloadedUIComponent.customData = customData;
+    preloadedUIComponent.extraParameters = extraParameters;
+    preloadedUIComponent.localExtraParameters = localExtraParameters;
+    
+    [preloadedUIComponent loadAd];
+    
+    result(nil);
+}
+
++ (void)destroyNativeUIComponentAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result
+{
+    AppLovinMAXAdViewUIComponent *preloadedUIComponent = preloadedUIComponentInstances[adUnitIdentifier];
+    if ( !preloadedUIComponent )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"No native UI component found to destroy" details: nil]);
+        return;
+    }
+    
+    if ( [preloadedUIComponent hasContainerView] )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot destroy - currently in use" details: nil]);
+        return;
+    }
+    
+    [preloadedUIComponentInstances removeObjectForKey: adUnitIdentifier];
+    
+    [preloadedUIComponent detachAdView];
+    [preloadedUIComponent destroy];
+    
+    result(nil);
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -52,12 +103,12 @@ static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
             
             if ( [@"startAutoRefresh" isEqualToString: call.method] )
             {
-                [weakSelf.adView startAutoRefresh];
+                [weakSelf.uiComponent.adView startAutoRefresh];
                 result(nil);
             }
             else if ( [@"stopAutoRefresh" isEqualToString: call.method] )
             {
-                [weakSelf.adView stopAutoRefresh];
+                [weakSelf.uiComponent.adView stopAutoRefresh];
                 result(nil);
             }
             else
@@ -66,91 +117,62 @@ static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
             }
         }];
         
-        self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat sdk: sdk];
-        self.adView.frame = frame;
-        self.adView.delegate = self;
-        self.adView.revenueDelegate = self;
-        
-        self.adView.placement = placement;
-        self.adView.customData = customData;
-        
-        [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
-        
-        for ( NSString *key in extraParameters )
+        self.uiComponent = preloadedUIComponentInstances[adUnitId];
+        if ( self.uiComponent )
         {
-            [self.adView setExtraParameterForKey: key value: extraParameters[key]];
+            // Attach the preloaded uiComponent if possible, otherwise create a new one for the
+            // same adUnitId
+            if ( ![self.uiComponent hasContainerView] )
+            {
+                self.uiComponent.autoRefresh = isAutoRefreshEnabled;
+                [self.uiComponent attachAdView: self];
+                return self;
+            }
         }
         
-        for ( NSString *key in localExtraParameters )
-        {
-            [self.adView setLocalExtraParameterForKey: key value: localExtraParameters[key]];
-        }
+        self.uiComponent = [[AppLovinMAXAdViewUIComponent alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat];
+        uiComponentInstances[adUnitId] = self.uiComponent;
         
-        [self.adView loadAd];
+        self.uiComponent.placement = placement;
+        self.uiComponent.customData = customData;
+        self.uiComponent.extraParameters = extraParameters;
+        self.uiComponent.localExtraParameters = localExtraParameters;
+        self.uiComponent.autoRefresh = isAutoRefreshEnabled;
         
-        if ( !isAutoRefreshEnabled )
-        {
-            [self.adView stopAutoRefresh];
-        }
-
-        adViewInstances[adUnitId] = self.adView;
+        [self.uiComponent attachAdView: self];
+        [self.uiComponent loadAd];
     }
     return self;
 }
 
 - (UIView *)view
 {
-    return self.adView;
+    return self.uiComponent.adView;
 }
 
 - (void)dealloc
 {
-    [adViewInstances removeObjectForKey: self.adView.adUnitIdentifier];
-
+    [self.uiComponent detachAdView];
+    
+    AppLovinMAXAdViewUIComponent *preloadedUIComponent = preloadedUIComponentInstances[self.uiComponent.adView.adUnitIdentifier];
+    
+    if ( self.uiComponent == preloadedUIComponent )
+    {
+        self.uiComponent.autoRefresh = NO;
+    }
+    else
+    {
+        [uiComponentInstances removeObjectForKey: self.uiComponent.adView.adUnitIdentifier];
+        [self.uiComponent destroy];
+    }
+    
     [self.channel setMethodCallHandler: nil];
     self.channel = nil;
 }
 
-#pragma mark - Ad Callbacks
-
-- (void)didLoadAd:(MAAd *)ad
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
 {
-    [self sendEventWithName: @"OnAdViewAdLoadedEvent" ad: ad];
-}
-
-- (void)didFailToLoadAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
-{
-    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error];
-    [[AppLovinMAX shared] sendEventWithName: @"OnAdViewAdLoadFailedEvent" body: body channel: self.channel];
-}
-
-- (void)didClickAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdClickedEvent" ad: ad];
-}
-
-- (void)didExpandAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdExpandedEvent" ad: ad];
-}
-
-- (void)didCollapseAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdCollapsedEvent" ad: ad];
-}
-
-- (void)didPayRevenueForAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdRevenuePaidEvent" ad: ad];
-}
-
-- (void)didDisplayAd:(MAAd *)ad {}
-- (void)didFailToDisplayAd:(MAAd *)ad withError:(MAError *)error {}
-- (void)didHideAd:(MAAd *)ad {}
-
-- (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad
-{
-    [[AppLovinMAX shared] sendEventWithName: name ad: ad channel: self.channel];
+    [[AppLovinMAX shared] sendEventWithName: name body: body channel: self.channel];
 }
 
 @end

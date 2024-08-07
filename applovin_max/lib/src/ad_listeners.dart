@@ -160,3 +160,19 @@ class AppOpenAdListener extends FullscreenAdListener {
           onAdRevenuePaidCallback: onAdRevenuePaidCallback,
         );
 }
+
+/// Defines a NativeUIComponent AdView ad (Banner / MREC) listener to be
+/// notified about ad view events.
+class NativeUIComponentAdViewAdListener {
+  /// The SDK invokes this method when a new ad has been loaded.
+  final Function(MaxAd ad) onAdLoadedCallback;
+
+  /// The SDK invokes this method when an ad could not be retrieved.
+  final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
+
+  /// @nodoc
+  const NativeUIComponentAdViewAdListener({
+    required this.onAdLoadedCallback,
+    required this.onAdLoadFailedCallback,
+  });
+}

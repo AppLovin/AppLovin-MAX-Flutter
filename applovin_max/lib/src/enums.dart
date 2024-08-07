@@ -1,3 +1,18 @@
+/// Represents an ad format.
+enum AdFormat {
+  /// The banner ad.
+  banner("banner"),
+
+  /// The MREC ad.
+  mrec("mrec");
+
+  /// @nodoc
+  final String value;
+
+  /// @nodoc
+  const AdFormat(this.value);
+}
+
 /// Represents an AdView ad position.
 enum AdViewPosition {
   topCenter("top_center"),
