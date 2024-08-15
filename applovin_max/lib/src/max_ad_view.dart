@@ -69,7 +69,6 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   late double _width;
   late double _height;
-  late bool _visible;
   late bool _adaptiveBannerEnabled;
 
   @override
@@ -160,7 +159,6 @@ class _MaxAdViewState extends State<MaxAdView> {
       var arguments = call.arguments;
 
       if ("OnAdViewAdLoadedEvent" == method) {
-        if (!_visible) _visible = true;
         widget.listener?.onAdLoadedCallback(AppLovinMAX.createAd(arguments));
       } else if ("OnAdViewAdLoadFailedEvent" == method) {
         widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createError(arguments));

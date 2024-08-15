@@ -1039,7 +1039,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat withResult:(nullable FlutterResult)result
 {
-    NSString *message = [NSString stringWithFormat:@"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+    NSString *message = [NSString stringWithFormat: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
     
     if ( !result )
     {
@@ -1057,7 +1057,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logUninitializedAccessError:(NSString *)callingMethod withResult:(nullable FlutterResult)result
 {
-    NSString *message = [NSString stringWithFormat:@"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
+    NSString *message = [NSString stringWithFormat: @"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
 
     if ( !result )
     {
@@ -1963,7 +1963,7 @@ static FlutterMethodChannel *ALSharedChannel;
         
         result(nil);
     }
-    else if ( [@"preloadNativeUIComponentAdView" isEqualToString: call.method] )
+    else if ( [@"preloadPlatformWidgetAdView" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *adFormatStr = call.arguments[@"ad_format"];
@@ -1974,8 +1974,8 @@ static FlutterMethodChannel *ALSharedChannel;
 
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
         NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
-        NSDictionary<NSString*, NSString*> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
-        NSDictionary<NSString*, id> *localExtraParameters = ( rawLocalExtraParameters != [NSNull null] ) ? rawLocalExtraParameters : nil;
+        NSDictionary<NSString *, id> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
+        NSDictionary<NSString *, id> *localExtraParameters = ( rawLocalExtraParameters != [NSNull null] ) ? rawLocalExtraParameters : nil;
 
         MAAdFormat *adFormat;
     
@@ -1993,19 +1993,18 @@ static FlutterMethodChannel *ALSharedChannel;
             return;
         }
     
-        [AppLovinMAXAdView preloadNativeUIComponentAdView: adUnitId
-                                                 adFormat: adFormat
-                                                placement: placement
-                                               customData: customData
-                                          extraParameters: extraParameters
-                                     localExtraParameters: localExtraParameters
-                                               withResult: result];
+        [AppLovinMAXAdView preloadPlatformWidgetAdView: adUnitId
+                                              adFormat: adFormat
+                                             placement: placement
+                                            customData: customData
+                                       extraParameters: extraParameters
+                                  localExtraParameters: localExtraParameters
+                                            withResult: result];
     }
-    else if ( [@"destroyNativeUIComponentAdView" isEqualToString: call.method] )
+    else if ( [@"destroyPlatformWidgetAdView" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-
-        [AppLovinMAXAdView destroyNativeUIComponentAdView: adUnitId withResult: result];
+        [AppLovinMAXAdView destroyPlatformWidgetAdView: adUnitId withResult: result];
     }
     else if ( [@"addSegment" isEqualToString: call.method] )
     {

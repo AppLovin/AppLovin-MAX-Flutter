@@ -62,7 +62,7 @@ public class AppLovinMAX
         implements FlutterPlugin, MethodCallHandler, ActivityAware, MaxAdListener, MaxAdViewAdListener, MaxRewardedAdListener, MaxAdRevenueListener
 {
     private static final String SDK_TAG = "AppLovinSdk";
-    private static final String TAG     = "AppLovinMAX";
+    public static final  String TAG     = "AppLovinMAX";
 
     private static final String USER_GEOGRAPHY_GDPR    = "G";
     private static final String USER_GEOGRAPHY_OTHER   = "O";
@@ -1969,6 +1969,46 @@ public class AppLovinMAX
             setAppOpenAdExtraParameter( adUnitId, key, value );
 
             result.success( null );
+        }
+        else if ( "preloadPlatformWidgetAdView".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            String adFormatStr = call.argument( "ad_format" );
+            String placement = call.argument( "placement" );
+            String customData = call.argument( "custom_data" );
+            Map<String, Object> extraParameters = call.argument( "extra_parameters" );
+            Map<String, Object> localExtraParameters = call.argument( "local_extra_parameters" );
+
+            MaxAdFormat adFormat;
+
+            if ( MaxAdFormat.BANNER.getLabel().equalsIgnoreCase( adFormatStr ) )
+            {
+                adFormat = AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( applicationContext );
+            }
+            else if ( MaxAdFormat.MREC.getLabel().equalsIgnoreCase( adFormatStr ) )
+            {
+                adFormat = MaxAdFormat.MREC;
+            }
+            else
+            {
+                result.error( TAG, "invalid ad format: " + adFormatStr, null );
+                return;
+            }
+
+            AppLovinMAXAdView.preloadPlatformWidgetAdView( adUnitId,
+                                                           adFormat,
+                                                           placement,
+                                                           customData,
+                                                           extraParameters,
+                                                           localExtraParameters,
+                                                           result,
+                                                           sdk,
+                                                           applicationContext );
+        }
+        else if ( "destroyPlatformWidgetAdView".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            AppLovinMAXAdView.destroyPlatformWidgetAdView( adUnitId, result );
         }
         else if ( "addSegment".equals( call.method ) )
         {

@@ -1,18 +1,24 @@
 #import <AppLovinSDK/AppLovinSDK.h>
 #import "AppLovinMAX.h"
 #import "AppLovinMAXAdView.h"
-#import "AppLovinMAXAdViewUIComponent.h"
+#import "AppLovinMAXAdViewPlatformWidget.h"
 
-@interface AppLovinMAXAdViewUIComponent()<MAAdViewAdDelegate, MAAdRevenueDelegate>
+@interface AppLovinMAXAdViewPlatformWidget()<MAAdViewAdDelegate, MAAdRevenueDelegate>
 
+@property (nonatomic, assign, getter=isPreloadPlatformWidget) BOOL preload;
 @property (nonatomic, strong) MAAdView *adView;
 @property (nonatomic, weak, nullable) AppLovinMAXAdView *containerView;
 
 @end
 
-@implementation AppLovinMAXAdViewUIComponent
+@implementation AppLovinMAXAdViewPlatformWidget
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    return [self initWithAdUnitIdentifierForPreload: adUnitIdentifier adFormat: adFormat preload: NO];
+}
+
+- (instancetype)initWithAdUnitIdentifierForPreload:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat preload:(BOOL)preload
 {
     self = [super init];
     if ( self )
@@ -26,6 +32,8 @@
         
         // Set a frame size to suppress an error of zero area for MAAdView
         self.adView.frame = (CGRect) { CGPointZero, adFormat.size };
+        
+        self.preload = preload;
     }
     return self;
 }
@@ -40,11 +48,6 @@
     self.adView.customData = customData;
 }
 
-- (void)setAdaptiveBannerEnabled:(BOOL)adaptiveBannerEnabled
-{
-    [self.adView setExtraParameterForKey: @"adaptive_banner" value: adaptiveBannerEnabled ? @"true" : @"false"];
-}
-
 - (void)setAutoRefresh:(BOOL)autoRefresh
 {
     if ( autoRefresh )
@@ -57,18 +60,18 @@
     }
 }
 
--(void)setExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
+- (void)setExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
 {
-    for (NSString *key in parameterDict)
+    for ( NSString *key in parameterDict )
     {
-        NSString *value = (NSString *) parameterDict[key];
+        NSString *value = [parameterDict al_stringForKey: key];
         [self.adView setExtraParameterForKey: key value: value];
     }
 }
 
--(void)setLocalExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
+- (void)setLocalExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
 {
-    for (NSString *key in parameterDict)
+    for ( NSString *key in parameterDict )
     {
         id value = parameterDict[key];
         [self.adView setLocalExtraParameterForKey: key value: value];
@@ -111,15 +114,14 @@
 {
     NSDictionary *adInfo = [[AppLovinMAX shared] adInfoForAd: ad];
     
-    [[AppLovinMAX shared] sendEventWithName:@"OnNativeUIComponentAdViewAdLoadedEvent" body: adInfo];
+    if ( self.isPreloadPlatformWidget )
+    {
+        [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadedEvent" body: adInfo];
+    }
     
     if ( self.containerView )
     {
         [self.containerView sendEventWithName: @"OnAdViewAdLoadedEvent" body: adInfo];
-    }
-    else
-    {
-        [self setAutoRefresh: NO];
     }
 }
 
@@ -127,7 +129,10 @@
 {
     NSDictionary *adLoadFailedInfo = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error];
     
-    [[AppLovinMAX shared] sendEventWithName:@"OnNativeUIComponentAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
+    if ( self.isPreloadPlatformWidget )
+    {
+        [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
+    }
     
     if ( self.containerView )
     {

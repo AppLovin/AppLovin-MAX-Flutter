@@ -27,7 +27,7 @@ class AppLovinMAX {
   static InterstitialListener? _interstitialListener;
   static RewardedAdListener? _rewardedAdListener;
   static AppOpenAdListener? _appOpenAdListener;
-  static NativeUIComponentAdViewAdListener? _nativeUIComponentAdViewAdListener;
+  static PlatformWidgetAdViewAdListener? _platformWidgetAdViewAdListener;
 
   /// @nodoc
   ///
@@ -133,16 +133,16 @@ class AppLovinMAX {
         _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
       }
 
-      /// Native UI Component AdView Ad Events
-      else if ("OnNativeUIComponentAdViewAdLoadedEvent" == method) {
-        _nativeUIComponentAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
-      } else if ("OnNativeUIComponentAdViewAdLoadFailedEvent" == method) {
-        _nativeUIComponentAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
+      /// Platform Widget AdView Ad Events
+      else if ("OnPlatformWidgetAdViewAdLoadedEvent" == method) {
+        _platformWidgetAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
+      } else if ("OnPlatformWidgetAdViewAdLoadFailedEvent" == method) {
+        _platformWidgetAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       }
     });
 
     // isInitialized() returns true when Flutter is performing hot restart
-    bool isPlatformSDKInitialized = (await isInitialized()) ?? false;
+    bool isPlatformSDKInitialized = await isInitialized() ?? false;
     if (isPlatformSDKInitialized) {
       Map conf = await channel.invokeMethod('getConfiguration');
       _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
@@ -708,20 +708,22 @@ class AppLovinMAX {
   // AdView Preloading
   //
 
-  /// Sets an [NativeUIComponentAdViewAdListener] listener with which you can
+  /// Sets an [PlatformWidgetAdViewAdListener] listener with which you can
   /// receive notifications about [AdView] ad events.
-  static void setNativeUIComponentAdViewAdListener(NativeUIComponentAdViewAdListener listener) {
-    _nativeUIComponentAdViewAdListener = listener;
+  static void setPlatformWidgetAdViewAdListener(PlatformWidgetAdViewAdListener listener) {
+    _platformWidgetAdViewAdListener = listener;
   }
 
-  /// Preloads a native UI Component for [AdView].
-  static Future<void> preloadNativeUIComponentAdView(String adUnitId, AdFormat adFormat, {
-      String? placement,
-      String? customData,
-      Map<String, String>? extraParameters,
-      Map<String, dynamic>? localExtraParameters,
+  /// Preloads a platform widget for [AdView].
+  static Future<void> preloadPlatformWidgetAdView(
+    String adUnitId,
+    AdFormat adFormat, {
+    String? placement,
+    String? customData,
+    Map<String, String>? extraParameters,
+    Map<String, dynamic>? localExtraParameters,
   }) {
-    return channel.invokeMethod('preloadNativeUIComponentAdView', {
+    return channel.invokeMethod('preloadPlatformWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
       'placement': placement,
@@ -731,9 +733,9 @@ class AppLovinMAX {
     });
   }
 
-  /// Destroys a native UI component for the specified [adUnitId].
-  static Future<void> destroyNativeUIComponentAdView(String adUnitId) {
-    return channel.invokeMethod('destroyNativeUIComponentAdView', {
+  /// Destroys a platform widget for the specified [adUnitId].
+  static Future<void> destroyPlatformWidgetAdView(String adUnitId) {
+    return channel.invokeMethod('destroyPlatformWidgetAdView', {
       'ad_unit_id': adUnitId,
     });
   }
