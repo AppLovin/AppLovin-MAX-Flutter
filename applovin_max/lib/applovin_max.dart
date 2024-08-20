@@ -720,7 +720,7 @@ class AppLovinMAX {
     AdFormat adFormat, {
     String? placement,
     String? customData,
-    Map<String, String>? extraParameters,
+    Map<String, String?>? extraParameters,
     Map<String, dynamic>? localExtraParameters,
   }) {
     return channel.invokeMethod('preloadPlatformWidgetAdView', {
