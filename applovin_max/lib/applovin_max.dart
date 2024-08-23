@@ -708,13 +708,32 @@ class AppLovinMAX {
   // AdView Preloading
   //
 
-  /// Sets an [PlatformWidgetAdViewAdListener] listener with which you can
-  /// receive notifications about [AdView] ad events.
+  /// Sets a [PlatformWidgetAdViewAdListener] to receive notifications about
+  /// [MaxAdView] ad events when preloading a [MaxAdView] platform widget with
+  /// [preloadPlatformWidgetAdView].
   static void setPlatformWidgetAdViewAdListener(PlatformWidgetAdViewAdListener listener) {
     _platformWidgetAdViewAdListener = listener;
   }
 
-  /// Preloads a platform widget for [AdView].
+  /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with
+  /// the given [adFormat] before it is mounted in the widget tree.
+  ///
+  /// When you mount a [MaxAdView] with the preloaded [adUnitId], it will be
+  /// constructed using the preloaded [MaxAdView] platform widget, allowing ads
+  /// to be displayed more quickly. After unmounting the [MaxAdView], the
+  /// preloaded [MaxAdView] platform widget will not be destroyed; instead, it
+  /// will be reused for the next mount. You must manually destroy it when it is
+  /// no longer needed.
+  ///
+  /// You can preload only one [MaxAdView] platform widget for a single Ad Unit
+  /// ID. If you mount two [MaxAdView] widgets with the same Ad Unit ID, the
+  /// first [MaxAdView] will use the preloaded platform widget, while the second
+  /// [MaxAdView] will create its own platform widget and destroy it upon
+  /// unmounting.
+  ///
+  /// Returns a `Future<void>` that completes when the preload operation has
+  /// been successfully started. If the preload operation fails to start, the
+  /// `Future` completes with an error.
   static Future<void> preloadPlatformWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
@@ -733,7 +752,11 @@ class AppLovinMAX {
     });
   }
 
-  /// Destroys a platform widget for the specified [adUnitId].
+  /// Destroys a [MaxAdView] platform widget for the specified [adUnitId].
+  ///
+  /// Returns a `Future<void>` that completes the destruction of the [MaxAdView]
+  /// platform widget. If the destruction operation fails, the `Future`
+  /// completes with an error.
   static Future<void> destroyPlatformWidgetAdView(String adUnitId) {
     return channel.invokeMethod('destroyPlatformWidgetAdView', {
       'ad_unit_id': adUnitId,

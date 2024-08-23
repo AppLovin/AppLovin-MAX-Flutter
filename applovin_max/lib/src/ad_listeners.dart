@@ -161,7 +161,7 @@ class AppOpenAdListener extends FullscreenAdListener {
         );
 }
 
-/// Defines a platform widget listener for AdView ad (Banner / MREC) to be
+/// Defines a platform widget listener for an AdView ad (Banner / MREC) to be
 /// notified about ad view events.
 class PlatformWidgetAdViewAdListener {
   /// The SDK invokes this method when a new ad has been loaded.
