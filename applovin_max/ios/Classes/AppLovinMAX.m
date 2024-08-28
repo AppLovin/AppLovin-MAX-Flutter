@@ -1039,7 +1039,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat withResult:(nullable FlutterResult)result
 {
-    NSString *message = [NSString stringWithFormat: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+    NSString *message = [NSString stringWithFormat: @"Invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
     
     if ( !result )
     {

@@ -20,7 +20,7 @@ class AppLovinMAXAdViewPlatformWidget
         implements MaxAdListener, MaxAdViewAdListener, MaxAdRevenueListener
 {
     private final MaxAdView adView;
-    private final boolean   isPreloadPlatformWidget;
+    private final boolean   shouldPreloadWidget;
 
     @Nullable
     private AppLovinMAXAdView containerView;
@@ -30,8 +30,10 @@ class AppLovinMAXAdViewPlatformWidget
         this( adUnitId, adFormat, false, sdk, context );
     }
 
-    public AppLovinMAXAdViewPlatformWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean preload, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdViewPlatformWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean shouldPreloadWidget, final AppLovinSdk sdk, final Context context)
     {
+        this.shouldPreloadWidget = shouldPreloadWidget;
+
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
         adView.setListener( this );
         adView.setRevenueListener( this );
@@ -40,8 +42,6 @@ class AppLovinMAXAdViewPlatformWidget
 
         // Set this extra parameter to work around a SDK bug that ignores calls to stopAutoRefresh()
         adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
-
-        isPreloadPlatformWidget = preload;
     }
 
     public MaxAdView getAdView()
@@ -125,8 +125,10 @@ class AppLovinMAXAdViewPlatformWidget
     {
         Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
 
-        if ( isPreloadPlatformWidget )
+        if ( shouldPreloadWidget )
         {
+            // Copy the `params` for the next sending, as they are consumed (i.e., released) by
+            // `MethodChannel.invokeMethod()` through `fireCallback()`.
             AppLovinMAX.getInstance().fireCallback( "OnPlatformWidgetAdViewAdLoadedEvent", Map.copyOf( params ) );
         }
 
@@ -141,8 +143,10 @@ class AppLovinMAXAdViewPlatformWidget
     {
         Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
 
-        if ( isPreloadPlatformWidget )
+        if ( shouldPreloadWidget )
         {
+            // Copy the `params` for the next sending, as they are consumed (i.e., released) by
+            // `MethodChannel.invokeMethod()` through `fireCallback()`.
             AppLovinMAX.getInstance().fireCallback( "OnPlatformWidgetAdViewAdLoadFailedEvent", Map.copyOf( params ) );
         }
 

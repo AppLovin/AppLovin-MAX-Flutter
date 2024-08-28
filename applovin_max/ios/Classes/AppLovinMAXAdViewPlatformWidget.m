@@ -5,9 +5,9 @@
 
 @interface AppLovinMAXAdViewPlatformWidget()<MAAdViewAdDelegate, MAAdRevenueDelegate>
 
-@property (nonatomic, assign, getter=isPreloadPlatformWidget) BOOL preload;
 @property (nonatomic, strong) MAAdView *adView;
 @property (nonatomic, weak, nullable) AppLovinMAXAdView *containerView;
+@property (nonatomic, assign) BOOL shouldPreload;
 
 @end
 
@@ -15,14 +15,16 @@
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
-    return [self initWithAdUnitIdentifierForPreload: adUnitIdentifier adFormat: adFormat preload: NO];
+    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: NO];
 }
 
-- (instancetype)initWithAdUnitIdentifierForPreload:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat preload:(BOOL)preload
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat shouldPreload:(BOOL)shouldPreload
 {
     self = [super init];
     if ( self )
     {
+        self.shouldPreload = shouldPreload;
+
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat sdk: [AppLovinMAX shared].sdk];
         self.adView.delegate = self;
         self.adView.revenueDelegate = self;
@@ -32,8 +34,6 @@
         
         // Set a frame size to suppress an error of zero area for MAAdView
         self.adView.frame = (CGRect) { CGPointZero, adFormat.size };
-        
-        self.preload = preload;
     }
     return self;
 }
@@ -113,7 +113,7 @@
 {
     NSDictionary *adInfo = [[AppLovinMAX shared] adInfoForAd: ad];
     
-    if ( self.isPreloadPlatformWidget )
+    if ( self.shouldPreload )
     {
         [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadedEvent" body: adInfo];
     }
@@ -128,7 +128,7 @@
 {
     NSDictionary *adLoadFailedInfo = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error];
     
-    if ( self.isPreloadPlatformWidget )
+    if ( self.shouldPreload )
     {
         [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
     }

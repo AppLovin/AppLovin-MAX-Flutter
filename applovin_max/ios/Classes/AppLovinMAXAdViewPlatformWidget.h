@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *customData;
 @property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *extraParameters;
 @property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *localExtraParameters;
-@property (nonatomic, assign, getter=isAutoRefreshEnabled) BOOL autoRefresh;
+@property (nonatomic, assign, getter=isAutoRefreshEnabled) BOOL autoRefreshEnabled;
 
 - (void)loadAd;
 - (void)attachAdView:(AppLovinMAXAdView *)view;
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)destroy;
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat;
-- (instancetype)initWithAdUnitIdentifierForPreload:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat preload:(BOOL)preload;
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat shouldPreload:(BOOL)shouldPreload;
 
 @end
 

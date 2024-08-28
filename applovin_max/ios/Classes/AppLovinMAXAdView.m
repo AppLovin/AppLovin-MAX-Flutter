@@ -49,7 +49,7 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewPlatformWidget *> *prelo
         return;
     }
     
-    preloadedPlatformWidget = [[AppLovinMAXAdViewPlatformWidget alloc] initWithAdUnitIdentifierForPreload: adUnitIdentifier adFormat: adFormat preload: YES];
+    preloadedPlatformWidget = [[AppLovinMAXAdViewPlatformWidget alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: YES];
     preloadedPlatformWidgetInstances[adUnitIdentifier] = preloadedPlatformWidget;
     
     preloadedPlatformWidget.placement = placement;
@@ -131,7 +131,7 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewPlatformWidget *> *prelo
             // same adUnitId
             if ( ![self.platformWidget hasContainerView] )
             {
-                self.platformWidget.autoRefresh = isAutoRefreshEnabled;
+                self.platformWidget.autoRefreshEnabled = isAutoRefreshEnabled;
                 [self.platformWidget attachAdView: self];
                 return self;
             }
@@ -144,7 +144,7 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewPlatformWidget *> *prelo
         self.platformWidget.customData = customData;
         self.platformWidget.extraParameters = extraParameters;
         self.platformWidget.localExtraParameters = localExtraParameters;
-        self.platformWidget.autoRefresh = isAutoRefreshEnabled;
+        self.platformWidget.autoRefreshEnabled = isAutoRefreshEnabled;
         
         [self.platformWidget attachAdView: self];
         [self.platformWidget loadAd];

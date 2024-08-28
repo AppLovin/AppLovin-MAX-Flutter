@@ -1991,7 +1991,7 @@ public class AppLovinMAX
             }
             else
             {
-                result.error( TAG, "invalid ad format: " + adFormatStr, null );
+                result.error( TAG, "Invalid ad format: " + adFormatStr, null );
                 return;
             }
 

@@ -74,6 +74,8 @@ class _MyAppState extends State<MyApp> {
 
       attachAdListeners();
 
+      // If you need to preload banners/MRECs ahead of time such that the
+      // contents are readily available when displayed.
       preloadAdViewAd();
     }
   }
@@ -204,6 +206,7 @@ class _MyAppState extends State<MyApp> {
     }));
   }
 
+  // Preload banners/MRECs
   void preloadAdViewAd() {
     AppLovinMAX.setPlatformWidgetAdViewAdListener(PlatformWidgetAdViewAdListener(onAdLoadedCallback: (ad) {
       if (ad.adUnitId == _bannerAdUnitId) {

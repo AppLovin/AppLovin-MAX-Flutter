@@ -51,7 +51,7 @@ public class AppLovinMAXAdView
         AppLovinMAXAdViewPlatformWidget preloadedPlatformWidget = preloadedPlatformWidgetInstances.get( adUnitId );
         if ( preloadedPlatformWidget != null )
         {
-            result.error( AppLovinMAX.TAG, "Cannot preload more than one for a single Ad Unit ID.", null );
+            result.error( AppLovinMAX.TAG, "Cannot preload more than once for a single Ad Unit ID.", null );
             return;
         }
 
