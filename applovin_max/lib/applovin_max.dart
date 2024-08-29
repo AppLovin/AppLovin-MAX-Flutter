@@ -27,7 +27,7 @@ class AppLovinMAX {
   static InterstitialListener? _interstitialListener;
   static RewardedAdListener? _rewardedAdListener;
   static AppOpenAdListener? _appOpenAdListener;
-  static PlatformWidgetAdViewAdListener? _platformWidgetAdViewAdListener;
+  static WidgetAdViewAdListener? _widgetAdViewAdListener;
 
   /// @nodoc
   ///
@@ -134,10 +134,10 @@ class AppLovinMAX {
       }
 
       /// Platform Widget AdView Ad Events
-      else if ("OnPlatformWidgetAdViewAdLoadedEvent" == method) {
-        _platformWidgetAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
-      } else if ("OnPlatformWidgetAdViewAdLoadFailedEvent" == method) {
-        _platformWidgetAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
+      else if ("OnWidgetAdViewAdLoadedEvent" == method) {
+        _widgetAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
+      } else if ("OnWidgetAdViewAdLoadFailedEvent" == method) {
+        _widgetAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       }
     });
 
@@ -708,11 +708,11 @@ class AppLovinMAX {
   // AdView Preloading
   //
 
-  /// Sets a [PlatformWidgetAdViewAdListener] to receive notifications about
+  /// Sets a [WidgetAdViewAdListener] to receive notifications about
   /// [MaxAdView] ad events when preloading a [MaxAdView] platform widget with
-  /// [preloadPlatformWidgetAdView].
-  static void setPlatformWidgetAdViewAdListener(PlatformWidgetAdViewAdListener listener) {
-    _platformWidgetAdViewAdListener = listener;
+  /// [preloadWidgetAdView].
+  static void setWidgetAdViewAdListener(WidgetAdViewAdListener listener) {
+    _widgetAdViewAdListener = listener;
   }
 
   /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with
@@ -734,7 +734,7 @@ class AppLovinMAX {
   /// Returns a `Future<void>` that completes when the preload operation has
   /// been successfully started. If the preload operation fails to start, the
   /// `Future` completes with an error.
-  static Future<void> preloadPlatformWidgetAdView(
+  static Future<void> preloadWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
     String? placement,
@@ -742,7 +742,7 @@ class AppLovinMAX {
     Map<String, String?>? extraParameters,
     Map<String, dynamic>? localExtraParameters,
   }) {
-    return channel.invokeMethod('preloadPlatformWidgetAdView', {
+    return channel.invokeMethod('preloadWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
       'placement': placement,
@@ -757,8 +757,8 @@ class AppLovinMAX {
   /// Returns a `Future<void>` that completes the destruction of the [MaxAdView]
   /// platform widget. If the destruction operation fails, the `Future`
   /// completes with an error.
-  static Future<void> destroyPlatformWidgetAdView(String adUnitId) {
-    return channel.invokeMethod('destroyPlatformWidgetAdView', {
+  static Future<void> destroyWidgetAdView(String adUnitId) {
+    return channel.invokeMethod('destroyWidgetAdView', {
       'ad_unit_id': adUnitId,
     });
   }

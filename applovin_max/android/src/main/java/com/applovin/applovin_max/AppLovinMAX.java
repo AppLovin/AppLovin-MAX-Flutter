@@ -1970,7 +1970,7 @@ public class AppLovinMAX
 
             result.success( null );
         }
-        else if ( "preloadPlatformWidgetAdView".equals( call.method ) )
+        else if ( "preloadWidgetAdView".equals( call.method ) )
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String adFormatStr = call.argument( "ad_format" );
@@ -1995,20 +1995,20 @@ public class AppLovinMAX
                 return;
             }
 
-            AppLovinMAXAdView.preloadPlatformWidgetAdView( adUnitId,
-                                                           adFormat,
-                                                           placement,
-                                                           customData,
-                                                           extraParameters,
-                                                           localExtraParameters,
-                                                           result,
-                                                           sdk,
-                                                           applicationContext );
+            AppLovinMAXAdView.preloadWidgetAdView( adUnitId,
+                                                   adFormat,
+                                                   placement,
+                                                   customData,
+                                                   extraParameters,
+                                                   localExtraParameters,
+                                                   result,
+                                                   sdk,
+                                                   applicationContext );
         }
-        else if ( "destroyPlatformWidgetAdView".equals( call.method ) )
+        else if ( "destroyWidgetAdView".equals( call.method ) )
         {
             String adUnitId = call.argument( "ad_unit_id" );
-            AppLovinMAXAdView.destroyPlatformWidgetAdView( adUnitId, result );
+            AppLovinMAXAdView.destroyWidgetAdView( adUnitId, result );
         }
         else if ( "addSegment".equals( call.method ) )
         {

@@ -1963,7 +1963,7 @@ static FlutterMethodChannel *ALSharedChannel;
         
         result(nil);
     }
-    else if ( [@"preloadPlatformWidgetAdView" isEqualToString: call.method] )
+    else if ( [@"preloadWidgetAdView" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *adFormatStr = call.arguments[@"ad_format"];
@@ -1993,18 +1993,18 @@ static FlutterMethodChannel *ALSharedChannel;
             return;
         }
     
-        [AppLovinMAXAdView preloadPlatformWidgetAdView: adUnitId
-                                              adFormat: adFormat
-                                             placement: placement
-                                            customData: customData
-                                       extraParameters: extraParameters
-                                  localExtraParameters: localExtraParameters
-                                            withResult: result];
+        [AppLovinMAXAdView preloadWidgetAdView: adUnitId
+                                      adFormat: adFormat
+                                     placement: placement
+                                    customData: customData
+                               extraParameters: extraParameters
+                          localExtraParameters: localExtraParameters
+                                    withResult: result];
     }
-    else if ( [@"destroyPlatformWidgetAdView" isEqualToString: call.method] )
+    else if ( [@"destroyWidgetAdView" isEqualToString: call.method] )
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        [AppLovinMAXAdView destroyPlatformWidgetAdView: adUnitId withResult: result];
+        [AppLovinMAXAdView destroyWidgetAdView: adUnitId withResult: result];
     }
     else if ( [@"addSegment" isEqualToString: call.method] )
     {

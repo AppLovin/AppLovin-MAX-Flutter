@@ -163,7 +163,7 @@ class AppOpenAdListener extends FullscreenAdListener {
 
 /// Defines a platform widget listener for an AdView ad (Banner / MREC) to be
 /// notified about ad view events.
-class PlatformWidgetAdViewAdListener {
+class WidgetAdViewAdListener {
   /// The SDK invokes this method when a new ad has been loaded.
   final Function(MaxAd ad) onAdLoadedCallback;
 
@@ -171,7 +171,7 @@ class PlatformWidgetAdViewAdListener {
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
 
   /// @nodoc
-  const PlatformWidgetAdViewAdListener({
+  const WidgetAdViewAdListener({
     required this.onAdLoadedCallback,
     required this.onAdLoadFailedCallback,
   });

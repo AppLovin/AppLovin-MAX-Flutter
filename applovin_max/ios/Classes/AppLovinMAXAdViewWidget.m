@@ -1,9 +1,9 @@
 #import <AppLovinSDK/AppLovinSDK.h>
 #import "AppLovinMAX.h"
 #import "AppLovinMAXAdView.h"
-#import "AppLovinMAXAdViewPlatformWidget.h"
+#import "AppLovinMAXAdViewWidget.h"
 
-@interface AppLovinMAXAdViewPlatformWidget()<MAAdViewAdDelegate, MAAdRevenueDelegate>
+@interface AppLovinMAXAdViewWidget()<MAAdViewAdDelegate, MAAdRevenueDelegate>
 
 @property (nonatomic, strong) MAAdView *adView;
 @property (nonatomic, weak, nullable) AppLovinMAXAdView *containerView;
@@ -11,7 +11,7 @@
 
 @end
 
-@implementation AppLovinMAXAdViewPlatformWidget
+@implementation AppLovinMAXAdViewWidget
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
@@ -115,7 +115,7 @@
     
     if ( self.shouldPreload )
     {
-        [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadedEvent" body: adInfo];
+        [[AppLovinMAX shared] sendEventWithName: @"OnWidgetAdViewAdLoadedEvent" body: adInfo];
     }
     
     if ( self.containerView )
@@ -130,7 +130,7 @@
     
     if ( self.shouldPreload )
     {
-        [[AppLovinMAX shared] sendEventWithName: @"OnPlatformWidgetAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
+        [[AppLovinMAX shared] sendEventWithName: @"OnWidgetAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
     }
     
     if ( self.containerView )

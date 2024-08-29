@@ -17,15 +17,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier;
 
-+ (void)preloadPlatformWidgetAdView:(NSString *)adUnitIdentifier 
-                           adFormat:(MAAdFormat *)adFormat
-                          placement:(nullable NSString *)placement
-                         customData:(nullable NSString *)customData
-                    extraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters
-               localExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
-                         withResult:(FlutterResult)result;
++ (void)preloadWidgetAdView:(NSString *)adUnitIdentifier 
+                   adFormat:(MAAdFormat *)adFormat
+                  placement:(nullable NSString *)placement
+                 customData:(nullable NSString *)customData
+            extraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters
+       localExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
+                 withResult:(FlutterResult)result;
 
-+ (void)destroyPlatformWidgetAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result;
++ (void)destroyWidgetAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result;
 
 - (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
 

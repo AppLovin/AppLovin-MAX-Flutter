@@ -208,7 +208,7 @@ class _MyAppState extends State<MyApp> {
 
   // Preload banners/MRECs
   void preloadAdViewAd() {
-    AppLovinMAX.setPlatformWidgetAdViewAdListener(PlatformWidgetAdViewAdListener(onAdLoadedCallback: (ad) {
+    AppLovinMAX.setWidgetAdViewAdListener(WidgetAdViewAdListener(onAdLoadedCallback: (ad) {
       if (ad.adUnitId == _bannerAdUnitId) {
         print('Banner ad preloaded from ${ad.networkName}');
       } else if (ad.adUnitId == _mrecAdUnitId) {
@@ -226,13 +226,13 @@ class _MyAppState extends State<MyApp> {
       }
     }));
 
-    AppLovinMAX.preloadPlatformWidgetAdView(_bannerAdUnitId, AdFormat.banner).then((_) {
+    AppLovinMAX.preloadWidgetAdView(_bannerAdUnitId, AdFormat.banner).then((_) {
       print('Started preloading a banner ad for $_bannerAdUnitId');
     }).catchError((e) {
       print('Error: failed to preload a banner ad for $_bannerAdUnitId: $e');
     });
 
-    AppLovinMAX.preloadPlatformWidgetAdView(
+    AppLovinMAX.preloadWidgetAdView(
       _mrecAdUnitId, AdFormat.mrec,
       // additional parameters
       placement: "placement",

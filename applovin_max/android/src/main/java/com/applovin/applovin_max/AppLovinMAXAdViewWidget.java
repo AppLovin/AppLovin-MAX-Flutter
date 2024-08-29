@@ -16,7 +16,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-class AppLovinMAXAdViewPlatformWidget
+class AppLovinMAXAdViewWidget
         implements MaxAdListener, MaxAdViewAdListener, MaxAdRevenueListener
 {
     private final MaxAdView adView;
@@ -25,12 +25,12 @@ class AppLovinMAXAdViewPlatformWidget
     @Nullable
     private AppLovinMAXAdView containerView;
 
-    public AppLovinMAXAdViewPlatformWidget(final String adUnitId, final MaxAdFormat adFormat, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final AppLovinSdk sdk, final Context context)
     {
         this( adUnitId, adFormat, false, sdk, context );
     }
 
-    public AppLovinMAXAdViewPlatformWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean shouldPreloadWidget, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean shouldPreloadWidget, final AppLovinSdk sdk, final Context context)
     {
         this.shouldPreloadWidget = shouldPreloadWidget;
 
@@ -129,7 +129,7 @@ class AppLovinMAXAdViewPlatformWidget
         {
             // Copy the `params` for the next sending, as they are consumed (i.e., released) by
             // `MethodChannel.invokeMethod()` through `fireCallback()`.
-            AppLovinMAX.getInstance().fireCallback( "OnPlatformWidgetAdViewAdLoadedEvent", Map.copyOf( params ) );
+            AppLovinMAX.getInstance().fireCallback( "OnWidgetAdViewAdLoadedEvent", Map.copyOf( params ) );
         }
 
         if ( containerView != null )
@@ -147,7 +147,7 @@ class AppLovinMAXAdViewPlatformWidget
         {
             // Copy the `params` for the next sending, as they are consumed (i.e., released) by
             // `MethodChannel.invokeMethod()` through `fireCallback()`.
-            AppLovinMAX.getInstance().fireCallback( "OnPlatformWidgetAdViewAdLoadFailedEvent", Map.copyOf( params ) );
+            AppLovinMAX.getInstance().fireCallback( "OnWidgetAdViewAdLoadFailedEvent", Map.copyOf( params ) );
         }
 
         if ( containerView != null )
