@@ -31,11 +31,9 @@ enum AdViewPosition {
   const AdViewPosition(this.value);
 }
 
-///
 /// Represents content ratings for the ads shown to users.
 ///
-/// They correspond to IQG Media Ratings.
-///
+/// These ratings correspond to IQG Media Ratings.
 enum AdContentRating {
   none(0),
   allAudiences(1),
@@ -49,9 +47,7 @@ enum AdContentRating {
   const AdContentRating(this.value);
 }
 
-///
 /// Represents gender.
-///
 enum UserGender {
   unknown('U'),
   female('F'),
@@ -65,10 +61,8 @@ enum UserGender {
   const UserGender(this.value);
 }
 
-///
-/// This enum represents the user's geography used to determine the type of
-/// consent flow shown to the user.
-///
+/// Represents the user's geography used to determine the type of consent flow
+/// shown to the user.
 enum ConsentFlowUserGeography {
   /// User's geography is unknown.
   unknown('U'),
@@ -86,10 +80,8 @@ enum ConsentFlowUserGeography {
   const ConsentFlowUserGeography(this.value);
 }
 
-///
-/// AppLovin SDK-defined app tracking transparency status values (extended to include "unavailable"
-/// state on iOS before iOS14).
-///
+/// AppLovin SDK-defined app tracking transparency status values (extended to
+/// include "unavailable" state on iOS before iOS14).
 enum AppTrackingStatus {
   /// Device is on iOS before iOS14, AppTrackingTransparency.framework is not
   /// available.
@@ -118,28 +110,18 @@ enum AppTrackingStatus {
   const AppTrackingStatus(this.value);
 }
 
-///
 /// Represents errors for CMP flow.
-///
 enum CMPErrorCode {
-  ///
   /// Indicates that an unspecified error has occurred.
-  ///
   unspecified(-1),
 
-  ///
   /// Indicates that the CMP has not been integrated correctly.
-  ///
   integrationError(1),
 
-  ///
   /// Indicates that the CMP form is unavailable.
-  ///
   formUnavailable(2),
 
-  ///
   /// Indicates that the CMP form is not required.
-  ///
   formNotRequired(3);
 
   /// @nodoc
@@ -149,20 +131,18 @@ enum CMPErrorCode {
   const CMPErrorCode(this.value);
 }
 
-///
-/// Represents load state of an ad in the waterfall.
+/// Represents the load state of an ad in the waterfall.
 ///
 /// This enum contains possible states of an ad in the waterfall the adapter
 /// response info could represent.
 enum AdLoadState {
   /// The AppLovin MAX SDK did not attempt to load an ad from this network in
-  /// the waterfall because an ad higher in the waterfall loaded
-  /// successfully.
+  /// the waterfall because an ad higher in the waterfall loaded successfully.
   adLoadNotAttempted,
 
   /// An ad successfully loaded from this network.
   adLoaded,
 
   /// An ad failed to load from this network.
-  adFailedToLoad,
+  adFailedToLoad;
 }
