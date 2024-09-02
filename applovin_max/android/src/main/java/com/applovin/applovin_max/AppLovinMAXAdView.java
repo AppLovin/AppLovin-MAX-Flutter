@@ -3,11 +3,7 @@ package com.applovin.applovin_max;
 import android.content.Context;
 import android.view.View;
 
-import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdFormat;
-import com.applovin.mediation.MaxAdRevenueListener;
-import com.applovin.mediation.MaxAdViewAdListener;
-import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
 import com.applovin.sdk.AppLovinSdk;
 
@@ -17,24 +13,82 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.platform.PlatformView;
 
 /**
  * Created by Thomas So on July 17 2022
  */
 public class AppLovinMAXAdView
-        implements PlatformView, MaxAdViewAdListener, MaxAdRevenueListener
+        implements PlatformView
 {
-    private static final Map<String, MaxAdView> adViewInstances = new HashMap<>( 2 );
+    private static final Map<String, AppLovinMAXAdViewWidget> widgetInstances          = new HashMap<>( 2 );
+    private static final Map<String, AppLovinMAXAdViewWidget> preloadedWidgetInstances = new HashMap<>( 2 );
+
+    @Nullable
+    private AppLovinMAXAdViewWidget widget;
 
     private final MethodChannel channel;
-    private final MaxAdView     adView;
 
     public static MaxAdView getInstance(final String adUnitId)
     {
-        return adViewInstances.get( adUnitId );
+        AppLovinMAXAdViewWidget widget = preloadedWidgetInstances.get( adUnitId );
+        if ( widget == null ) widget = widgetInstances.get( adUnitId );
+        return ( widget != null ) ? widget.getAdView() : null;
+    }
+
+    public static void preloadWidgetAdView(final String adUnitId,
+                                           final MaxAdFormat adFormat,
+                                           @Nullable final String placement,
+                                           @Nullable final String customData,
+                                           @Nullable final Map<String, Object> extraParameters,
+                                           @Nullable final Map<String, Object> localExtraParameters,
+                                           final Result result,
+                                           final AppLovinSdk sdk,
+                                           final Context context)
+    {
+        AppLovinMAXAdViewWidget preloadedWidget = preloadedWidgetInstances.get( adUnitId );
+        if ( preloadedWidget != null )
+        {
+            result.error( AppLovinMAX.TAG, "Cannot preload more than once for a single Ad Unit ID.", null );
+            return;
+        }
+
+        preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, true, sdk, context );
+        preloadedWidgetInstances.put( adUnitId, preloadedWidget );
+
+        preloadedWidget.setPlacement( placement );
+        preloadedWidget.setCustomData( customData );
+        preloadedWidget.setExtraParameters( extraParameters );
+        preloadedWidget.setLocalExtraParameters( localExtraParameters );
+
+        preloadedWidget.loadAd();
+
+        result.success( null );
+    }
+
+    public static void destroyWidgetAdView(final String adUnitId, final Result result)
+    {
+        AppLovinMAXAdViewWidget preloadedWidget = preloadedWidgetInstances.get( adUnitId );
+        if ( preloadedWidget == null )
+        {
+            result.error( AppLovinMAX.TAG, "No widget found to destroy", null );
+            return;
+        }
+
+        if ( preloadedWidget.hasContainerView() )
+        {
+            result.error( AppLovinMAX.TAG, "Cannot destroy - currently in use", null );
+            return;
+        }
+
+        preloadedWidgetInstances.remove( adUnitId );
+
+        preloadedWidget.detachAdView();
+        preloadedWidget.destroy();
+
+        result.success( null );
     }
 
     public AppLovinMAXAdView(final int viewId,
@@ -51,61 +105,47 @@ public class AppLovinMAXAdView
     {
         String uniqueChannelName = "applovin_max/adview_" + viewId;
         channel = new MethodChannel( messenger, uniqueChannelName );
-        channel.setMethodCallHandler( new MethodChannel.MethodCallHandler()
-        {
-            @Override
-            public void onMethodCall(@NonNull final MethodCall call, @NonNull final MethodChannel.Result result)
+        channel.setMethodCallHandler( (call, result) -> {
+            if ( "startAutoRefresh".equals( call.method ) )
             {
-                if ( "startAutoRefresh".equals( call.method ) )
-                {
-                    adView.startAutoRefresh();
-                    result.success( null );
-                }
-                else if ( "stopAutoRefresh".equals( call.method ) )
-                {
-                    adView.stopAutoRefresh();
-                    result.success( null );
-                }
-                else
-                {
-                    result.notImplemented();
-                }
+                widget.setAutoRefresh( true );
+                result.success( null );
+            }
+            else if ( "stopAutoRefresh".equals( call.method ) )
+            {
+                widget.setAutoRefresh( false );
+                result.success( null );
+            }
+            else
+            {
+                result.notImplemented();
             }
         } );
 
-        adView = new MaxAdView( adUnitId, adFormat, sdk, context );
-        adView.setListener( this );
-        adView.setRevenueListener( this );
-
-        adView.setPlacement( placement );
-        adView.setCustomData( customData );
-
-        adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
-
-        if ( extraParameters != null )
+        widget = preloadedWidgetInstances.get( adUnitId );
+        if ( widget != null )
         {
-            for ( Map.Entry<String, Object> entry : extraParameters.entrySet() )
+            // Attach the preloaded widget if possible, otherwise create a new one for the
+            // same adUnitId
+            if ( !widget.hasContainerView() )
             {
-                adView.setExtraParameter( entry.getKey(), (String) entry.getValue() );
+                widget.setAutoRefresh( isAutoRefreshEnabled );
+                widget.attachAdView( this );
+                return;
             }
         }
 
-        if ( localExtraParameters != null )
-        {
-            for ( Map.Entry<String, Object> entry : localExtraParameters.entrySet() )
-            {
-                adView.setLocalExtraParameter( entry.getKey(), entry.getValue() );
-            }
-        }
+        widget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, sdk, context );
+        widgetInstances.put( adUnitId, widget );
 
-        adView.loadAd();
+        widget.setPlacement( placement );
+        widget.setCustomData( customData );
+        widget.setExtraParameters( extraParameters );
+        widget.setLocalExtraParameters( localExtraParameters );
+        widget.setAutoRefresh( isAutoRefreshEnabled );
 
-        if ( !isAutoRefreshEnabled )
-        {
-            adView.stopAutoRefresh();
-        }
-
-        adViewInstances.put( adUnitId, adView );
+        widget.attachAdView( this );
+        widget.loadAd();
     }
 
     /// Flutter Lifecycle Methods
@@ -114,7 +154,7 @@ public class AppLovinMAXAdView
     @Override
     public View getView()
     {
-        return adView;
+        return widget != null ? widget.getAdView() : null;
     }
 
     @Override
@@ -126,13 +166,17 @@ public class AppLovinMAXAdView
     @Override
     public void dispose()
     {
-        if ( adView != null )
+        if ( widget != null )
         {
-            adViewInstances.remove( adView.getAdUnitId() );
+            widget.detachAdView();
 
-            adView.destroy();
-            adView.setListener( null );
-            adView.setRevenueListener( null );
+            AppLovinMAXAdViewWidget preloadedWidget = preloadedWidgetInstances.get( widget.getAdView().getAdUnitId() );
+
+            if ( widget != preloadedWidget )
+            {
+                widgetInstances.remove( widget.getAdView().getAdUnitId() );
+                widget.destroy();
+            }
         }
 
         if ( channel != null )
@@ -141,54 +185,8 @@ public class AppLovinMAXAdView
         }
     }
 
-    @Override
-    public void onAdLoaded(@NonNull final MaxAd ad)
+    public void sendEvent(final String event, final Map<String, Object> params)
     {
-        sendEvent( "OnAdViewAdLoadedEvent", ad );
-    }
-
-    @Override
-    public void onAdLoadFailed(@NonNull final String adUnitId, @NonNull final MaxError error)
-    {
-        Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
-        AppLovinMAX.getInstance().fireCallback( "OnAdViewAdLoadFailedEvent", params, channel );
-    }
-
-    @Override
-    public void onAdClicked(@NonNull final MaxAd ad)
-    {
-        sendEvent( "OnAdViewAdClickedEvent", ad );
-    }
-
-    @Override
-    public void onAdExpanded(@NonNull final MaxAd ad)
-    {
-        sendEvent( "OnAdViewAdExpandedEvent", ad );
-    }
-
-    @Override
-    public void onAdCollapsed(@NonNull final MaxAd ad)
-    {
-        sendEvent( "OnAdViewAdCollapsedEvent", ad );
-    }
-
-    @Override
-    public void onAdDisplayed(@NonNull final MaxAd ad) { }
-
-    @Override
-    public void onAdDisplayFailed(@NonNull final MaxAd ad, @NonNull final MaxError error) { }
-
-    @Override
-    public void onAdHidden(@NonNull final MaxAd ad) { }
-
-    @Override
-    public void onAdRevenuePaid(@NonNull final MaxAd ad)
-    {
-        sendEvent( "OnAdViewAdRevenuePaidEvent", ad );
-    }
-
-    private void sendEvent(final String event, final MaxAd ad)
-    {
-        AppLovinMAX.getInstance().fireCallback( event, ad, channel );
+        AppLovinMAX.getInstance().fireCallback( event, params, channel );
     }
 }

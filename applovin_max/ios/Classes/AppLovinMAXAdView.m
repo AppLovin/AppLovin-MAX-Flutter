@@ -5,29 +5,87 @@
 //  Created by Thomas So on 7/17/22.
 //
 
-#import "AppLovinMAXAdView.h"
 #import "AppLovinMAX.h"
+#import "AppLovinMAXAdView.h"
+#import "AppLovinMAXAdViewWidget.h"
 #import <AppLovinSDK/AppLovinSDK.h>
 
-@interface AppLovinMAXAdView()<MAAdViewAdDelegate, MAAdRevenueDelegate>
+@interface AppLovinMAXAdView()
 @property (nonatomic, strong) FlutterMethodChannel *channel;
-@property (nonatomic, strong) MAAdView *adView;
+@property (nonatomic, strong, nullable) AppLovinMAXAdViewWidget *widget;
 @end
 
 @implementation AppLovinMAXAdView
 
-static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
+static NSMutableDictionary<NSString *, AppLovinMAXAdViewWidget *> *widgetInstances;
+static NSMutableDictionary<NSString *, AppLovinMAXAdViewWidget *> *preloadedWidgetInstances;
 
 + (void)initialize
 {
     [super initialize];
-    adViewInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
+    widgetInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
+    preloadedWidgetInstances = [NSMutableDictionary dictionaryWithCapacity: 2];
 }
 
 + (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier
 {
-    return adViewInstances[adUnitIdentifier];
+    return (preloadedWidgetInstances[adUnitIdentifier] ?: widgetInstances[adUnitIdentifier]).adView;
 }
+
+#pragma mark - Preloading
+
++ (void)preloadWidgetAdView:(NSString *)adUnitIdentifier
+                   adFormat:(MAAdFormat *)adFormat
+                  placement:(nullable NSString *)placement
+                 customData:(nullable NSString *)customData
+            extraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters
+       localExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
+                 withResult:(FlutterResult)result
+{
+    AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[adUnitIdentifier];
+    if ( preloadedWidget )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot preload more than once for a single Ad Unit ID." details: nil]);
+        return;
+    }
+    
+    preloadedWidget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: YES];
+    preloadedWidgetInstances[adUnitIdentifier] = preloadedWidget;
+    
+    preloadedWidget.placement = placement;
+    preloadedWidget.customData = customData;
+    preloadedWidget.extraParameters = extraParameters;
+    preloadedWidget.localExtraParameters = localExtraParameters;
+    
+    [preloadedWidget loadAd];
+    
+    result(nil);
+}
+
++ (void)destroyWidgetAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result
+{
+    AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[adUnitIdentifier];
+    if ( !preloadedWidget )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"No widget found to destroy" details: nil]);
+        return;
+    }
+    
+    if ( [preloadedWidget hasContainerView] )
+    {
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot destroy - currently in use" details: nil]);
+        return;
+    }
+    
+    [preloadedWidgetInstances removeObjectForKey: adUnitIdentifier];
+    
+    [preloadedWidget detachAdView];
+    [preloadedWidget destroy];
+    
+    result(nil);
+}
+
+#pragma mark - AdView
 
 - (instancetype)initWithFrame:(CGRect)frame
                        viewId:(int64_t)viewId
@@ -52,12 +110,12 @@ static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
             
             if ( [@"startAutoRefresh" isEqualToString: call.method] )
             {
-                [weakSelf.adView startAutoRefresh];
+                [weakSelf.widget.adView startAutoRefresh];
                 result(nil);
             }
             else if ( [@"stopAutoRefresh" isEqualToString: call.method] )
             {
-                [weakSelf.adView stopAutoRefresh];
+                [weakSelf.widget.adView stopAutoRefresh];
                 result(nil);
             }
             else
@@ -66,91 +124,58 @@ static NSMutableDictionary<NSString *, MAAdView *> *adViewInstances;
             }
         }];
         
-        self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat sdk: sdk];
-        self.adView.frame = frame;
-        self.adView.delegate = self;
-        self.adView.revenueDelegate = self;
-        
-        self.adView.placement = placement;
-        self.adView.customData = customData;
-        
-        [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
-        
-        for ( NSString *key in extraParameters )
+        self.widget = preloadedWidgetInstances[adUnitId];
+        if ( self.widget )
         {
-            [self.adView setExtraParameterForKey: key value: extraParameters[key]];
+            // Attach the preloaded widget if possible, otherwise create a new one for the
+            // same adUnitId
+            if ( ![self.widget hasContainerView] )
+            {
+                self.widget.autoRefreshEnabled = isAutoRefreshEnabled;
+                [self.widget attachAdView: self];
+                return self;
+            }
         }
         
-        for ( NSString *key in localExtraParameters )
-        {
-            [self.adView setLocalExtraParameterForKey: key value: localExtraParameters[key]];
-        }
+        self.widget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat];
+        widgetInstances[adUnitId] = self.widget;
         
-        [self.adView loadAd];
+        self.widget.placement = placement;
+        self.widget.customData = customData;
+        self.widget.extraParameters = extraParameters;
+        self.widget.localExtraParameters = localExtraParameters;
+        self.widget.autoRefreshEnabled = isAutoRefreshEnabled;
         
-        if ( !isAutoRefreshEnabled )
-        {
-            [self.adView stopAutoRefresh];
-        }
-
-        adViewInstances[adUnitId] = self.adView;
+        [self.widget attachAdView: self];
+        [self.widget loadAd];
     }
     return self;
 }
 
 - (UIView *)view
 {
-    return self.adView;
+    return self.widget.adView;
 }
 
 - (void)dealloc
 {
-    [adViewInstances removeObjectForKey: self.adView.adUnitIdentifier];
-
+    [self.widget detachAdView];
+    
+    AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[self.widget.adView.adUnitIdentifier];
+    
+    if ( self.widget != preloadedWidget )
+    {
+        [widgetInstances removeObjectForKey: self.widget.adView.adUnitIdentifier];
+        [self.widget destroy];
+    }
+    
     [self.channel setMethodCallHandler: nil];
     self.channel = nil;
 }
 
-#pragma mark - Ad Callbacks
-
-- (void)didLoadAd:(MAAd *)ad
+- (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
 {
-    [self sendEventWithName: @"OnAdViewAdLoadedEvent" ad: ad];
-}
-
-- (void)didFailToLoadAdForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
-{
-    NSDictionary *body = [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error];
-    [[AppLovinMAX shared] sendEventWithName: @"OnAdViewAdLoadFailedEvent" body: body channel: self.channel];
-}
-
-- (void)didClickAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdClickedEvent" ad: ad];
-}
-
-- (void)didExpandAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdExpandedEvent" ad: ad];
-}
-
-- (void)didCollapseAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdCollapsedEvent" ad: ad];
-}
-
-- (void)didPayRevenueForAd:(MAAd *)ad
-{
-    [self sendEventWithName: @"OnAdViewAdRevenuePaidEvent" ad: ad];
-}
-
-- (void)didDisplayAd:(MAAd *)ad {}
-- (void)didFailToDisplayAd:(MAAd *)ad withError:(MAError *)error {}
-- (void)didHideAd:(MAAd *)ad {}
-
-- (void)sendEventWithName:(NSString *)name ad:(MAAd *)ad
-{
-    [[AppLovinMAX shared] sendEventWithName: name ad: ad channel: self.channel];
+    [[AppLovinMAX shared] sendEventWithName: name body: body channel: self.channel];
 }
 
 @end

@@ -160,3 +160,19 @@ class AppOpenAdListener extends FullscreenAdListener {
           onAdRevenuePaidCallback: onAdRevenuePaidCallback,
         );
 }
+
+/// Defines a platform widget listener for an AdView ad (Banner / MREC) to be
+/// notified about ad view events.
+class WidgetAdViewAdListener {
+  /// The SDK invokes this method when a new ad has been loaded.
+  final Function(MaxAd ad) onAdLoadedCallback;
+
+  /// The SDK invokes this method when an ad could not be retrieved.
+  final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
+
+  /// @nodoc
+  const WidgetAdViewAdListener({
+    required this.onAdLoadedCallback,
+    required this.onAdLoadFailedCallback,
+  });
+}

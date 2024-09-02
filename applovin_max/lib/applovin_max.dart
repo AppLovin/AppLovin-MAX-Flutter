@@ -27,6 +27,7 @@ class AppLovinMAX {
   static InterstitialListener? _interstitialListener;
   static RewardedAdListener? _rewardedAdListener;
   static AppOpenAdListener? _appOpenAdListener;
+  static WidgetAdViewAdListener? _widgetAdViewAdListener;
 
   /// @nodoc
   ///
@@ -130,6 +131,13 @@ class AppLovinMAX {
         _appOpenAdListener?.onAdHiddenCallback.call(createAd(arguments));
       } else if ("OnAppOpenAdRevenuePaid" == method) {
         _appOpenAdListener?.onAdRevenuePaidCallback?.call(createAd(arguments));
+      }
+
+      /// Platform Widget AdView Ad Events
+      else if ("OnWidgetAdViewAdLoadedEvent" == method) {
+        _widgetAdViewAdListener?.onAdLoadedCallback.call(createAd(arguments));
+      } else if ("OnWidgetAdViewAdLoadFailedEvent" == method) {
+        _widgetAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createError(arguments));
       }
     });
 
@@ -695,6 +703,69 @@ class AppLovinMAX {
       'value': value,
     });
   }
+
+  //
+  // AdView Preloading
+  //
+
+  /// Sets a [WidgetAdViewAdListener] to receive notifications about
+  /// [MaxAdView] ad events when preloading a [MaxAdView] platform widget with
+  /// [preloadWidgetAdView].
+  static void setWidgetAdViewAdListener(WidgetAdViewAdListener listener) {
+    _widgetAdViewAdListener = listener;
+  }
+
+  /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with
+  /// the given [adFormat] before it is mounted in the widget tree.
+  ///
+  /// When you mount a [MaxAdView] with the preloaded [adUnitId], it will be
+  /// constructed using the preloaded [MaxAdView] platform widget, allowing ads
+  /// to be displayed more quickly. After unmounting the [MaxAdView], the
+  /// preloaded [MaxAdView] platform widget will not be destroyed; instead, it
+  /// will be reused for the next mount. You must manually destroy it when it is
+  /// no longer needed.
+  ///
+  /// You can preload only one [MaxAdView] platform widget for a single Ad Unit
+  /// ID. If you mount two [MaxAdView] widgets with the same Ad Unit ID, the
+  /// first [MaxAdView] will use the preloaded platform widget, while the second
+  /// [MaxAdView] will create its own platform widget and destroy it upon
+  /// unmounting.
+  ///
+  /// Returns a `Future<void>` that completes when the preload operation has
+  /// been successfully started. If the preload operation fails to start, the
+  /// `Future` completes with an error.
+  static Future<void> preloadWidgetAdView(
+    String adUnitId,
+    AdFormat adFormat, {
+    String? placement,
+    String? customData,
+    Map<String, String?>? extraParameters,
+    Map<String, dynamic>? localExtraParameters,
+  }) {
+    return channel.invokeMethod('preloadWidgetAdView', {
+      'ad_unit_id': adUnitId,
+      'ad_format': adFormat.value,
+      'placement': placement,
+      'custom_data': customData,
+      'extra_parameters': extraParameters,
+      'local_extra_parameters': localExtraParameters,
+    });
+  }
+
+  /// Destroys a [MaxAdView] platform widget for the specified [adUnitId].
+  ///
+  /// Returns a `Future<void>` that completes the destruction of the [MaxAdView]
+  /// platform widget. If the destruction operation fails, the `Future`
+  /// completes with an error.
+  static Future<void> destroyWidgetAdView(String adUnitId) {
+    return channel.invokeMethod('destroyWidgetAdView', {
+      'ad_unit_id': adUnitId,
+    });
+  }
+
+  //
+  // Segment Targeting
+  //
 
   /// Adds a segment.
   static void addSegment(int key, List<int> values) {

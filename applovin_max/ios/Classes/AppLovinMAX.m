@@ -377,7 +377,6 @@ static FlutterMethodChannel *ALSharedChannel;
     
     for ( MASegment *segment in segments )
     {
-
         map[segment.key] = segment.values;
     }
 
@@ -1035,7 +1034,20 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logInvalidAdFormat:(MAAdFormat *)adFormat
 {
-    [self log: @"invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+    [self logInvalidAdFormat: adFormat withResult: nil];
+}
+
+- (void)logInvalidAdFormat:(MAAdFormat *)adFormat withResult:(nullable FlutterResult)result
+{
+    NSString *message = [NSString stringWithFormat: @"Invalid ad format: %@, from %@", adFormat, [NSThread callStackSymbols]];
+    
+    if ( !result )
+    {
+        NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
+        return;
+    }
+    
+    result([FlutterError errorWithCode: TAG message: message details: nil]);
 }
 
 - (void)logUninitializedAccessError:(NSString *)callingMethod
@@ -1045,7 +1057,7 @@ static FlutterMethodChannel *ALSharedChannel;
 
 - (void)logUninitializedAccessError:(NSString *)callingMethod withResult:(nullable FlutterResult)result
 {
-    NSString *message = [NSString stringWithFormat:@"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
+    NSString *message = [NSString stringWithFormat: @"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
 
     if ( !result )
     {
@@ -1950,6 +1962,49 @@ static FlutterMethodChannel *ALSharedChannel;
         [self showAppOpenAdForAdUnitIdentifier: adUnitId placement: placement customData: customData];
         
         result(nil);
+    }
+    else if ( [@"preloadWidgetAdView" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        NSString *adFormatStr = call.arguments[@"ad_format"];
+        id rawPlacement = call.arguments[@"placement"];
+        id rawCustomData = call.arguments[@"custom_data"];
+        id rawExtraParameters = call.arguments[@"extra_parameters"];
+        id rawLocalExtraParameters = call.arguments[@"local_extra_parameters"];
+
+        NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
+        NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
+        NSDictionary<NSString *, id> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
+        NSDictionary<NSString *, id> *localExtraParameters = ( rawLocalExtraParameters != [NSNull null] ) ? rawLocalExtraParameters : nil;
+
+        MAAdFormat *adFormat;
+    
+        if ( [MAAdFormat.banner.label al_isEqualToStringIgnoringCase: adFormatStr] )
+        {
+            adFormat = DEVICE_SPECIFIC_ADVIEW_AD_FORMAT;
+        }
+        else if ( [MAAdFormat.mrec.label al_isEqualToStringIgnoringCase: adFormatStr] )
+        {
+            adFormat = MAAdFormat.mrec;
+        }
+        else
+        {
+            [self logInvalidAdFormat: adFormat withResult: result];
+            return;
+        }
+    
+        [AppLovinMAXAdView preloadWidgetAdView: adUnitId
+                                      adFormat: adFormat
+                                     placement: placement
+                                    customData: customData
+                               extraParameters: extraParameters
+                          localExtraParameters: localExtraParameters
+                                    withResult: result];
+    }
+    else if ( [@"destroyWidgetAdView" isEqualToString: call.method] )
+    {
+        NSString *adUnitId = call.arguments[@"ad_unit_id"];
+        [AppLovinMAXAdView destroyWidgetAdView: adUnitId withResult: result];
     }
     else if ( [@"addSegment" isEqualToString: call.method] )
     {
