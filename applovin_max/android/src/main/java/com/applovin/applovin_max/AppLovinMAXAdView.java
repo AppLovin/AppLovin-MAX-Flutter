@@ -73,7 +73,7 @@ public class AppLovinMAXAdView
         AppLovinMAXAdViewWidget preloadedWidget = preloadedWidgetInstances.get( adUnitId );
         if ( preloadedWidget == null )
         {
-            result.error( AppLovinMAX.TAG, "No platform widget found to destroy", null );
+            result.error( AppLovinMAX.TAG, "No widget found to destroy", null );
             return;
         }
 

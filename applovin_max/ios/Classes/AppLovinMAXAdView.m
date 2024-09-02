@@ -45,7 +45,7 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewWidget *> *preloadedWidg
     AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[adUnitIdentifier];
     if ( preloadedWidget )
     {
-        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot preload more than one for a single Ad Unit ID." details: nil]);
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"Cannot preload more than once for a single Ad Unit ID." details: nil]);
         return;
     }
     
@@ -67,7 +67,7 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewWidget *> *preloadedWidg
     AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[adUnitIdentifier];
     if ( !preloadedWidget )
     {
-        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"No native UI component found to destroy" details: nil]);
+        result([FlutterError errorWithCode: @"AppLovinMAX" message: @"No widget found to destroy" details: nil]);
         return;
     }
     
