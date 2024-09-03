@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.11.1
 * Add APIs to preload widgets for banners and MRECs. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-mrec-ads#ad-preloading).
 ## 3.11.0
 * Replace targeting data APIs with new numeric segments targeting APIs. For migration instructions, please see [here](https://developers.applovin.com/en/flutter/overview/data-and-keyword-passing/#segment-targeting).
