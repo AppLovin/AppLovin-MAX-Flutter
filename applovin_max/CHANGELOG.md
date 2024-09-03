@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 3.11.1
 * Depends on Android SDK v12.6.1 and iOS SDK v12.6.1.
 * Add APIs to preload widgets for banners and MRECs. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-mrec-ads#ad-preloading).
 ## 3.11.0
