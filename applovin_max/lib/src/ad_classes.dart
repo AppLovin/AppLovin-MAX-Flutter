@@ -21,19 +21,21 @@ class MaxAd {
   /// * "" - An empty string, if revenue and precision are not valid (for example, in test mode).
   final String revenuePrecision;
 
-  /// The creative ID tied to the ad, if any. You can report creative issues to the corresponding ad network using this ID.
+  /// The creative ID tied to the ad, if any. You can report creative issues to
+  /// the corresponding ad network using this ID.
   final String creativeId;
 
-  /// The DSP network that provided the loaded ad when the ad is served through AppLovin Exchange.
+  /// The DSP network that provided the loaded ad when the ad is served through
+  /// AppLovin Exchange.
   final String dspName;
 
-  ///  The placement name that you assign when you integrate each ad format.
+  /// The placement name that you assign when you integrate each ad format.
   final String placement;
 
   /// The underlying waterfall of ad responses.
   final MaxAdWaterfallInfo waterfall;
 
-  /// An instance of [MaxNativeAd], available only for native ads
+  /// An instance of [MaxNativeAd], available only for native ads.
   final MaxNativeAd? nativeAd;
 
   /// @nodoc
@@ -90,15 +92,15 @@ class MaxReward {
   }
 }
 
-/// Represents a native ad
+/// Represents a native ad.
 class MaxNativeAd {
   /// The native ad title text.
   final String? title;
 
-  /// The native ad advertiser text
+  /// The native ad advertiser text.
   final String? advertiser;
 
-  /// The native ad body text
+  /// The native ad body text.
   final String? body;
 
   /// The native ad CTA button text.
@@ -107,7 +109,7 @@ class MaxNativeAd {
   /// The star rating of the native ad in the [0.0, 5.0] range if provided by the network.
   final double? starRating;
 
-  /// The aspect ratio for the media view if provided by the network
+  /// The aspect ratio for the media view if provided by the network.
   final double? mediaContentAspectRatio;
 
   /// Whether or not the icon image is available.
@@ -193,8 +195,8 @@ class MaxConfiguration {
   /// The user's geography used to determine the type of consent flow shown to the user.
   final ConsentFlowUserGeography? consentFlowUserGeography;
 
-  // Whether or not the user authorizes access to app-related data that can be
-  // used for tracking the user or the device.
+  /// Whether or not the user authorizes access to app-related data that can be
+  /// used for tracking the user or the device.
   final AppTrackingStatus? appTrackingStatus;
 
   /// @nodoc
@@ -264,7 +266,7 @@ class MaxAdWaterfallInfo {
   /// The ad waterfall test name.
   final String testName;
 
-  /// The list of [MAAdapterResponseInfo] info objects relating to each ad in
+  /// The list of [MaxNetworkResponse] info objects relating to each ad in
   /// the waterfall, ordered by their position.
   final List<MaxNetworkResponse> networkResponses;
 
@@ -296,14 +298,15 @@ class MaxAdWaterfallInfo {
 
 /// Represents an ad response in a waterfall.
 class MaxNetworkResponse {
-  /// The state of the ad that this [MAAdapterResponseInfo] object
-  /// represents. For more info, see the [AdLoadState] enum.
+  /// The state of the ad that this [MaxNetworkResponse] object represents. For
+  /// more info, see the [AdLoadState] enum.
   final AdLoadState adLoadState;
 
   /// The mediated network that this adapter response info object represents.
   final MaxMediatedNetworkInfo mediatedNetwork;
 
-  /// The credentials used to load an ad from this adapter, as entered in the AppLovin MAX dashboard.
+  /// The credentials used to load an ad from this adapter, as entered in the
+  /// AppLovin MAX dashboard.
   final Map<String, dynamic> credentials;
 
   /// The amount of time the network took to load (either successfully or not)
