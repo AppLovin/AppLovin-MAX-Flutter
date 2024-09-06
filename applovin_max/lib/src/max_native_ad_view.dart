@@ -422,10 +422,12 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
   const MaxNativeAdCallToActionView({
     super.key,
     this.style,
+    this.textWidget,
   });
 
   /// The button style to apply.
   final ButtonStyle? style;
+  final Widget? textWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +444,7 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
           key: _NativeAdViewScope.of(context)._callToActionViewKey,
           style: style,
           onPressed: () {},
-          child: Text(
+          child: textWidget != null ? textWidget : Text(
             _NativeAdViewScope.of(context)._nativeAd?.callToAction?.toUpperCase() ?? '',
           ),
         ),
