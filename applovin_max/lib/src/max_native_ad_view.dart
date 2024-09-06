@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+const String _viewType = "applovin_max/nativeadview";
+
 /// An inherited widget for [MaxNativeAdView] to propagate information down the tree.
 class _NativeAdViewScope extends InheritedWidget {
   const _NativeAdViewScope({
@@ -117,58 +119,47 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
   @override
   Widget build(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return _NativeAdViewScope(
-          nativeAdViewState: this,
-          child: SizedBox(
-            key: _nativeAdViewKey,
-            width: widget.width,
-            height: widget.height,
-            child: Stack(children: <Widget>[
-              LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+    return _NativeAdViewScope(
+      nativeAdViewState: this,
+      child: SizedBox(
+        key: _nativeAdViewKey,
+        width: widget.width,
+        height: widget.height,
+        child: Stack(
+          children: <Widget>[
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
                 return widget.child;
-              }),
+              },
+            ),
+            if (defaultTargetPlatform == TargetPlatform.android)
               AndroidView(
-                viewType: "applovin_max/nativeadview",
-                creationParams: <String, dynamic>{
-                  "ad_unit_id": widget.adUnitId,
-                  "custom_data": widget.customData,
-                  "placement": widget.placement,
-                  "extra_parameters": widget.extraParameters,
-                  "local_extra_parameters": widget.localExtraParameters,
-                },
+                viewType: _viewType,
+                creationParams: _createParams(),
                 creationParamsCodec: const StandardMessageCodec(),
                 onPlatformViewCreated: _onMaxNativeAdViewCreated,
               ),
-            ]),
-          ));
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return _NativeAdViewScope(
-          nativeAdViewState: this,
-          child: SizedBox(
-            key: _nativeAdViewKey,
-            width: widget.width,
-            height: widget.height,
-            child: Stack(children: <Widget>[
-              LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                return widget.child;
-              }),
+            if (defaultTargetPlatform == TargetPlatform.iOS)
               UiKitView(
-                  viewType: "applovin_max/nativeadview",
-                  creationParams: <String, dynamic>{
-                    "ad_unit_id": widget.adUnitId,
-                    "custom_data": widget.customData,
-                    "placement": widget.placement,
-                    "extra_parameters": widget.extraParameters,
-                    "local_extra_parameters": widget.localExtraParameters,
-                  },
-                  creationParamsCodec: const StandardMessageCodec(),
-                  onPlatformViewCreated: _onMaxNativeAdViewCreated),
-            ]),
-          ));
-    }
+                viewType: _viewType,
+                creationParams: _createParams(),
+                creationParamsCodec: const StandardMessageCodec(),
+                onPlatformViewCreated: _onMaxNativeAdViewCreated,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    return Container();
+  Map<String, dynamic> _createParams() {
+    return {
+      "ad_unit_id": widget.adUnitId,
+      "custom_data": widget.customData,
+      "placement": widget.placement,
+      "extra_parameters": widget.extraParameters,
+      "local_extra_parameters": widget.localExtraParameters,
+    };
   }
 
   void _handleControllerChanged() {
@@ -176,73 +167,92 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   }
 
   void _onMaxNativeAdViewCreated(int id) {
-    _methodChannel = MethodChannel('applovin_max/nativeadview_$id');
+    _methodChannel = MethodChannel('${_viewType}_$id');
     _methodChannel?.setMethodCallHandler(_handleNativeMethodCall);
   }
 
   Future<dynamic> _handleNativeMethodCall(MethodCall call) async {
-    var method = call.method;
-    var arguments = call.arguments;
+    try {
+      final String method = call.method;
+      final Map<dynamic, dynamic>? arguments = call.arguments;
 
-    if ("OnNativeAdLoadedEvent" == method) {
-      MaxAd maxAd = AppLovinMAX.createAd(arguments);
-      widget.listener?.onAdLoadedCallback(maxAd);
+      if (arguments == null) {
+        throw ArgumentError('Arguments for method $method cannot be null.');
+      }
 
-      // add native ad components in the platform
-      _addNativeAdComponent(_iconViewKey, "addIconView");
-      _addNativeAdComponent(_optionsViewKey, "addOptionsView");
-      _addNativeAdComponent(_mediaViewKey, "addMediaView");
-      _addNativeAdComponent(_titleViewKey, "addTitleView");
-      _addNativeAdComponent(_advertiserViewKey, "addAdvertiserView");
-      _addNativeAdComponent(_bodyViewKey, "addBodyView");
-      _addNativeAdComponent(_callToActionViewKey, "addCallToActionView");
+      if ("OnNativeAdLoadedEvent" == method) {
+        MaxAd maxAd = AppLovinMAX.createMaxAd(arguments);
+        widget.listener?.onAdLoadedCallback(maxAd);
 
-      // register clickable views and render the ad in the platform
-      _methodChannel?.invokeMethod("renderAd");
+        // Add or update all native ad asset views (e.g., title, body, icon) on the platform.
+        _updateAllAssetViews();
 
-      // update the all native ad components with the native ad
-      _applyNativeAdToComponents(maxAd);
-    } else if ("OnNativeAdLoadFailedEvent" == method) {
-      widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createError(arguments));
-    } else if ("OnNativeAdClickedEvent" == method) {
-      widget.listener?.onAdClickedCallback(AppLovinMAX.createAd(arguments));
-    } else if ("OnNativeAdRevenuePaidEvent" == method) {
-      widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createAd(arguments));
+        // Register clickable views and initiate the rendering of the native ad on the platform.
+        await _methodChannel?.invokeMethod("renderAd");
+
+        // Update the Flutter asset views with the native ad
+        setState(() {
+          _nativeAd = maxAd.nativeAd;
+        });
+      } else if ("OnNativeAdLoadFailedEvent" == method) {
+        widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createMaxError(arguments));
+      } else if ("OnNativeAdClickedEvent" == method) {
+        widget.listener?.onAdClickedCallback(AppLovinMAX.createMaxAd(arguments));
+      } else if ("OnNativeAdRevenuePaidEvent" == method) {
+        widget.listener?.onAdRevenuePaidCallback?.call(AppLovinMAX.createMaxAd(arguments));
+      } else {
+        throw MissingPluginException('No handler for method $method');
+      }
+    } catch (e) {
+      debugPrint('Error handling native method call ${call.method} with arguments ${call.arguments}: $e');
     }
   }
 
-  // add a native ad component in the platform or update with the current position and size
-  void _addNativeAdComponent(GlobalKey? key, String method) {
+  void _updateAllAssetViews() {
+    _updateAssetView(_iconViewKey, "addIconView");
+    _updateAssetView(_optionsViewKey, "addOptionsView");
+    _updateAssetView(_mediaViewKey, "addMediaView");
+    _updateAssetView(_titleViewKey, "addTitleView");
+    _updateAssetView(_advertiserViewKey, "addAdvertiserView");
+    _updateAssetView(_bodyViewKey, "addBodyView");
+    _updateAssetView(_callToActionViewKey, "addCallToActionView");
+  }
+
+  // Updates the specified asset view's position and size on the platform using the provided method name.
+  void _updateAssetView(GlobalKey? key, String method) {
     if (key == null) return;
+
     Rect rect = _getViewSize(key, _nativeAdViewKey);
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-      _methodChannel?.invokeMethod(method, <String, dynamic>{
-        'x': (rect.left * devicePixelRatio).round(),
-        'y': (rect.top * devicePixelRatio).round(),
-        'width': (rect.width * devicePixelRatio).round(),
-        'height': (rect.height * devicePixelRatio).round(),
-      });
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      _methodChannel?.invokeMethod(method, <String, dynamic>{
+    if (rect.isEmpty) return;
+
+    Map<String, dynamic> params;
+
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      params = {
         'x': rect.left,
         'y': rect.top,
         'width': rect.width,
         'height': rect.height,
-      });
+      };
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+      params = {
+        'x': (rect.left * devicePixelRatio).round(),
+        'y': (rect.top * devicePixelRatio).round(),
+        'width': (rect.width * devicePixelRatio).round(),
+        'height': (rect.height * devicePixelRatio).round(),
+      };
+    } else {
+      return;
     }
+
+    _methodChannel?.invokeMethod(method, params);
   }
 
-  // update the all native ad components with the native ad
-  void _applyNativeAdToComponents(MaxAd ad) {
-    setState(() {
-      _nativeAd = ad.nativeAd;
-    });
-  }
-
-  // get a frame(rect) size with a relative position to parent
+  // Returns the frame (rect) size relative to the parent's position
   Rect _getViewSize(GlobalKey key, GlobalKey parentKey) {
-    RenderBox renderedObject = key.currentContext?.findRenderObject() as RenderBox;
+    RenderBox? renderedObject = key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderedObject == null) return Rect.zero;
     Offset globalPosition = renderedObject.localToGlobal(Offset.zero);
     RenderBox parentRenderedObject = parentKey.currentContext?.findRenderObject() as RenderBox;
     Offset relativePosition = parentRenderedObject.globalToLocal(globalPosition);
@@ -286,7 +296,7 @@ class MaxNativeAdTitleView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._titleViewKey, "addTitleView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._titleViewKey, "addTitleView");
         });
         return false;
       },
@@ -341,7 +351,7 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._advertiserViewKey, "addAdvertiserView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._advertiserViewKey, "addAdvertiserView");
         });
         return false;
       },
@@ -396,7 +406,7 @@ class MaxNativeAdBodyView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._bodyViewKey, "addBodyView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._bodyViewKey, "addBodyView");
         });
         return false;
       },
@@ -435,7 +445,7 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._callToActionViewKey, "addCallToActionView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._callToActionViewKey, "addCallToActionView");
         });
         return false;
       },
@@ -475,7 +485,7 @@ class MaxNativeAdIconView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._iconViewKey, "addIconView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._iconViewKey, "addIconView");
         });
         return false;
       },
@@ -514,7 +524,7 @@ class MaxNativeAdOptionsView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._optionsViewKey, "addOptionsView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._optionsViewKey, "addOptionsView");
         });
         return false;
       },
@@ -554,7 +564,7 @@ class MaxNativeAdMediaView extends StatelessWidget {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._addNativeAdComponent(_NativeAdViewScope.of(context)._mediaViewKey, "addMediaView");
+          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._mediaViewKey, "addMediaView");
         });
         return false;
       },
