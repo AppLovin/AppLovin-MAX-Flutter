@@ -146,3 +146,78 @@ enum AdLoadState {
   /// An ad failed to load from this network.
   adFailedToLoad;
 }
+
+/// This enum contains various error codes that the SDK can return when a MAX ad fails to load or display.
+enum ErrorCode {
+  /// This error code represents an error that could not be categorized into one of the other defined
+  /// errors. See the message field in the error object for more details.
+  unspecified(-1),
+
+  /// This error code indicates that MAX returned no eligible ads from any mediated networks for this
+  /// app/device.
+  noFill(204),
+
+  /// This error code indicates that MAX returned eligible ads from mediated networks, but all ads
+  /// failed to load. See the adLoadFailureInfo field in the error object for more details.
+  adLoadFailed(-5001),
+
+  /// This error code represents an error that was encountered when showing an ad.
+  adDisplayFailed(-4205),
+
+  /// This error code indicates that the ad request failed due to a generic network error. See the
+  /// message field in the error object for more details.
+  networkError(-1000),
+
+  /// This error code indicates that the ad request timed out due to a slow internet connection.
+  networkTimeout(-1001),
+
+  /// This error code indicates that the ad request failed because the device is not connected to the
+  /// internet.
+  noNetwork(-1009),
+
+  /// This error code indicates that you attempted to show a fullscreen ad while another fullscreen ad
+  /// is still showing.
+  fullscreenAdAlreadyShowing(-23),
+
+  /// This error code indicates you are attempting to show a fullscreen ad before the one has been
+  /// loaded.
+  fullscreenAdNotReady(-24),
+
+  /// This error code indicates you are attempting to load a fullscreen ad while another
+  /// fullscreen ad is already loading.
+  fullscreenAdAlreadyLoading(-26),
+
+  /// This error code indicates you are attempting to load a fullscreen ad while another fullscreen ad
+  /// is still showing.
+  fullscreenAdLoadWhileShowing(-27),
+
+  /// This error code indicates that the SDK failed to load an ad because the publisher provided an
+  /// invalid ad unit identifier.
+  ///
+  /// Possible reasons for an invalid ad unit identifier:
+  /// 1. Ad unit identifier is malformed or does not exist.
+  /// 2. Ad unit is disabled.
+  /// 3. Ad unit is not associated with the current app's package name.
+  /// 4. Ad unit was created within the last 30-60 minutes.
+  invalidAdUnitId(-5603);
+
+  /// @nodoc
+  final int code;
+
+  /// @nodoc
+  const ErrorCode(this.code);
+
+  /// Returns the corresponding [ErrorCode] enum for a given integer value.
+  ///
+  /// If the provided integer value does not match any defined [ErrorCode],
+  /// the method returns `null`.
+  static ErrorCode? fromValue(int value) {
+    ErrorCode? code;
+    try {
+      code = ErrorCode.values.firstWhere((e) => e.code == value);
+    } catch (_) {
+      code = null;
+    }
+    return code;
+  }
+}

@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Add constants for MAX Error Codes. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/overview/error-handling#max-error-codes).
 ## 3.11.1
 * Depends on Android SDK v12.6.1 and iOS SDK v12.6.1.
 * Add APIs to preload widgets for banners and MRECs. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-mrec-ads#ad-preloading).

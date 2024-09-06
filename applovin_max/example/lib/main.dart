@@ -95,6 +95,15 @@ class _MyAppState extends State<MyApp> {
       onAdLoadFailedCallback: (adUnitId, error) {
         _interstitialLoadState = AdLoadState.notLoaded;
 
+        ErrorCode? errorCode = ErrorCode.fromValue(error.code);
+        if (errorCode == ErrorCode.fullscreenAdAlreadyLoading) {
+          logStatus('Interstitial ad failed: ad is already loading');
+          return;
+        } else if (errorCode == ErrorCode.fullscreenAdLoadWhileShowing) {
+          logStatus('Interstitial ad failed: ad is currently being shown for this ad unit');
+          return;
+        }
+
         // Interstitial ad failed to load
         // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
         _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
@@ -142,6 +151,15 @@ class _MyAppState extends State<MyApp> {
       _rewardedAdRetryAttempt = 0;
     }, onAdLoadFailedCallback: (adUnitId, error) {
       _rewardedAdLoadState = AdLoadState.notLoaded;
+
+      ErrorCode? errorCode = ErrorCode.fromValue(error.code);
+      if (errorCode == ErrorCode.fullscreenAdAlreadyLoading) {
+        logStatus('Rewarded ad failed: ad is already loading');
+        return;
+      } else if (errorCode == ErrorCode.fullscreenAdLoadWhileShowing) {
+        logStatus('Rewarded ad failed: ad is currently being shown for this ad unit');
+        return;
+      }
 
       // Rewarded ad failed to load
       // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
