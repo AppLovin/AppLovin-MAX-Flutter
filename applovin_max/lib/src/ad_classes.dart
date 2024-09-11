@@ -154,7 +154,7 @@ class MaxNativeAd {
 /// Encapsulates various data for MAX load and display errors.
 class MaxError {
   /// The error code for the error.
-  final int code;
+  final ErrorCode code;
 
   /// The error message for the error.
   final String message;
@@ -167,6 +167,8 @@ class MaxError {
 
   /// @nodoc
   factory MaxError.fromJson(Map<String, dynamic> json) {
+    ErrorCode code = ErrorCode.fromValue(json['code'] as int);
+
     MaxAdWaterfallInfo? waterfall;
     if (json['waterfall'] != null) {
       var waterfallData = Map<String, dynamic>.from(json['waterfall']);
@@ -175,7 +177,7 @@ class MaxError {
       }
     }
 
-    return MaxError(json['code'] as int, json['message'] as String, waterfall);
+    return MaxError(code, json['message'] as String, waterfall);
   }
 
   @override
