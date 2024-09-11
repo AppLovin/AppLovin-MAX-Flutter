@@ -167,7 +167,7 @@ class MaxError {
 
   /// @nodoc
   factory MaxError.fromJson(Map<String, dynamic> json) {
-    ErrorCode code = ErrorCode.fromValue(json['code'] as int) ?? ErrorCode.unspecified;
+    ErrorCode code = ErrorCode.fromValue(json['code'] as int);
 
     MaxAdWaterfallInfo? waterfall;
     if (json['waterfall'] != null) {

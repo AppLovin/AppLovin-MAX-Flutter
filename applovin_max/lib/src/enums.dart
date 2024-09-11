@@ -224,12 +224,12 @@ enum ErrorCode {
   ///
   /// If the provided integer value does not match any defined [ErrorCode],
   /// the method returns `null`.
-  static ErrorCode? fromValue(int value) {
+  static ErrorCode fromValue(int value) {
     try {
       return ErrorCode.values.firstWhere((e) => e.value == value);
     } catch (e) {
       debugPrint('Unknown error code: $value');
-      return null;
+      return ErrorCode.unspecified;
     }
   }
 }
