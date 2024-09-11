@@ -3,7 +3,7 @@
 
     <application
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_round"
         android:label="AppLovin MAX Demo">
         <activity
             android:name="com.applovin.example.MainActivity"
