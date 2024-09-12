@@ -320,7 +320,7 @@ class _MyAppState extends State<MyApp> {
         toolbarHeight: 60,
         centerTitle: true,
         title: Container(
-          height: 28,
+          height: 42,
           alignment: Alignment.center,
           child: ColorFiltered(
             colorFilter: ColorFilter.mode(
