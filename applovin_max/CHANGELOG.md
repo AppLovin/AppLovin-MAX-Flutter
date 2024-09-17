@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Removed COPPA support.
 * Add constants for MAX Error Codes. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/overview/error-handling#max-error-codes).
 ## 3.11.1
 * Depends on Android SDK v12.6.1 and iOS SDK v12.6.1.
