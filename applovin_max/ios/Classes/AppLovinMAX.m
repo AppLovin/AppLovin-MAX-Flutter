@@ -227,16 +227,6 @@ static FlutterMethodChannel *ALSharedChannel;
     result(@([ALPrivacySettings hasUserConsent]));
 }
 
-- (void)setIsAgeRestrictedUser:(BOOL)isAgeRestrictedUser
-{
-    [ALPrivacySettings setIsAgeRestrictedUser: isAgeRestrictedUser];
-}
-
-- (void)isAgeRestrictedUser:(FlutterResult)result
-{
-    result(@([ALPrivacySettings isAgeRestrictedUser]));
-}
-
 - (void)setDoNotSell:(BOOL)doNotSell
 {
     [ALPrivacySettings setDoNotSell: doNotSell];
@@ -1592,17 +1582,6 @@ static FlutterMethodChannel *ALSharedChannel;
     else if ( [@"hasUserConsent" isEqualToString: call.method] )
     {
         [self hasUserConsent: result];
-    }
-    else if ( [@"setIsAgeRestrictedUser" isEqualToString: call.method] )
-    {
-        BOOL isAgeRestrictedUser = ((NSNumber *)call.arguments[@"value"]).boolValue;
-        [self setIsAgeRestrictedUser: isAgeRestrictedUser];
-        
-        result(nil);
-    }
-    else if ( [@"isAgeRestrictedUser" isEqualToString: call.method] )
-    {
-        [self isAgeRestrictedUser: result];
     }
     else if ( [@"setDoNotSell" isEqualToString: call.method] )
     {

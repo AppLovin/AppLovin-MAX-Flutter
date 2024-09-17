@@ -238,16 +238,6 @@ public class AppLovinMAX
         result.success( AppLovinPrivacySettings.hasUserConsent( applicationContext ) );
     }
 
-    public void setIsAgeRestrictedUser(boolean isAgeRestrictedUser)
-    {
-        AppLovinPrivacySettings.setIsAgeRestrictedUser( isAgeRestrictedUser, applicationContext );
-    }
-
-    public void isAgeRestrictedUser(final Result result)
-    {
-        result.success( AppLovinPrivacySettings.isAgeRestrictedUser( applicationContext ) );
-    }
-
     public void setDoNotSell(final boolean doNotSell)
     {
         AppLovinPrivacySettings.setDoNotSell( doNotSell, applicationContext );
@@ -1608,17 +1598,6 @@ public class AppLovinMAX
         else if ( "hasUserConsent".equals( call.method ) )
         {
             hasUserConsent( result );
-        }
-        else if ( "setIsAgeRestrictedUser".equals( call.method ) )
-        {
-            boolean isAgeRestrictedUser = call.argument( "value" );
-            setIsAgeRestrictedUser( isAgeRestrictedUser );
-
-            result.success( null );
-        }
-        else if ( "isAgeRestrictedUser".equals( call.method ) )
-        {
-            isAgeRestrictedUser( result );
         }
         else if ( "setDoNotSell".equals( call.method ) )
         {

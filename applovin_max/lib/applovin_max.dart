@@ -202,22 +202,6 @@ class AppLovinMAX {
     return _methodChannel.invokeMethod('hasUserConsent');
   }
 
-  /// Marks the user as age-restricted.
-  ///
-  /// [Prohibition on Personal Information from Children](https://developers.applovin.com/en/flutter/overview/privacy#prohibition-on-ads-to-and-personal-information-from-children-and-apps-exclusively-designed-for-or-exclusively-directed-to-children)
-  static void setIsAgeRestrictedUser(bool isAgeRestrictedUser) {
-    _methodChannel.invokeMethod('setIsAgeRestrictedUser', {
-      'value': isAgeRestrictedUser,
-    });
-  }
-
-  /// Checks if the user is age-restricted.
-  ///
-  /// [Prohibition on Personal Information from Children](https://developers.applovin.com/en/flutter/overview/privacy#prohibition-on-ads-to-and-personal-information-from-children-and-apps-exclusively-designed-for-or-exclusively-directed-to-children)
-  static Future<bool?> isAgeRestrictedUser() {
-    return _methodChannel.invokeMethod('isAgeRestrictedUser');
-  }
-
   /// Sets true to indicate that the user has opted out of interest-based advertising.
   ///
   /// Or, sets false to indicate that the user has not opted out of interest-based advertising.
