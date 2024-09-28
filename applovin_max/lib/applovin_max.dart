@@ -558,7 +558,7 @@ class AppLovinMAX {
   //
 
   /// Sets an [InterstitialListener] listener with which you can receive notifications about ad events.
-  static void setInterstitialListener(InterstitialListener listener) {
+  static void setInterstitialListener(InterstitialListener? listener) {
     _interstitialListener = listener;
   }
 
