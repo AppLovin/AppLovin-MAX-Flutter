@@ -352,8 +352,13 @@ class AppLovinMAX {
   //
 
   /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
-  static void setBannerListener(AdViewAdListener listener) {
+  static void setBannerListener(AdViewAdListener? listener) {
     _bannerAdListener = listener;
+  }
+
+  /// Unsets the [AdViewAdListener listener when it's no longer needed.
+  static void unsetBannerListener() {
+    _bannerAdListener = null;
   }
 
   /// Creates a banner using your [adUnitId] at the specified [AdViewPosition] position.
@@ -468,8 +473,13 @@ class AppLovinMAX {
   //
 
   /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
-  static void setMRecListener(AdViewAdListener listener) {
+  static void setMRecListener(AdViewAdListener? listener) {
     _mrecAdListener = listener;
+  }
+
+  /// Unsets the [AdViewAdListener listener when it's no longer needed.
+  static void unsetMRecListener() {
+    _mrecAdListener = null;
   }
 
   /// Creates an MREC using your [adUnitId] at the specified [AdViewPosition] position.
@@ -562,6 +572,11 @@ class AppLovinMAX {
     _interstitialListener = listener;
   }
 
+  /// Unsets the [InterstitialListener] listener when it's no longer needed.
+  static void unsetInterstitialListener() {
+    _interstitialListener = null;
+  }
+
   /// Loads an interstitial ad using your [adUnitId].
   ///
   /// [Loading an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#loading-an-interstitial-ad)
@@ -603,8 +618,13 @@ class AppLovinMAX {
   //
 
   /// Sets a [RewardedAdListener] listener with which you can receive notifications about ad events.
-  static void setRewardedAdListener(RewardedAdListener listener) {
+  static void setRewardedAdListener(RewardedAdListener? listener) {
     _rewardedAdListener = listener;
+  }
+
+  /// Unsets the [RewardedAdListener] listener when it's no longer needed.
+  static void unsetRewardedAdListener() {
+    _rewardedAdListener = null;
   }
 
   /// Loads a rewarded ad using your [adUnitId].
@@ -648,8 +668,13 @@ class AppLovinMAX {
   //
 
   /// Sets a [AppOpenAdListener] listener with which you can receive notifications about ad events.
-  static void setAppOpenAdListener(AppOpenAdListener listener) {
+  static void setAppOpenAdListener(AppOpenAdListener? listener) {
     _appOpenAdListener = listener;
+  }
+
+  /// Unsets the [AppOpenAdListener] listener when it's no longer needed.
+  static void unsetAppOpenAdListener() {
+    _appOpenAdListener = null;
   }
 
   /// Check if the ad is ready to be shown with the specified [adUnitId].
@@ -691,8 +716,13 @@ class AppLovinMAX {
   /// Sets a [WidgetAdViewAdListener] to receive notifications about
   /// [MaxAdView] ad events when preloading a [MaxAdView] platform widget with
   /// [preloadWidgetAdView].
-  static void setWidgetAdViewAdListener(WidgetAdViewAdListener listener) {
+  static void setWidgetAdViewAdListener(WidgetAdViewAdListener? listener) {
     _widgetAdViewAdListener = listener;
+  }
+
+  /// Unsets the [WidgetAdViewAdListener] listener when it's no longer needed.
+  static void unsetWidgetAdViewAdListener() {
+    _widgetAdViewAdListener = null;
   }
 
   /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with
