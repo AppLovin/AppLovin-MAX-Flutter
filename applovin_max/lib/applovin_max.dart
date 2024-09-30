@@ -356,11 +356,6 @@ class AppLovinMAX {
     _bannerAdListener = listener;
   }
 
-  /// Unsets the [AdViewAdListener listener when it's no longer needed.
-  static void unsetBannerListener() {
-    _bannerAdListener = null;
-  }
-
   /// Creates a banner using your [adUnitId] at the specified [AdViewPosition] position.
   ///
   /// [Creating a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads)
@@ -477,11 +472,6 @@ class AppLovinMAX {
     _mrecAdListener = listener;
   }
 
-  /// Unsets the [AdViewAdListener listener when it's no longer needed.
-  static void unsetMRecListener() {
-    _mrecAdListener = null;
-  }
-
   /// Creates an MREC using your [adUnitId] at the specified [AdViewPosition] position.
   ///
   /// [Programmatic Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#loading-a-banner-or-mrec)
@@ -572,11 +562,6 @@ class AppLovinMAX {
     _interstitialListener = listener;
   }
 
-  /// Unsets the [InterstitialListener] listener when it's no longer needed.
-  static void unsetInterstitialListener() {
-    _interstitialListener = null;
-  }
-
   /// Loads an interstitial ad using your [adUnitId].
   ///
   /// [Loading an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#loading-an-interstitial-ad)
@@ -620,11 +605,6 @@ class AppLovinMAX {
   /// Sets a [RewardedAdListener] listener with which you can receive notifications about ad events.
   static void setRewardedAdListener(RewardedAdListener? listener) {
     _rewardedAdListener = listener;
-  }
-
-  /// Unsets the [RewardedAdListener] listener when it's no longer needed.
-  static void unsetRewardedAdListener() {
-    _rewardedAdListener = null;
   }
 
   /// Loads a rewarded ad using your [adUnitId].
@@ -672,11 +652,6 @@ class AppLovinMAX {
     _appOpenAdListener = listener;
   }
 
-  /// Unsets the [AppOpenAdListener] listener when it's no longer needed.
-  static void unsetAppOpenAdListener() {
-    _appOpenAdListener = null;
-  }
-
   /// Check if the ad is ready to be shown with the specified [adUnitId].
   static Future<bool?> isAppOpenAdReady(String adUnitId) {
     return _methodChannel.invokeMethod('isAppOpenAdReady', {
@@ -718,11 +693,6 @@ class AppLovinMAX {
   /// [preloadWidgetAdView].
   static void setWidgetAdViewAdListener(WidgetAdViewAdListener? listener) {
     _widgetAdViewAdListener = listener;
-  }
-
-  /// Unsets the [WidgetAdViewAdListener] listener when it's no longer needed.
-  static void unsetWidgetAdViewAdListener() {
-    _widgetAdViewAdListener = null;
   }
 
   /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with

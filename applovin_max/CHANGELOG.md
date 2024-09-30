@@ -1,7 +1,7 @@
 ## Versions
 
 ## x.x.x
-* Add APIs to unset the AppLovinMAX listeners.
+* Add APIs to remove the AppLovinMAX listeners.
 ## 4.0.0
 * Depends on Android SDK v13.0.0 and iOS SDK v13.0.0.
 * Removed COPPA support.
