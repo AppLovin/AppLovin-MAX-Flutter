@@ -352,7 +352,7 @@ class AppLovinMAX {
   //
 
   /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
-  static void setBannerListener(AdViewAdListener listener) {
+  static void setBannerListener(AdViewAdListener? listener) {
     _bannerAdListener = listener;
   }
 
@@ -468,7 +468,7 @@ class AppLovinMAX {
   //
 
   /// Sets an [AdViewAdListener] listener with which you can receive notifications about ad events.
-  static void setMRecListener(AdViewAdListener listener) {
+  static void setMRecListener(AdViewAdListener? listener) {
     _mrecAdListener = listener;
   }
 
@@ -558,7 +558,7 @@ class AppLovinMAX {
   //
 
   /// Sets an [InterstitialListener] listener with which you can receive notifications about ad events.
-  static void setInterstitialListener(InterstitialListener listener) {
+  static void setInterstitialListener(InterstitialListener? listener) {
     _interstitialListener = listener;
   }
 
@@ -603,7 +603,7 @@ class AppLovinMAX {
   //
 
   /// Sets a [RewardedAdListener] listener with which you can receive notifications about ad events.
-  static void setRewardedAdListener(RewardedAdListener listener) {
+  static void setRewardedAdListener(RewardedAdListener? listener) {
     _rewardedAdListener = listener;
   }
 
@@ -648,7 +648,7 @@ class AppLovinMAX {
   //
 
   /// Sets a [AppOpenAdListener] listener with which you can receive notifications about ad events.
-  static void setAppOpenAdListener(AppOpenAdListener listener) {
+  static void setAppOpenAdListener(AppOpenAdListener? listener) {
     _appOpenAdListener = listener;
   }
 
@@ -691,7 +691,7 @@ class AppLovinMAX {
   /// Sets a [WidgetAdViewAdListener] to receive notifications about
   /// [MaxAdView] ad events when preloading a [MaxAdView] platform widget with
   /// [preloadWidgetAdView].
-  static void setWidgetAdViewAdListener(WidgetAdViewAdListener listener) {
+  static void setWidgetAdViewAdListener(WidgetAdViewAdListener? listener) {
     _widgetAdViewAdListener = listener;
   }
 

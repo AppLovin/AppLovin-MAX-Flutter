@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Update listener APIs to allow for null values for unsetting.
 ## 4.0.0
 * Depends on Android SDK v13.0.0 and iOS SDK v13.0.0.
 * Removed COPPA support.
