@@ -310,7 +310,7 @@ public class AppLovinMAXNativeAdView
 
         if ( titleView == null )
         {
-            titleView = new View( context );
+            titleView = new FrameLayout( context );
             titleView.setTag( TITLE_LABEL_TAG );
             nativeAdView.addView( titleView );
         }
@@ -328,7 +328,7 @@ public class AppLovinMAXNativeAdView
 
         if ( advertiserView == null )
         {
-            advertiserView = new View( context );
+            advertiserView = new FrameLayout( context );
             advertiserView.setTag( ADVERTISER_VIEW_TAG );
             nativeAdView.addView( advertiserView );
         }
@@ -346,7 +346,7 @@ public class AppLovinMAXNativeAdView
 
         if ( bodyView == null )
         {
-            bodyView = new View( context );
+            bodyView = new FrameLayout( context );
             bodyView.setTag( BODY_VIEW_TAG );
             nativeAdView.addView( bodyView );
         }
@@ -364,7 +364,7 @@ public class AppLovinMAXNativeAdView
 
         if ( callToActionView == null )
         {
-            callToActionView = new View( context );
+            callToActionView = new FrameLayout( context );
             callToActionView.setTag( CALL_TO_ACTION_VIEW_TAG );
             nativeAdView.addView( callToActionView );
         }
