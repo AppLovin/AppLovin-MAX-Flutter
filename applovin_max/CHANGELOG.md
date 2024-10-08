@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Add support for Yandex native ads.
 * Update listener APIs to allow for null values for unsetting.
 ## 4.0.0
 * Depends on Android SDK v13.0.0 and iOS SDK v13.0.0.

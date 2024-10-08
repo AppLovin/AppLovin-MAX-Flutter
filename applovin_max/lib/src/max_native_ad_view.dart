@@ -188,7 +188,7 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
         _updateAllAssetViews();
 
         // Register clickable views and initiate the rendering of the native ad on the platform.
-        await _methodChannel?.invokeMethod("renderAd");
+        _renderAd();
 
         // Update the Flutter asset views with the native ad
         setState(() {
@@ -249,6 +249,10 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     _methodChannel?.invokeMethod(method, params);
   }
 
+  void _renderAd() {
+    _methodChannel?.invokeMethod("renderAd");
+  }
+
   // Returns the frame (rect) size relative to the parent's position
   Rect _getViewSize(GlobalKey key, GlobalKey parentKey) {
     RenderBox? renderedObject = key.currentContext?.findRenderObject() as RenderBox?;
@@ -297,6 +301,7 @@ class MaxNativeAdTitleView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._titleViewKey, "addTitleView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -352,6 +357,7 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._advertiserViewKey, "addAdvertiserView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -407,6 +413,7 @@ class MaxNativeAdBodyView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._bodyViewKey, "addBodyView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -444,6 +451,7 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._callToActionViewKey, "addCallToActionView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -484,6 +492,7 @@ class MaxNativeAdIconView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._iconViewKey, "addIconView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -523,6 +532,7 @@ class MaxNativeAdOptionsView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._optionsViewKey, "addOptionsView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
@@ -563,6 +573,7 @@ class MaxNativeAdMediaView extends StatelessWidget {
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._mediaViewKey, "addMediaView");
+          _NativeAdViewScope.of(context)._renderAd();
         });
         return false;
       },
