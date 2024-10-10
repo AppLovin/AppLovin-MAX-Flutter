@@ -14,6 +14,12 @@
 + (NSNumber *)al_numberWithString:(NSString *)string;
 @end
 
+@interface ALUtils (ALUtils)
++ (BOOL)isInclusiveVersion:(NSString *)version
+             forMinVersion:(nullable NSString *)minVersion
+                maxVersion:(nullable NSString *)maxVersion;
+@end
+
 @interface AppLovinMAX()<MAAdDelegate, MAAdViewAdDelegate, MARewardedAdDelegate, MAAdRevenueDelegate>
 
 // Parent Fields
@@ -47,6 +53,7 @@
 @implementation AppLovinMAX
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
+static NSString *const PLUGIN_VERSION = @"8.0.1";
 
 static NSString *const USER_GEOGRAPHY_GDPR = @"G";
 static NSString *const USER_GEOGRAPHY_OTHER = @"O";
@@ -62,8 +69,15 @@ static AppLovinMAX *AppLovinMAXShared;
 
 static FlutterMethodChannel *ALSharedChannel;
 
+static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
+    ALCompatibleNativeSDKVersions = @{
+        @"8.0.1" : @"13.0.0",
+        @"8.0.0" : @"13.0.0"
+    };
+
     ALSharedChannel = [FlutterMethodChannel methodChannelWithName: @"applovin_max" binaryMessenger: [registrar messenger]];
     AppLovinMAX *instance = [[AppLovinMAX alloc] init];
     [registrar addMethodCallDelegate: instance channel: ALSharedChannel];
@@ -106,6 +120,17 @@ static FlutterMethodChannel *ALSharedChannel;
         self.safeAreaBackground.translatesAutoresizingMaskIntoConstraints = NO;
         self.safeAreaBackground.userInteractionEnabled = NO;
         [ROOT_VIEW_CONTROLLER.view addSubview: self.safeAreaBackground];
+
+        // Check that plugin version is compatible with native SDK version
+        NSString *minCompatibleNativeSdkVersion = ALCompatibleNativeSDKVersions[PLUGIN_VERSION];
+        BOOL isCompatible = [ALUtils isInclusiveVersion: @"13.0.1"
+                                          forMinVersion: minCompatibleNativeSdkVersion
+                                             maxVersion: nil];
+        if ( !isCompatible )
+        {
+            [NSException raise: NSInternalInconsistencyException
+                        format: @"Incompatible native SDK version (%@) found for plugin (%@)", minCompatibleNativeSdkVersion, PLUGIN_VERSION];
+        }
     }
     return self;
 }

@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Crash if plugin version is incompatible with native SDK version.
 * Add support for Yandex native ads.
 * Update listener APIs to allow for null values for unsetting.
 ## 4.0.0
