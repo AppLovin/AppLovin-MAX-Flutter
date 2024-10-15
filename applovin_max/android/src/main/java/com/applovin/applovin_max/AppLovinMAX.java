@@ -63,10 +63,19 @@ public class AppLovinMAX
 {
     private static final String SDK_TAG = "AppLovinSdk";
     public static final  String TAG     = "AppLovinMAX";
+    private static final String PLUGIN_VERSION = "8.0.1";
 
     private static final String USER_GEOGRAPHY_GDPR    = "G";
     private static final String USER_GEOGRAPHY_OTHER   = "O";
     private static final String USER_GEOGRAPHY_UNKNOWN = "U";
+
+    private static final Map<String, String> ALCompatibleNativeSdkVersions = new HashMap<>();
+
+    static
+    {
+        ALCompatibleNativeSdkVersions.put( "8.0.1", "13.0.0" );
+        ALCompatibleNativeSdkVersions.put( "8.0.0", "13.0.0" );
+    }
 
     public static AppLovinMAX instance;
 
@@ -110,6 +119,14 @@ public class AppLovinMAX
     @Override
     public void onAttachedToEngine(@NonNull final FlutterPluginBinding binding)
     {
+        // Check that plugin version is compatible with native SDK version
+        String minCompatibleNativeSdkVersion = ALCompatibleNativeSdkVersions.get( PLUGIN_VERSION );
+        boolean isCompatible = isInclusiveVersion( AppLovinSdk.VERSION, minCompatibleNativeSdkVersion, null );
+        if ( !isCompatible )
+        {
+            throw new RuntimeException( "Incompatible native SDK version " + AppLovinSdk.VERSION + " found for plugin " + PLUGIN_VERSION );
+        }
+
         // KNOWN ISSUE: onAttachedToEngine will be call twice, which may be caused by using
         // firebase_messaging plugin. See https://github.com/flutter/flutter/issues/97840
         //
@@ -2040,5 +2057,55 @@ public class AppLovinMAX
     private Activity getCurrentActivity()
     {
         return ( lastActivityPluginBinding != null ) ? lastActivityPluginBinding.getActivity() : null;
+    }
+
+    //
+    // Version Utils
+    //
+
+    private boolean isInclusiveVersion(final String version, @Nullable final String minVersion, @Nullable final String maxVersion)
+    {
+        if ( TextUtils.isEmpty( version ) ) return true;
+
+        int versionCode = toVersionCode( version );
+
+        // if version is less than the minimum version
+        if ( !TextUtils.isEmpty( minVersion ) )
+        {
+            int minVersionCode = toVersionCode( minVersion );
+
+            if ( versionCode < minVersionCode ) return false;
+        }
+
+        // if version is greater than the maximum version
+        if ( !TextUtils.isEmpty( maxVersion ) )
+        {
+            int maxVersionCode = toVersionCode( maxVersion );
+
+            if ( versionCode > maxVersionCode ) return false;
+        }
+
+        return true;
+    }
+
+    private static int toVersionCode(String versionString)
+    {
+        String[] versionNums = versionString.split( "\\." );
+
+        int versionCode = 0;
+        for ( String num : versionNums )
+        {
+            // Each number gets two digits in the version code.
+            if ( num.length() > 2 )
+            {
+                w( "Version number components cannot be longer than two digits -> " + versionString );
+                return versionCode;
+            }
+
+            versionCode *= 100;
+            versionCode += Integer.parseInt( num );
+        }
+
+        return versionCode;
     }
 }
