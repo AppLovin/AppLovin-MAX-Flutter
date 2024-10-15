@@ -74,6 +74,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
     ALCompatibleNativeSDKVersions = @{
+        @"4.0.1" : @"13.0.0",
         @"4.0.0" : @"13.0.0"
     };
 

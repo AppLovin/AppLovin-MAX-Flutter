@@ -73,6 +73,7 @@ public class AppLovinMAX
 
     static
     {
+        ALCompatibleNativeSdkVersions.put( "4.0.1", "13.0.0" );
         ALCompatibleNativeSdkVersions.put( "4.0.0", "13.0.0" );
     }
 
