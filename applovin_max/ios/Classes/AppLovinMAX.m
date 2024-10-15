@@ -123,7 +123,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 
         // Check that plugin version is compatible with native SDK version
         NSString *minCompatibleNativeSdkVersion = ALCompatibleNativeSDKVersions[PLUGIN_VERSION];
-        BOOL isCompatible = [ALUtils isInclusiveVersion: @"13.0.1"
+        BOOL isCompatible = [ALUtils isInclusiveVersion: ALSdk.version
                                           forMinVersion: minCompatibleNativeSdkVersion
                                              maxVersion: nil];
         if ( !isCompatible )
