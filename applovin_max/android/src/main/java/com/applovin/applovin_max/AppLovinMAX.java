@@ -2059,7 +2059,9 @@ public class AppLovinMAX
         return ( lastActivityPluginBinding != null ) ? lastActivityPluginBinding.getActivity() : null;
     }
 
-    // Version String
+    //
+    // Version Utils
+    //
 
     private boolean isInclusiveVersion(final String version, @Nullable final String minVersion, @Nullable final String maxVersion)
     {
