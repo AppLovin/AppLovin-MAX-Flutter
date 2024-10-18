@@ -379,8 +379,9 @@ public class AppLovinMAXNativeAdView
         if ( ad == null ) return;
 
         MaxNativeAd.MaxNativeAdImage icon = ad.getNativeAd().getIcon();
+        ImageView iconImageView = (ImageView) ad.getNativeAd().getIconView();
 
-        if ( icon == null )
+        if ( icon == null && iconImageView == null )
         {
             if ( iconView != null )
             {
@@ -401,13 +402,20 @@ public class AppLovinMAXNativeAdView
 
         updateViewLayout( nativeAdView, iconView, getRect( call ) );
 
-        if ( icon.getUri() != null )
+        if ( icon != null )
         {
-            AppLovinSdkUtils.setImageUrl( icon.getUri().toString(), iconView, sdk );
+            if ( icon.getUri() != null )
+            {
+                AppLovinSdkUtils.setImageUrl( icon.getUri().toString(), iconView, sdk );
+            }
+            else if ( icon.getDrawable() != null )
+            {
+                iconView.setImageDrawable( icon.getDrawable() );
+            }
         }
-        else if ( icon.getDrawable() != null )
+        else if ( iconImageView != null )
         {
-            iconView.setImageDrawable( icon.getDrawable() );
+            iconView.setImageDrawable( iconImageView.getDrawable() );
         }
     }
 
@@ -533,7 +541,7 @@ public class AppLovinMAXNativeAdView
             nativeAdInfo.put( "mediaContentAspectRatio", ad.getMediaContentAspectRatio() );
         }
 
-        nativeAdInfo.put( "isIconImageAvailable", ( ad.getIcon() != null ) );
+        nativeAdInfo.put( "isIconImageAvailable", ( ad.getIcon() != null || ad.getIconView() != null ) );
         nativeAdInfo.put( "isOptionsViewAvailable", ( ad.getOptionsView() != null ) );
         nativeAdInfo.put( "isMediaViewAvailable", ( ad.getMediaView() != null ) );
 

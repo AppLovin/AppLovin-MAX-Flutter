@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Add support for BigoAds native ads.
 ## 4.0.1
 * Crash if plugin version is incompatible with native SDK version.
 * Add support for Yandex native ads.
