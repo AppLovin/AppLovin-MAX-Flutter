@@ -334,7 +334,9 @@
 - (void)addIconViewForCall:(FlutterMethodCall *)call
 {
     MANativeAdImage *icon = self.nativeAd.nativeAd.icon;
-    if ( !icon )
+    UIView *iconImageView = self.nativeAd.nativeAd.iconView;
+
+    if ( !icon && !iconImageView )
     {
         self.iconView.image = nil;
         return;
@@ -351,13 +353,21 @@
     
     self.iconView.frame = [self frameForCall: call];
     
-    if ( icon.URL )
+    if ( icon )
     {
-        [self.iconView al_setImageWithURL: icon.URL];
+        if ( icon.URL )
+        {
+            [self.iconView al_setImageWithURL: icon.URL];
+        }
+        else if ( icon.image )
+        {
+            self.iconView.image = icon.image;
+        }
     }
-    else if ( icon.image )
+    else if ( iconImageView )
     {
-        self.iconView.image = icon.image;
+        [self.iconView addSubview: iconImageView];
+        [iconImageView al_pinToSuperview];
     }
 }
 
@@ -392,6 +402,8 @@
         self.mediaViewContainer.tag = MEDIA_VIEW_CONTAINER_TAG;
         [self.nativeAdView addSubview: self.mediaViewContainer];
     }
+    
+    [self.clickableViews addObject: self.mediaViewContainer];
     
     if ( !mediaView.superview )
     {
@@ -460,7 +472,7 @@
         nativeAdInfo[@"mediaContentAspectRatio"] = @(ad.mediaContentAspectRatio);
     }
     
-    nativeAdInfo[@"isIconImageAvailable"] = (ad.icon != nil) ? @YES : @NO;
+    nativeAdInfo[@"isIconImageAvailable"] = (ad.icon != nil || ad.iconView) ? @YES : @NO;
     nativeAdInfo[@"isOptionsViewAvailable"] = (ad.optionsView != nil) ? @YES : @NO;
     nativeAdInfo[@"isMediaViewAvailable"] = (ad.mediaView != nil) ? @YES : @NO;
     
