@@ -311,10 +311,10 @@ public class AppLovinMAXNativeAdView
         if ( titleView == null )
         {
             titleView = new FrameLayout( context );
-            titleView.setTag( TITLE_LABEL_TAG );
             nativeAdView.addView( titleView );
         }
 
+        titleView.setTag( TITLE_LABEL_TAG );
         clickableViews.add( titleView );
 
         updateViewLayout( nativeAdView, titleView, getRect( call ) );
@@ -329,10 +329,10 @@ public class AppLovinMAXNativeAdView
         if ( advertiserView == null )
         {
             advertiserView = new FrameLayout( context );
-            advertiserView.setTag( ADVERTISER_VIEW_TAG );
             nativeAdView.addView( advertiserView );
         }
 
+        advertiserView.setTag( ADVERTISER_VIEW_TAG );
         clickableViews.add( advertiserView );
 
         updateViewLayout( nativeAdView, advertiserView, getRect( call ) );
@@ -347,10 +347,10 @@ public class AppLovinMAXNativeAdView
         if ( bodyView == null )
         {
             bodyView = new FrameLayout( context );
-            bodyView.setTag( BODY_VIEW_TAG );
             nativeAdView.addView( bodyView );
         }
 
+        bodyView.setTag( BODY_VIEW_TAG );
         clickableViews.add( bodyView );
 
         updateViewLayout( nativeAdView, bodyView, getRect( call ) );
@@ -365,10 +365,10 @@ public class AppLovinMAXNativeAdView
         if ( callToActionView == null )
         {
             callToActionView = new FrameLayout( context );
-            callToActionView.setTag( CALL_TO_ACTION_VIEW_TAG );
             nativeAdView.addView( callToActionView );
         }
 
+        callToActionView.setTag( CALL_TO_ACTION_VIEW_TAG );
         clickableViews.add( callToActionView );
 
         updateViewLayout( nativeAdView, callToActionView, getRect( call ) );
@@ -394,10 +394,10 @@ public class AppLovinMAXNativeAdView
         if ( iconView == null )
         {
             iconView = new ImageView( context );
-            iconView.setTag( ICON_VIEW_TAG );
             nativeAdView.addView( iconView );
         }
 
+        iconView.setTag( ICON_VIEW_TAG );
         clickableViews.add( iconView );
 
         updateViewLayout( nativeAdView, iconView, getRect( call ) );
@@ -455,9 +455,11 @@ public class AppLovinMAXNativeAdView
             mediaViewContainer = new RelativeLayout( context );
             // Sets an identifier for the Google adapters to verify the view in the tree
             mediaViewContainer.setId( MEDIA_VIEW_CONTAINER_TAG );
-            mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
             nativeAdView.addView( mediaViewContainer );
         }
+
+        mediaViewContainer.setTag( MEDIA_VIEW_CONTAINER_TAG );
+        clickableViews.add( mediaViewContainer );
 
         Rect rect = getRect( call );
 
