@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Update IconView to support native ad icon image view, primarily for BigoAds native ads.
 ## 4.0.1
 * Crash if plugin version is incompatible with native SDK version.
 * Add support for Yandex native ads.
