@@ -163,7 +163,11 @@ static NSMutableDictionary<NSString *, AppLovinMAXAdViewWidget *> *preloadedWidg
     
     AppLovinMAXAdViewWidget *preloadedWidget = preloadedWidgetInstances[self.widget.adView.adUnitIdentifier];
     
-    if ( self.widget != preloadedWidget )
+    if ( self.widget == preloadedWidget )
+    {
+        self.widget.autoRefresh = NO;
+    }
+    else
     {
         [widgetInstances removeObjectForKey: self.widget.adView.adUnitIdentifier];
         [self.widget destroy];
