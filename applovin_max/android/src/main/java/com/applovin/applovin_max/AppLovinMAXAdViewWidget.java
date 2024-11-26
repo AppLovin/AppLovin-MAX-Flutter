@@ -42,6 +42,8 @@ class AppLovinMAXAdViewWidget
 
         // Set this extra parameter to work around a SDK bug that ignores calls to stopAutoRefresh()
         adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
+
+        adView.stopAutoRefresh();
     }
 
     public MaxAdView getAdView()

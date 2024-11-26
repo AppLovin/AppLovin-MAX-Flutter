@@ -32,6 +32,8 @@
         // Set this extra parameter to work around a SDK bug that ignores calls to stopAutoRefresh()
         [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
         
+        [self.adView stopAutoRefresh];
+
         // Set a frame size to suppress an error of zero area for MAAdView
         self.adView.frame = (CGRect) { CGPointZero, adFormat.size };
     }

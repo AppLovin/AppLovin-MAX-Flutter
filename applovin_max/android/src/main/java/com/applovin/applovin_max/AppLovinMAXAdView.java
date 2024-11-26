@@ -172,7 +172,11 @@ public class AppLovinMAXAdView
 
             AppLovinMAXAdViewWidget preloadedWidget = preloadedWidgetInstances.get( widget.getAdView().getAdUnitId() );
 
-            if ( widget != preloadedWidget )
+            if ( widget == preloadedWidget )
+            {
+                widget.setAutoRefresh( false );
+            }
+            else
             {
                 widgetInstances.remove( widget.getAdView().getAdUnitId() );
                 widget.destroy();
