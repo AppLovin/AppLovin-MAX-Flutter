@@ -50,6 +50,10 @@ var _isWidgetBannerShowing = false;
 var _isProgrammaticMRecCreated = false;
 var _isProgrammaticMRecShowing = false;
 var _isWidgetMRecShowing = false;
+var _preloadedBannerId;
+var _preloadedMRecId;
+var _preloadedBanner2Id;
+var _preloadedMRec2Id;
 
 var _statusText = '';
 
@@ -229,9 +233,9 @@ class _MyAppState extends State<MyApp> {
   void preloadAdViewAd() {
     AppLovinMAX.setWidgetAdViewAdListener(WidgetAdViewAdListener(onAdLoadedCallback: (ad) {
       if (ad.adUnitId == _bannerAdUnitId) {
-        print('Banner ad preloaded from ${ad.networkName}');
+        print('Banner ad preloaded (${ad.adViewId}) from ${ad.networkName}');
       } else if (ad.adUnitId == _mrecAdUnitId) {
-        print('MREC ad preloaded from ${ad.networkName}');
+        print('MREC ad preloaded (${ad.adViewId}) from ${ad.networkName}');
       } else {
         print('Error: unexpected ad preloaded for ${ad.adUnitId}');
       }
@@ -245,8 +249,9 @@ class _MyAppState extends State<MyApp> {
       }
     }));
 
-    AppLovinMAX.preloadWidgetAdView(_bannerAdUnitId, AdFormat.banner).then((_) {
-      print('Started preloading a banner ad for $_bannerAdUnitId');
+    AppLovinMAX.preloadWidgetAdView(_bannerAdUnitId, AdFormat.banner).then((adViewId) {
+      _preloadedBannerId = adViewId;
+      print('Started preloading a banner ad ($adViewId) for $_bannerAdUnitId');
     }).catchError((e) {
       print('Error: failed to preload a banner ad for $_bannerAdUnitId: $e');
     });
@@ -258,8 +263,23 @@ class _MyAppState extends State<MyApp> {
       customData: 'customData',
       extraParameters: {'key1': 'value1', 'key2': 'value2'},
       localExtraParameters: {'key1': 100, 'key2': 200},
-    ).then((_) {
-      print('Started preloading a MREC ad for $_mrecAdUnitId');
+    ).then((adViewId) {
+      _preloadedMRecId = adViewId;
+      print('Started preloading a MREC ad ($adViewId) for $_mrecAdUnitId');
+    }).catchError((e) {
+      print('Error: failed to preload a MREC ad for $_mrecAdUnitId: $e');
+    });
+
+    AppLovinMAX.preloadWidgetAdView(_bannerAdUnitId, AdFormat.banner).then((adViewId) {
+      _preloadedBanner2Id = adViewId;
+      print('Started preloading a banner ad ($adViewId) for $_bannerAdUnitId');
+    }).catchError((e) {
+      print('Error: failed to preload a banner ad for $_bannerAdUnitId: $e');
+    });
+
+    AppLovinMAX.preloadWidgetAdView(_mrecAdUnitId, AdFormat.mrec).then((adViewId) {
+      _preloadedMRec2Id = adViewId;
+      print('Started preloading a MREC ad ($adViewId) for $_mrecAdUnitId');
     }).catchError((e) {
       print('Error: failed to preload a MREC ad for $_mrecAdUnitId: $e');
     });
@@ -484,9 +504,12 @@ class _MyAppState extends State<MyApp> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ScrolledAdView(
-                                      bannerAdUnitId: _bannerAdUnitId,
-                                      mrecAdUnitId: _mrecAdUnitId,
-                                    )),
+                                    bannerAdUnitId: _bannerAdUnitId,
+                                    mrecAdUnitId: _mrecAdUnitId,
+                                    preloadedBannerId: _preloadedBannerId,
+                                    preloadedMRecId: _preloadedMRecId,
+                                    preloadedBanner2Id: _preloadedBanner2Id,
+                                    preloadedMRec2Id: _preloadedMRec2Id)),
                           );
                         }
                       : null,
@@ -496,6 +519,7 @@ class _MyAppState extends State<MyApp> {
                   MaxAdView(
                       adUnitId: _bannerAdUnitId,
                       adFormat: AdFormat.banner,
+                      adViewId: _preloadedBannerId,
                       listener: AdViewAdListener(onAdLoadedCallback: (ad) {
                         logStatus('Banner widget ad loaded from ${ad.networkName}');
                       }, onAdLoadFailedCallback: (adUnitId, error) {
@@ -513,6 +537,7 @@ class _MyAppState extends State<MyApp> {
                   MaxAdView(
                       adUnitId: _mrecAdUnitId,
                       adFormat: AdFormat.mrec,
+                      adViewId: _preloadedMRecId,
                       listener: AdViewAdListener(onAdLoadedCallback: (ad) {
                         logStatus('MREC widget ad loaded from ${ad.networkName}');
                       }, onAdLoadFailedCallback: (adUnitId, error) {

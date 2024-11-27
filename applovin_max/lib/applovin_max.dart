@@ -695,26 +695,23 @@ class AppLovinMAX {
     _widgetAdViewAdListener = listener;
   }
 
-  /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] with
-  /// the given [adFormat] before it is mounted in the widget tree.
+  /// Preloads a [MaxAdView] platform widget for the specified [adUnitId] and [adFormat].
   ///
-  /// When you mount a [MaxAdView] with the preloaded [adUnitId], it will be
-  /// constructed using the preloaded [MaxAdView] platform widget, allowing ads
-  /// to be displayed more quickly. After unmounting the [MaxAdView], the
-  /// preloaded [MaxAdView] platform widget will not be destroyed; instead, it
-  /// will be reused for the next mount. You must manually destroy it when it is
-  /// no longer needed.
+  /// Preloading a [MaxAdView] improves ad rendering speed when the widget is later
+  /// mounted in the widget tree. The preloaded platform widget is reused across
+  /// mounts for the same [adViewId] until explicitly destroyed, reducing load times.
   ///
-  /// You can preload only one [MaxAdView] platform widget for a single Ad Unit
-  /// ID. If you mount two [MaxAdView] widgets with the same Ad Unit ID, the
-  /// first [MaxAdView] will use the preloaded platform widget, while the second
-  /// [MaxAdView] will create its own platform widget and destroy it upon
-  /// unmounting.
+  /// - **Behavior**:
+  ///   - When a [MaxAdView] is mounted with the preloaded [adViewId], it uses the
+  ///     preloaded platform widget for faster rendering.
   ///
-  /// Returns a `Future<void>` that completes when the preload operation has
-  /// been successfully started. If the preload operation fails to start, the
-  /// `Future` completes with an error.
-  static Future<void> preloadWidgetAdView(
+  /// - **Important**: Preloaded platform widgets must be destroyed manually using
+  ///   [destroyWidgetAdView] when they are no longer needed to free up resources.
+  ///
+  /// - **Return**:
+  ///   A `Future<AdViewId?>` that completes when the preload operation starts
+  ///   successfully. If the operation fails, the `Future` completes with an error.
+  static Future<AdViewId?> preloadWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
     String? placement,
@@ -732,14 +729,17 @@ class AppLovinMAX {
     });
   }
 
-  /// Destroys a [MaxAdView] platform widget for the specified [adUnitId].
+  /// Destroys the preloaded [MaxAdView] platform widget associated with the specified [adViewId].
   ///
-  /// Returns a `Future<void>` that completes the destruction of the [MaxAdView]
-  /// platform widget. If the destruction operation fails, the `Future`
-  /// completes with an error.
-  static Future<void> destroyWidgetAdView(String adUnitId) {
+  /// This method releases resources associated with the preloaded platform widget,
+  /// ensuring that no unnecessary memory or platform-side resources remain allocated.
+  ///
+  /// - **Return**:
+  ///   A `Future<void>` that completes once the destruction operation is successful.
+  ///   If the operation fails, the `Future` completes with an error.
+  static Future<void> destroyWidgetAdView(AdViewId adViewId) {
     return _methodChannel.invokeMethod('destroyWidgetAdView', {
-      'ad_unit_id': adUnitId,
+      'ad_view_id': adViewId,
     });
   }
 

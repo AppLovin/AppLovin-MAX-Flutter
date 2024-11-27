@@ -42,15 +42,15 @@ public class AppLovinMAXAdViewFactory
         String adFormatStr = (String) params.get( "ad_format" );
         MaxAdFormat adFormat = "mrec".equals( adFormatStr ) ? MaxAdFormat.MREC : AppLovinMAX.getDeviceSpecificBannerAdViewAdFormat( context );
 
-        AppLovinMAX.d( "Creating MaxAdView widget with Ad Unit ID: " + adUnitId );
-
         // Optional params
+        Integer ad_view_id = params.containsKey( "ad_view_id" ) ? (Integer) params.get( "ad_view_id" ) : null;
+        int adViewId = ad_view_id != null ? ad_view_id : 0;
         boolean isAutoRefreshEnabled = Boolean.TRUE.equals( params.get( "is_auto_refresh_enabled" ) ); // Defaults to true
         String placement = params.containsKey( "placement" ) ? (String) params.get( "placement" ) : null;
         String customData = params.containsKey( "custom_data" ) ? (String) params.get( "custom_data" ) : null;
         Map<String, Object> extraParameters = params.containsKey( "extra_parameters" ) ? (Map<String, Object>) params.get( "extra_parameters" ) : null;
         Map<String, Object> localExtraParameters = params.containsKey( "local_extra_parameters" ) ? (Map<String, Object>) params.get( "local_extra_parameters" ) : null;
 
-        return new AppLovinMAXAdView( viewId, adUnitId, adFormat, isAutoRefreshEnabled, placement, customData, extraParameters, localExtraParameters, messenger, sdk, context );
+        return new AppLovinMAXAdView( viewId, adUnitId, adViewId, adFormat, isAutoRefreshEnabled, placement, customData, extraParameters, localExtraParameters, messenger, sdk, context );
     }
 }

@@ -23,6 +23,10 @@ class MaxAdView extends StatefulWidget {
   /// either [AdFormat.banner] or [AdFormat.mrec].
   final AdFormat adFormat;
 
+  /// A unique identifier representing the platform widget AdView instance.
+  /// Used to manage and track the specific platform widget AdView.
+  final AdViewId? adViewId;
+
   /// A string value representing the placement name that you assign when you
   /// integrate each ad format, for granular reporting in ad events.
   final String? placement;
@@ -51,6 +55,7 @@ class MaxAdView extends StatefulWidget {
     Key? key,
     required this.adUnitId,
     required this.adFormat,
+    this.adViewId,
     this.placement,
     this.customData,
     this.extraParameters,
@@ -114,6 +119,7 @@ class _MaxAdViewState extends State<MaxAdView> {
     return {
       "ad_unit_id": widget.adUnitId,
       "ad_format": widget.adFormat.value,
+      "ad_view_id": widget.adViewId,
       "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
       "custom_data": widget.customData,
       "placement": widget.placement,

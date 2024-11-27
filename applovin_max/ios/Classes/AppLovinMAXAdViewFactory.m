@@ -45,9 +45,8 @@
     NSString *adFormatStr = args[@"ad_format"];
     MAAdFormat *adFormat = [adFormatStr isEqualToString: @"mrec"] ? MAAdFormat.mrec : DEVICE_SPECIFIC_ADVIEW_AD_FORMAT;
     
-    [AppLovinMAX log: @"Creating MaxAdView widget with Ad Unit ID: %@", adUnitId];
-    
     // Optional params
+    NSNumber *adViewId = [args[@"ad_view_id"] isKindOfClass: [NSNumber class]] ? args[@"ad_view_id"] : nil; // May be NSNull
     BOOL isAutoRefreshEnabled = ((NSNumber *) args[@"is_auto_refresh_enabled"]).boolValue; // Defaults to true
     NSString *placement = [args[@"placement"] isKindOfClass: [NSString class]] ? args[@"placement"] : nil; // May be NSNull
     NSString *customData = [args[@"custom_data"] isKindOfClass: [NSString class]] ? args[@"custom_data"] : nil; // May be NSNull
@@ -58,6 +57,7 @@
                                              viewId: viewId
                                            adUnitId: adUnitId
                                            adFormat: adFormat
+                                           adViewId: adViewId
                                isAutoRefreshEnabled: isAutoRefreshEnabled
                                           placement: placement
                                          customData: customData

@@ -1,6 +1,7 @@
 ## Versions
 
-##
+## x.x.x
+* Enhance banner and MREC (`MaxAdView`) preloading to support preloading multiple `MaxAdView` instances.
 * Update preloaded banners and MRECs (`MaxAdView`) to suspend auto-refresh while not visible in background.
 ## 4.0.2
 * Update IconView to support native ad icon image view, primarily for BigoAds native ads.

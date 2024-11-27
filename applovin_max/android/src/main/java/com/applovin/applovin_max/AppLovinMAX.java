@@ -61,8 +61,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class AppLovinMAX
         implements FlutterPlugin, MethodCallHandler, ActivityAware, MaxAdListener, MaxAdViewAdListener, MaxRewardedAdListener, MaxAdRevenueListener
 {
-    private static final String SDK_TAG = "AppLovinSdk";
-    public static final  String TAG     = "AppLovinMAX";
+    private static final String SDK_TAG        = "AppLovinSdk";
+    public static final  String TAG            = "AppLovinMAX";
     private static final String PLUGIN_VERSION = "4.0.2";
 
     private static final String USER_GEOGRAPHY_GDPR    = "G";
@@ -1992,8 +1992,8 @@ public class AppLovinMAX
         }
         else if ( "destroyWidgetAdView".equals( call.method ) )
         {
-            String adUnitId = call.argument( "ad_unit_id" );
-            AppLovinMAXAdView.destroyWidgetAdView( adUnitId, result );
+            Integer adViewId = call.argument( "ad_view_id" );
+            AppLovinMAXAdView.destroyWidgetAdView( adViewId, result );
         }
         else if ( "addSegment".equals( call.method ) )
         {
