@@ -521,17 +521,17 @@ class _MyAppState extends State<MyApp> {
                       adFormat: AdFormat.banner,
                       adViewId: _preloadedBannerId,
                       listener: AdViewAdListener(onAdLoadedCallback: (ad) {
-                        logStatus('Banner widget ad loaded from ${ad.networkName}');
+                        logStatus('Banner widget ad (${ad.adViewId}) loaded from ${ad.networkName}');
                       }, onAdLoadFailedCallback: (adUnitId, error) {
-                        logStatus('Banner widget ad failed to load with error code ${error.code} and message: ${error.message}');
+                        logStatus('Banner widget ad (${error.adViewId}) failed to load with error code ${error.code} and message: ${error.message}');
                       }, onAdClickedCallback: (ad) {
-                        logStatus('Banner widget ad clicked');
+                        logStatus('Banner widget ad (${ad.adViewId}) clicked');
                       }, onAdExpandedCallback: (ad) {
-                        logStatus('Banner widget ad expanded');
+                        logStatus('Banner widget ad (${ad.adViewId}) expanded');
                       }, onAdCollapsedCallback: (ad) {
                         logStatus('Banner widget ad collapsed');
                       }, onAdRevenuePaidCallback: (ad) {
-                        logStatus('Banner widget ad revenue paid: ${ad.revenue}');
+                        logStatus('Banner widget ad (${ad.adViewId}) revenue paid: ${ad.revenue}');
                       })),
                 if (_isWidgetMRecShowing)
                   MaxAdView(
@@ -539,17 +539,17 @@ class _MyAppState extends State<MyApp> {
                       adFormat: AdFormat.mrec,
                       adViewId: _preloadedMRecId,
                       listener: AdViewAdListener(onAdLoadedCallback: (ad) {
-                        logStatus('MREC widget ad loaded from ${ad.networkName}');
+                        logStatus('MREC widget ad (${ad.adViewId}) loaded from ${ad.networkName}');
                       }, onAdLoadFailedCallback: (adUnitId, error) {
-                        logStatus('MREC widget ad failed to load with error code ${error.code} and message: ${error.message}');
+                        logStatus('MREC widget ad (${error.adViewId}) failed to load with error code ${error.code} and message: ${error.message}');
                       }, onAdClickedCallback: (ad) {
-                        logStatus('MREC widget ad clicked');
+                        logStatus('MREC widget ad (${ad.adViewId}) clicked');
                       }, onAdExpandedCallback: (ad) {
-                        logStatus('MREC widget ad expanded');
+                        logStatus('MREC widget ad (${ad.adViewId}) expanded');
                       }, onAdCollapsedCallback: (ad) {
-                        logStatus('MREC widget ad collapsed');
+                        logStatus('MREC widget ad (${ad.adViewId}) collapsed');
                       }, onAdRevenuePaidCallback: (ad) {
-                        logStatus('MREC widget ad revenue paid: ${ad.revenue}');
+                        logStatus('MREC widget ad (${ad.adViewId}) revenue paid: ${ad.revenue}');
                       })),
               ],
             ),
