@@ -233,9 +233,9 @@ class _MyAppState extends State<MyApp> {
   void preloadAdViewAd() {
     AppLovinMAX.setWidgetAdViewAdListener(WidgetAdViewAdListener(onAdLoadedCallback: (ad) {
       if (ad.adUnitId == _bannerAdUnitId) {
-        print('Banner ad preloaded (${ad.adViewId}) from ${ad.networkName}');
+        print('Banner ad (${ad.adViewId}) preloaded from ${ad.networkName}');
       } else if (ad.adUnitId == _mrecAdUnitId) {
-        print('MREC ad preloaded (${ad.adViewId}) from ${ad.networkName}');
+        print('MREC ad (${ad.adViewId}) preloaded from ${ad.networkName}');
       } else {
         print('Error: unexpected ad preloaded for ${ad.adUnitId}');
       }
