@@ -78,7 +78,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         @"4.0.1" : @"13.0.0",
         @"4.0.0" : @"13.0.0"
     };
-
+    
     ALSharedChannel = [FlutterMethodChannel methodChannelWithName: @"applovin_max" binaryMessenger: [registrar messenger]];
     AppLovinMAX *instance = [[AppLovinMAX alloc] init];
     [registrar addMethodCallDelegate: instance channel: ALSharedChannel];
@@ -114,14 +114,14 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
         self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
-
+        
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
         self.safeAreaBackground.backgroundColor = UIColor.clearColor;
         self.safeAreaBackground.translatesAutoresizingMaskIntoConstraints = NO;
         self.safeAreaBackground.userInteractionEnabled = NO;
         [ROOT_VIEW_CONTROLLER.view addSubview: self.safeAreaBackground];
-
+        
         // Check that plugin version is compatible with native SDK version
         NSString *minCompatibleNativeSdkVersion = ALCompatibleNativeSDKVersions[PLUGIN_VERSION];
         BOOL isCompatible = [ALUtils isInclusiveVersion: ALSdk.version
@@ -174,7 +174,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     }
     
     ALSdkInitializationConfiguration *initConfig = [ALSdkInitializationConfiguration configurationWithSdkKey: sdkKey builderBlock:^(ALSdkInitializationConfigurationBuilder *builder) {
-
+        
         builder.mediationProvider = ALMediationProviderMAX;
         builder.pluginVersion = [@"Flutter-" stringByAppendingString: pluginVersion];
         builder.segmentCollection = [self.segmentCollectionBuilder build];
@@ -189,11 +189,11 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
             self.testDeviceIdentifiersToSet = nil;
         }
     }];
-
-
+    
+    
     // Initialize SDK
     [self.sdk initializeWithConfiguration:initConfig completionHandler:^(ALSdkConfiguration *configuration) {
-
+        
         [self log: @"SDK initialized"];
         
         self.sdkConfiguration = configuration;
@@ -295,7 +295,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         [self log: @"[%@] Failed to set extra parameter for nil or empty key: %@", TAG, key];
         return;
     }
-
+    
     [self.sdk.settings setExtraParameterForKey: key value: ( value != (id) [NSNull null] ) ? value : nil];
 }
 
@@ -333,7 +333,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         [self logUninitializedAccessError: @"showCmpForExistingUser" withResult: result];
         return;
     }
-
+    
     [self.sdk.cmpService showCMPForExistingUserWithCompletion:^(ALCMPError * _Nullable error) {
         
         if ( !error )
@@ -341,7 +341,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
             result(nil);
             return;
         }
-
+        
         result(@{@"code" : @(error.code),
                  @"message" : error.message ?: @"",
                  @"cmpCode" : @(error.cmpCode),
@@ -356,7 +356,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         [self logUninitializedAccessError: @"hasSupportedCmp" withResult: result];
         return;
     }
-
+    
     result(@([self.sdk.cmpService hasSupportedCMP]));
 }
 
@@ -382,7 +382,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     }
     
     NSArray<MASegment *> *segments = self.sdk.segmentCollection.segments;
-
+    
     if ( ![segments count] )
     {
         result(nil);
@@ -395,7 +395,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         map[segment.key] = segment.values;
     }
-
+    
     result(map);
 }
 
@@ -1074,13 +1074,13 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 - (void)logUninitializedAccessError:(NSString *)callingMethod withResult:(nullable FlutterResult)result
 {
     NSString *message = [NSString stringWithFormat: @"ERROR: Failed to execute %@() - please ensure the AppLovin MAX React Native module has been initialized by calling 'AppLovinMAX.initialize(...);'!", callingMethod];
-
+    
     if ( !result )
     {
         NSLog(@"[%@] [%@] %@", SDK_TAG, TAG, message);
         return;
     }
-
+    
     result([FlutterError errorWithCode: TAG message: message details: nil]);
 }
 
@@ -1463,7 +1463,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
             [self log: @"Failed to set Amazon result - unable to find interstitial"];
             return;
         }
-
+        
         [interstitial setLocalExtraParameterForKey: key value: result];
     }
     else if ( adFormat == MAAdFormat.rewarded )
@@ -1474,13 +1474,13 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
             [self log: @"Failed to set Amazon result - unable to find rewarded ad"];
             return;
         }
-
+        
         [rewardedAd setLocalExtraParameterForKey: key value: result];
     }
     else // MAAdFormat.banner or MAAdFormat.mrec
     {
         MAAdView *adView = [AppLovinMAXAdView sharedWithAdUnitIdentifier: adUnitIdentifier];
-
+        
         if ( !adView )
         {
             adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
@@ -1515,7 +1515,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         return ALConsentFlowUserGeographyOther;
     }
-
+    
     return ALConsentFlowUserGeographyUnknown;
 }
 
@@ -1529,7 +1529,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         return USER_GEOGRAPHY_OTHER;
     }
-
+    
     return USER_GEOGRAPHY_UNKNOWN;
 }
 
@@ -1551,7 +1551,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         return APP_TRACKING_STATUS_AUTHORIZED;
     }
-
+    
     return APP_TRACKING_STATUS_UNAVAILABLE;
 }
 
@@ -1976,14 +1976,14 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         id rawCustomData = call.arguments[@"custom_data"];
         id rawExtraParameters = call.arguments[@"extra_parameters"];
         id rawLocalExtraParameters = call.arguments[@"local_extra_parameters"];
-
+        
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
         NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
         NSDictionary<NSString *, id> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
         NSDictionary<NSString *, id> *localExtraParameters = ( rawLocalExtraParameters != [NSNull null] ) ? rawLocalExtraParameters : nil;
-
+        
         MAAdFormat *adFormat;
-    
+        
         if ( [MAAdFormat.banner.label al_isEqualToStringIgnoringCase: adFormatStr] )
         {
             adFormat = DEVICE_SPECIFIC_ADVIEW_AD_FORMAT;
@@ -1997,7 +1997,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
             [self logInvalidAdFormat: adFormat withResult: result];
             return;
         }
-    
+        
         [AppLovinMAXAdView preloadWidgetAdView: adUnitId
                                       adFormat: adFormat
                                      placement: placement
@@ -2008,16 +2008,16 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     }
     else if ( [@"destroyWidgetAdView" isEqualToString: call.method] )
     {
-        NSString *adUnitId = call.arguments[@"ad_unit_id"];
-        [AppLovinMAXAdView destroyWidgetAdView: adUnitId withResult: result];
+        NSNumber *adViewId = call.arguments[@"ad_view_id"];
+        [AppLovinMAXAdView destroyWidgetAdView: adViewId withResult: result];
     }
     else if ( [@"addSegment" isEqualToString: call.method] )
     {
         NSNumber *key = call.arguments[@"key"];
         NSArray<NSNumber *> *values = call.arguments[@"values"];
-
+        
         [self addSegment: key values: values];
-
+        
         result(nil);
     }
     else if ( [@"getSegments" isEqualToString: call.method] )

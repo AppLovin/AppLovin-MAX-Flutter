@@ -7,10 +7,18 @@ class ScrolledAdView extends StatefulWidget {
     super.key,
     required this.bannerAdUnitId,
     required this.mrecAdUnitId,
+    this.preloadedBannerId,
+    this.preloadedMRecId,
+    this.preloadedBanner2Id,
+    this.preloadedMRec2Id,
   });
 
   final String bannerAdUnitId;
   final String mrecAdUnitId;
+  final AdViewId? preloadedBannerId;
+  final AdViewId? preloadedMRecId;
+  final AdViewId? preloadedBanner2Id;
+  final AdViewId? preloadedMRec2Id;
 
   @override
   State createState() => ScrolledAdViewState();
@@ -47,33 +55,80 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                     text: _isAdEnabled ? 'Disable ADs' : 'Enable ADs',
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(4),
-                      shrinkWrap: true,
-                      itemCount: 4,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(children: [
-                          const Text(
-                            _sampleText,
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                          _isAdEnabled
-                              ? (index % 2 == 0)
-                                  ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner)
-                                  : MaxAdView(adUnitId: widget.mrecAdUnitId, adFormat: AdFormat.mrec)
-                              : const SizedBox(
-                                  height: 50,
-                                  child: Center(child: Text('AD Placeholder')),
-                                ),
-                          const Text(
-                            _sampleText,
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ]);
-                      },
-                    ),
+                    child: ListView(padding: const EdgeInsets.all(4), shrinkWrap: true, children: [
+                      Column(children: [
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                        _isAdEnabled
+                            ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner, adViewId: widget.preloadedBannerId)
+                            : const SizedBox(
+                                height: 50,
+                                child: Center(child: Text('AD Placeholder')),
+                              ),
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ]),
+                      Column(children: [
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                        _isAdEnabled
+                            ? MaxAdView(adUnitId: widget.mrecAdUnitId, adFormat: AdFormat.mrec, adViewId: widget.preloadedMRecId)
+                            : const SizedBox(
+                                height: 50,
+                                child: Center(child: Text('AD Placeholder')),
+                              ),
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ]),
+                      Column(children: [
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                        _isAdEnabled
+                            ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner, adViewId: widget.preloadedBanner2Id)
+                            : const SizedBox(
+                                height: 50,
+                                child: Center(child: Text('AD Placeholder')),
+                              ),
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ]),
+                      Column(children: [
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                        _isAdEnabled
+                            ? MaxAdView(adUnitId: widget.mrecAdUnitId, adFormat: AdFormat.mrec, adViewId: widget.preloadedMRec2Id)
+                            : const SizedBox(
+                                height: 50,
+                                child: Center(child: Text('AD Placeholder')),
+                              ),
+                        const Text(
+                          _sampleText,
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ])
+                    ]),
                   ),
                   _isAdEnabled
                       ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner)

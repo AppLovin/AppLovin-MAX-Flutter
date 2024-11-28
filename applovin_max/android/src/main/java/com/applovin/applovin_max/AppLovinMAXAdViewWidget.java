@@ -51,6 +51,11 @@ class AppLovinMAXAdViewWidget
         return adView;
     }
 
+    public String getAdUnitId()
+    {
+        return adView.getAdUnitId();
+    }
+
     public void setPlacement(@Nullable final String value)
     {
         adView.setPlacement( value );
@@ -61,7 +66,7 @@ class AppLovinMAXAdViewWidget
         adView.setCustomData( value );
     }
 
-    public void setAutoRefresh(final boolean enabled)
+    public void setAutoRefreshEnabled(final boolean enabled)
     {
         if ( enabled )
         {
@@ -126,6 +131,7 @@ class AppLovinMAXAdViewWidget
     public void onAdLoaded(@NonNull final MaxAd ad)
     {
         Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
+        params.put( "adViewId", hashCode() );
 
         if ( shouldPreloadWidget )
         {
@@ -144,6 +150,7 @@ class AppLovinMAXAdViewWidget
     public void onAdLoadFailed(@NonNull final String adUnitId, @NonNull final MaxError error)
     {
         Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
+        params.put( "adViewId", hashCode() );
 
         if ( shouldPreloadWidget )
         {
@@ -164,6 +171,8 @@ class AppLovinMAXAdViewWidget
         if ( containerView != null )
         {
             Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
+            params.put( "adViewId", hashCode() );
+
             containerView.sendEvent( "OnAdViewAdClickedEvent", params );
         }
     }
@@ -174,6 +183,8 @@ class AppLovinMAXAdViewWidget
         if ( containerView != null )
         {
             Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
+            params.put( "adViewId", hashCode() );
+
             containerView.sendEvent( "OnAdViewAdExpandedEvent", params );
         }
     }
@@ -184,6 +195,8 @@ class AppLovinMAXAdViewWidget
         if ( containerView != null )
         {
             Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
+            params.put( "adViewId", hashCode() );
+
             containerView.sendEvent( "OnAdViewAdCollapsedEvent", params );
         }
     }
@@ -194,6 +207,8 @@ class AppLovinMAXAdViewWidget
         if ( containerView != null )
         {
             Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
+            params.put( "adViewId", hashCode() );
+
             containerView.sendEvent( "OnAdViewAdRevenuePaidEvent", params );
         }
     }

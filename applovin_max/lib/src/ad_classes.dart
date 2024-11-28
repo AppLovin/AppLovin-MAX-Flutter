@@ -1,9 +1,15 @@
 import 'package:applovin_max/src/enums.dart';
 
+/// A unique identifier used to reference a specific platform widget AdView instance.
+typedef AdViewId = num;
+
 /// Represents an ad that has been served by AppLovin MAX.
 class MaxAd {
   /// The ad unit ID for which this ad was loaded.
   final String adUnitId;
+
+  /// The unique ID of the platform widget AdView.
+  final AdViewId? adViewId;
 
   /// The ad network from which this ad was loaded.
   final String networkName;
@@ -39,7 +45,8 @@ class MaxAd {
   final MaxNativeAd? nativeAd;
 
   /// @nodoc
-  MaxAd(this.adUnitId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall, this.nativeAd);
+  MaxAd(this.adUnitId, this.adViewId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall,
+      this.nativeAd);
 
   /// @nodoc
   factory MaxAd.fromJson(Map<String, dynamic> json) {
@@ -50,6 +57,7 @@ class MaxAd {
 
     return MaxAd(
       json['adUnitId'] as String,
+      json['adViewId'] as AdViewId?,
       json['networkName'] as String,
       double.tryParse(json['revenue']?.toString() ?? '0.0') ?? 0.0,
       json['revenuePrecision'] as String,
@@ -64,6 +72,7 @@ class MaxAd {
   @override
   String toString() {
     return '{MaxAd: {adUnitId: $adUnitId'
+        ', adViewId: $adViewId'
         ', networkName: $networkName'
         ', revenue: $revenue'
         ', revenuePrecision: $revenuePrecision'
@@ -159,15 +168,20 @@ class MaxError {
   /// The error message for the error.
   final String message;
 
+  /// The unique ID of the platform widget AdView.
+  final AdViewId? adViewId;
+
   /// The underlying waterfall of ad responses.
   final MaxAdWaterfallInfo? waterfall;
 
   /// @nodoc
-  MaxError(this.code, this.message, this.waterfall);
+  MaxError(this.code, this.message, this.adViewId, this.waterfall);
 
   /// @nodoc
   factory MaxError.fromJson(Map<String, dynamic> json) {
     ErrorCode code = ErrorCode.fromValue(json['code'] as int);
+
+    AdViewId? adViewId = json['adViewId'] as AdViewId?;
 
     MaxAdWaterfallInfo? waterfall;
     if (json['waterfall'] != null) {
@@ -177,7 +191,7 @@ class MaxError {
       }
     }
 
-    return MaxError(code, json['message'] as String, waterfall);
+    return MaxError(code, json['message'] as String, adViewId, waterfall);
   }
 
   @override

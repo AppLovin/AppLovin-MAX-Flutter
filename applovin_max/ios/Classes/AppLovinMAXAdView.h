@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AppLovinMAXAdView : NSObject<FlutterPlatformView>
 
-+ (MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier;
++ (nullable MAAdView *)sharedWithAdUnitIdentifier:(NSString *)adUnitIdentifier;
 
 + (void)preloadWidgetAdView:(NSString *)adUnitIdentifier 
                    adFormat:(MAAdFormat *)adFormat
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
        localExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
                  withResult:(FlutterResult)result;
 
-+ (void)destroyWidgetAdView:(NSString *)adUnitIdentifier withResult:(FlutterResult)result;
++ (void)destroyWidgetAdView:(NSNumber *)adViewId withResult:(FlutterResult)result;
 
 - (void)sendEventWithName:(NSString *)name body:(NSDictionary<NSString *, id> *)body;
 
@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
                        viewId:(int64_t)viewId
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
+                     adViewId:(nullable NSNumber *)adViewId
          isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData

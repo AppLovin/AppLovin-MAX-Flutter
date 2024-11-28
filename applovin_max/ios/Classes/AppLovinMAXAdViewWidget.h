@@ -5,6 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AppLovinMAXAdViewWidget : NSObject
 
 @property (nonatomic, strong, readonly) MAAdView *adView;
+@property (nonatomic, copy,   readonly) NSString *adUnitIdentifier;
 @property (nonatomic, assign, readonly) BOOL hasContainerView;
 
 @property (nonatomic, copy, nullable) NSString *placement;
