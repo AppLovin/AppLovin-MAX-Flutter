@@ -2,6 +2,7 @@
 
 ## 4.1.1
 * Remove the mistakenly enabled adaptive banner from Android to prevent app-side errors.
+* Remove obsolete MAX Error Codes - `ErrorCode.fullscreenAdAlreadyLoading` and `ErrorCode.fullscreenAdLoadWhileShowing`.
 ## 4.1.0
 * Enhance banner and MREC (`MaxAdView`) preloading to support preloading multiple `MaxAdView` instances.
 * Update preloaded banners and MRECs (`MaxAdView`) to suspend auto-refresh while not visible in background.
