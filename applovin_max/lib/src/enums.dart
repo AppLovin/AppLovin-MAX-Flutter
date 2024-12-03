@@ -190,14 +190,6 @@ enum ErrorCode {
   /// Note: iOS only.
   fullscreenAdInvalidViewController(-25),
 
-  /// This error code indicates you are attempting to load a fullscreen ad while another
-  /// fullscreen ad is already loading.
-  fullscreenAdAlreadyLoading(-26),
-
-  /// This error code indicates you are attempting to load a fullscreen ad while another fullscreen ad
-  /// is still showing.
-  fullscreenAdLoadWhileShowing(-27),
-
   /// This error code indicates that the SDK failed to display an ad because the
   /// user has the "Don't Keep Activities" developer setting enabled.
   ///
