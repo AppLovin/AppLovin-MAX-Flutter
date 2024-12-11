@@ -1,6 +1,7 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
+import android.widget.FrameLayout;
 
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdFormat;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 class AppLovinMAXAdViewWidget
+        extends FrameLayout
         implements MaxAdListener, MaxAdViewAdListener, MaxAdRevenueListener
 {
     private final MaxAdView adView;
@@ -32,6 +34,8 @@ class AppLovinMAXAdViewWidget
 
     public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean shouldPreloadWidget, final AppLovinSdk sdk, final Context context)
     {
+        super( context );
+
         this.shouldPreloadWidget = shouldPreloadWidget;
 
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
@@ -42,6 +46,15 @@ class AppLovinMAXAdViewWidget
         adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
 
         adView.stopAutoRefresh();
+
+        addView( adView );
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+
+        adView.setLayoutParams( params );
     }
 
     public MaxAdView getAdView()

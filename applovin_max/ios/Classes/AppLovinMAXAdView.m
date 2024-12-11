@@ -143,12 +143,12 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
         self.widget = preloadedWidgetInstances[adViewId];
         if ( self.widget )
         {
-            // Attach the preloaded widget if possible, otherwise create a new one for the
-            // same adUnitId
+            // Attach the preloaded widget if available, otherwise create a new widget for the same ad unit.
             if ( ![self.widget hasContainerView] )
             {
                 [AppLovinMAX log: @"Mounting the preloaded AdView (%@) for Ad Unit ID %@", adViewId, adUnitId];
                 
+                self.widget.adView.frame = frame;
                 self.adViewId = adViewId;
                 [self.widget setAutoRefreshEnabled: isAutoRefreshEnabled];
                 [self.widget attachAdView: self];
@@ -157,6 +157,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
         }
         
         self.widget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat];
+        self.widget.adView.frame = frame;
         self.adViewId = @(self.widget.hash);
         widgetInstances[self.adViewId] = self.widget;
         
@@ -188,13 +189,11 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
     if ( self.widget == preloadedWidget )
     {
         [AppLovinMAX log: @"Unmounting the preloaded AdView (%@) for Ad Unit ID %@", self.adViewId, self.widget.adUnitIdentifier];
-        
         [self.widget setAutoRefreshEnabled: NO];
     }
     else
     {
         [AppLovinMAX log: @"Unmounting the AdView (%@) to destroy for Ad Unit ID %@", self.adViewId, self.widget.adUnitIdentifier];
-        
         [widgetInstances removeObjectForKey: self.adViewId];
         [self.widget destroy];
     }

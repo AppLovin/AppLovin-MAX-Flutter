@@ -42,9 +42,11 @@
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAdView *> *adViews;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, MAAdFormat *> *adViewAdFormats;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *adViewPositions;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSNumber *> *adViewWidths;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSArray<NSLayoutConstraint *> *> *adViewConstraints;
 @property (nonatomic, strong) NSMutableArray<NSString *> *adUnitIdentifiersToShowAfterCreate;
 @property (nonatomic, strong) NSMutableSet<NSString *> *disabledAutoRefreshAdViewAdUnitIdentifiers;
+@property (nonatomic, strong) NSMutableSet<NSString *> *disabledAdaptiveBannerAdUnitIdentifiers;
 @property (nonatomic, strong) UIView *safeAreaBackground;
 @property (nonatomic, strong, nullable) UIColor *publisherBannerBackgroundColor;
 
@@ -114,9 +116,11 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         self.adViews = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewAdFormats = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewPositions = [NSMutableDictionary dictionaryWithCapacity: 2];
+        self.adViewWidths = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adViewConstraints = [NSMutableDictionary dictionaryWithCapacity: 2];
         self.adUnitIdentifiersToShowAfterCreate = [NSMutableArray arrayWithCapacity: 2];
         self.disabledAutoRefreshAdViewAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
+        self.disabledAdaptiveBannerAdUnitIdentifiers = [NSMutableSet setWithCapacity: 2];
         
         self.safeAreaBackground = [[UIView alloc] init];
         self.safeAreaBackground.hidden = YES;
@@ -913,6 +917,20 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     adView.placement = placement;
 }
 
+- (void)setAdViewWidth:(CGFloat)width forAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+{
+    [self log: @"Setting width %f for \"%@\" with ad unit identifier \"%@\"", width, adFormat, adUnitIdentifier];
+        
+    CGFloat minWidth = adFormat.size.width;
+    if ( width < minWidth )
+    {
+        [self log: @"The provided with: %f is smaller than the minimum required width: %f for ad format: %@. Please set the width higher than the minimum required.", width, minWidth, adFormat];
+    }
+        
+    self.adViewWidths[adUnitIdentifier] = @(width);
+    [self positionAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+}
+
 - (void)updateAdViewPosition:(NSString *)adViewPosition forAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
     // Check if the previous position is same as the new position. If so, no need to update the position again.
@@ -946,6 +964,20 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         }
         
         self.adViewAdFormats[adUnitIdentifier] = adFormat;
+        [self positionAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
+    }
+    else if ( [@"adaptive_banner" isEqualToString: key] )
+    {
+        BOOL shouldUseAdaptiveBanner = [NSNumber al_numberWithString: value].boolValue;
+        if ( shouldUseAdaptiveBanner )
+        {
+            [self.disabledAdaptiveBannerAdUnitIdentifiers removeObject: adUnitIdentifier];
+        }
+        else
+        {
+            [self.disabledAdaptiveBannerAdUnitIdentifiers addObject: adUnitIdentifier];
+        }
+        
         [self positionAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
     }
 }
@@ -1198,6 +1230,8 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 {
     MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
     NSString *adViewPosition = self.adViewPositions[adUnitIdentifier];
+    BOOL isAdaptiveBannerDisabled = [self.disabledAdaptiveBannerAdUnitIdentifiers containsObject: adUnitIdentifier];
+    BOOL isWidthPtsOverridden = self.adViewWidths[adUnitIdentifier] != nil;
     
     UIView *superview = adView.superview;
     if ( !superview ) return;
@@ -1217,7 +1251,42 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     [NSLayoutConstraint deactivateConstraints: self.safeAreaBackground.constraints];
     self.safeAreaBackground.hidden = adView.hidden;
     
-    CGSize adViewSize = [[self class] adViewSizeForAdFormat: adFormat];
+    //
+    // Determine ad width
+    //
+    CGFloat adViewWidth;
+    
+    // Check if publisher has overridden width as points
+    if ( isWidthPtsOverridden )
+    {
+        adViewWidth = self.adViewWidths[adUnitIdentifier].floatValue;
+    }
+    // Top center / bottom center stretches full screen
+    else if ( [adViewPosition isEqual: @"top_center"] || [adViewPosition isEqual: @"bottom_center"] )
+    {
+        adViewWidth = CGRectGetWidth(KEY_WINDOW.bounds);
+    }
+    // Else use standard widths of 320, 728, or 300
+    else
+    {
+        adViewWidth = adFormat.size.width;
+    }
+    
+    //
+    // Determine ad height
+    //
+    CGFloat adViewHeight;
+    
+    if ( (adFormat == MAAdFormat.banner || adFormat == MAAdFormat.leader) && !isAdaptiveBannerDisabled )
+    {
+        adViewHeight = [adFormat adaptiveSizeForWidth: adViewWidth].height;
+    }
+    else
+    {
+        adViewHeight = adFormat.size.height;
+    }
+    
+    CGSize adViewSize = CGSizeMake(adViewWidth, adViewHeight);
     
     // All positions have constant height
     NSMutableArray<NSLayoutConstraint *> *constraints = [NSMutableArray arrayWithObject: [adView.heightAnchor constraintEqualToConstant: adViewSize.height]];
@@ -1227,6 +1296,21 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     // If top of bottom center, stretch width of screen
     if ( [adViewPosition isEqual: @"top_center"] || [adViewPosition isEqual: @"bottom_center"] )
     {
+        // Non AdMob banners will still be of 50/90 points tall. Set the auto sizing mask such that the inner ad view is pinned to the bottom or top according to the ad view position.
+        if ( !isAdaptiveBannerDisabled )
+        {
+            adView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            
+            if ( [adViewPosition isEqual: @"top_center"] )
+            {
+                adView.autoresizingMask |= UIViewAutoresizingFlexibleBottomMargin;
+            }
+            else // bottom_center
+            {
+                adView.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
+            }
+        }
+        
         // If publisher actually provided a banner background color, span the banner across the realm
         if ( self.publisherBannerBackgroundColor && adFormat != MAAdFormat.mrec )
         {
