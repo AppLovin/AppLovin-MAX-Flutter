@@ -55,7 +55,7 @@
     self.adView.customData = customData;
 }
 
-- (void)setAutoRefresh:(BOOL)autoRefresh
+- (void)setAutoRefreshEnabled:(BOOL)autoRefresh
 {
     if ( autoRefresh )
     {

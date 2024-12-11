@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix preloaded AdView not resuming auto-refresh on iOS.
 ## 4.1.1
 * Remove the mistakenly enabled adaptive banner from Android to prevent app-side errors.
 * Remove obsolete MAX Error Codes - `ErrorCode.fullscreenAdAlreadyLoading` and `ErrorCode.fullscreenAdLoadWhileShowing`.
