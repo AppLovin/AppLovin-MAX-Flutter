@@ -67,10 +67,10 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
     AppLovinMAXAdViewWidget *preloadedWidget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: YES];
     preloadedWidgetInstances[@(preloadedWidget.hash)] = preloadedWidget;
     
-    preloadedWidget.placement = placement;
-    preloadedWidget.customData = customData;
-    preloadedWidget.extraParameters = extraParameters;
-    preloadedWidget.localExtraParameters = localExtraParameters;
+    [preloadedWidget setPlacement: placement];
+    [preloadedWidget setCustomData: customData];
+    [preloadedWidget setExtraParameters: extraParameters];
+    [preloadedWidget setLocalExtraParameters: localExtraParameters];
     
     [preloadedWidget loadAd];
     
@@ -150,7 +150,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
                 [AppLovinMAX log: @"Mounting the preloaded AdView (%@) for Ad Unit ID %@", adViewId, adUnitId];
                 
                 self.adViewId = adViewId;
-                self.widget.autoRefreshEnabled = isAutoRefreshEnabled;
+                [self.widget setAutoRefreshEnabled: isAutoRefreshEnabled];
                 [self.widget attachAdView: self];
                 return self;
             }
@@ -162,11 +162,11 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
         
         [AppLovinMAX log: @"Mounting a new AdView (%@) for Ad Unit ID %@", self.adViewId, adUnitId];
         
-        self.widget.placement = placement;
-        self.widget.customData = customData;
-        self.widget.extraParameters = extraParameters;
-        self.widget.localExtraParameters = localExtraParameters;
-        self.widget.autoRefreshEnabled = isAutoRefreshEnabled;
+        [self.widget setPlacement: placement];
+        [self.widget setCustomData: customData];
+        [self.widget setExtraParameters: extraParameters];
+        [self.widget setLocalExtraParameters: localExtraParameters];
+        [self.widget setAutoRefreshEnabled: isAutoRefreshEnabled];
         
         [self.widget attachAdView: self];
         [self.widget loadAd];
@@ -189,7 +189,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
     {
         [AppLovinMAX log: @"Unmounting the preloaded AdView (%@) for Ad Unit ID %@", self.adViewId, self.widget.adUnitIdentifier];
         
-        self.widget.autoRefreshEnabled = NO;
+        [self.widget setAutoRefreshEnabled: NO];
     }
     else
     {

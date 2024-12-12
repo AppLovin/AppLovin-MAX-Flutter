@@ -12,7 +12,6 @@
 @end
 
 @implementation AppLovinMAXAdViewWidget
-@dynamic placement, customData, extraParameters, localExtraParameters, autoRefreshEnabled;
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
@@ -83,11 +82,6 @@
     {
         [self.adView stopAutoRefresh];
     }
-}
-
--(BOOL)isAutoRefreshEnabled
-{
-    return self.autoRefreshEnabled;
 }
 
 - (BOOL)hasContainerView
