@@ -8,11 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy,   readonly) NSString *adUnitIdentifier;
 @property (nonatomic, assign, readonly) BOOL hasContainerView;
 
-@property (nonatomic, copy, nullable) NSString *placement;
-@property (nonatomic, copy, nullable) NSString *customData;
-@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *extraParameters;
-@property (nonatomic, copy, nullable) NSDictionary<NSString *, id> *localExtraParameters;
-@property (nonatomic, assign, getter=isAutoRefreshEnabled) BOOL autoRefreshEnabled;
+- (void)setPlacement:(nullable NSString *)placement;
+- (void)setCustomData:(nullable NSString *)customData;
+- (void)setExtraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters;
+- (void)setLocalExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters;
+- (void)setAutoRefreshEnabled:(BOOL)autoRefreshEnabled;
 
 - (void)loadAd;
 - (void)attachAdView:(AppLovinMAXAdView *)view;

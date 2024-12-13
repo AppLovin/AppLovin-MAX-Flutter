@@ -45,42 +45,42 @@
     return self.adView.adUnitIdentifier;
 }
 
-- (void)setPlacement:(NSString *)placement
+- (void)setPlacement:(nullable NSString *)placement
 {
     self.adView.placement = placement;
 }
 
-- (void)setCustomData:(NSString *)customData
+- (void)setCustomData:(nullable NSString *)customData
 {
     self.adView.customData = customData;
 }
 
-- (void)setAutoRefresh:(BOOL)autoRefresh
+- (void)setExtraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters
 {
-    if ( autoRefresh )
+    for ( NSString *key in extraParameters )
+    {
+        [self.adView setExtraParameterForKey: key value: [extraParameters al_stringForKey: key]];
+    }
+}
+
+- (void)setLocalExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
+{
+    for ( NSString *key in localExtraParameters )
+    {
+        id value = localExtraParameters[key];
+        [self.adView setLocalExtraParameterForKey: key value: (value != [NSNull null] ? value : nil)];
+    }
+}
+
+- (void)setAutoRefreshEnabled:(BOOL)autoRefreshEnabled
+{
+    if ( autoRefreshEnabled )
     {
         [self.adView startAutoRefresh];
     }
     else
     {
         [self.adView stopAutoRefresh];
-    }
-}
-
-- (void)setExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
-{
-    for ( NSString *key in parameterDict )
-    {
-        [self.adView setExtraParameterForKey: key value: [parameterDict al_stringForKey: key]];
-    }
-}
-
-- (void)setLocalExtraParameters:(NSDictionary<NSString *, id> *)parameterDict
-{
-    for ( NSString *key in parameterDict )
-    {
-        id value = parameterDict[key];
-        [self.adView setLocalExtraParameterForKey: key value: (value != [NSNull null] ? value : nil)];
     }
 }
 
