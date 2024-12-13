@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 4.1.2
 * Fix preloaded banners and MRECs not resuming auto-refresh on iOS.
 ## 4.1.1
 * Remove the mistakenly enabled adaptive banner from Android to prevent app-side errors.
