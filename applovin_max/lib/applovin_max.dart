@@ -386,6 +386,13 @@ class AppLovinMAX {
     });
   }
 
+  static void setBannerWidth(String adUnitId, double width) {
+    _methodChannel.invokeMethod('setBannerWidth', {
+      'ad_unit_id': adUnitId,
+      'width': width.round(),
+    });
+  }
+
   /// Updates the banner position with the specified [adUnitId].
   static void updateBannerPosition(String adUnitId, AdViewPosition position) {
     _methodChannel.invokeMethod('updateBannerPosition', {

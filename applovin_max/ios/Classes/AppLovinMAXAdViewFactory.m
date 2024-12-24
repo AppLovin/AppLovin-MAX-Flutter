@@ -53,7 +53,7 @@
     NSDictionary *extraParameters = [args[@"extra_parameters"] isKindOfClass: [NSDictionary class]] ? args[@"extra_parameters"] : nil;
     NSDictionary *localExtraParameters = [args[@"local_extra_parameters"] isKindOfClass: [NSDictionary class]] ? args[@"local_extra_parameters"] : nil;
     
-    return [[AppLovinMAXAdView alloc] initWithFrame: (CGRect) { .size = adFormat.size }
+    return [[AppLovinMAXAdView alloc] initWithFrame: (CGRect) frame
                                              viewId: viewId
                                            adUnitId: adUnitId
                                            adFormat: adFormat
