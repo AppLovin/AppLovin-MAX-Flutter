@@ -1348,12 +1348,11 @@ public class AppLovinMAX
             adViewHeightDp = adViewSize.heightDp;
         }
 
-        // Size the ad
-        final int width = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewWidthDp );
-        final int height = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewHeightDp );
+        final int widthPx = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewWidthDp );
+        final int heightPx = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewHeightDp );
 
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) adView.getLayoutParams();
-        params.height = height;
+        params.height = heightPx;
         adView.setLayoutParams( params );
 
         // Parse gravity
@@ -1384,11 +1383,11 @@ public class AppLovinMAX
             if ( adViewPosition.contains( "center" ) )
             {
                 gravity |= Gravity.CENTER_HORIZONTAL;
-                params.width = ( MaxAdFormat.MREC == adFormat ) ? width : RelativeLayout.LayoutParams.MATCH_PARENT; // Stretch width if banner
+                params.width = ( MaxAdFormat.MREC == adFormat ) ? widthPx : RelativeLayout.LayoutParams.MATCH_PARENT; // Stretch width if banner
             }
             else
             {
-                params.width = width;
+                params.width = widthPx;
 
                 if ( adViewPosition.contains( "left" ) )
                 {
