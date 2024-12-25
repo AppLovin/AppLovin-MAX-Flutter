@@ -1416,6 +1416,8 @@ public class AppLovinMAX
         adInfo.put( "revenuePrecision", ad.getRevenuePrecision() );
         adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
+        adInfo.put( "width", ad.getSize().getWidth() );
+        adInfo.put( "height", ad.getSize().getHeight() );
 
         return adInfo;
     }

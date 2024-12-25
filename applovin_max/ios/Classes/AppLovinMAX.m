@@ -1424,7 +1424,9 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
              @"revenue" : @(ad.revenue),
              @"revenuePrecision" : ad.revenuePrecision,
              @"dspName" : ad.DSPName ?: @"",
-             @"waterfall": [self createAdWaterfallInfo: ad.waterfall]};
+             @"waterfall": [self createAdWaterfallInfo: ad.waterfall],
+             @"width": @(ad.size.width),
+             @"height": @(ad.size.height)};
 }
 
 - (NSDictionary<NSString *, id> *)adLoadFailedInfoForAdUnitIdentifier:(NSString *)adUnitIdentifier withError:(MAError *)error
