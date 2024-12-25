@@ -364,6 +364,7 @@ class AppLovinMAX {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
+    setBannerExtraParameter(adUnitId, "adaptive_banner", "true");
   }
 
   /// Sets a background color for the banner with the specified [adUnitId].

@@ -100,7 +100,7 @@ class _MaxAdViewState extends State<MaxAdView> {
   @override
   void initState() {
     super.initState();
-    _adaptiveBannerEnabled = (widget.extraParameters?['adaptive_banner'] == 'true');
+    _adaptiveBannerEnabled = widget.extraParameters?['adaptive_banner'] == 'true' || widget.extraParameters == null;
   }
 
   @override
