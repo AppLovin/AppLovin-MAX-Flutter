@@ -96,11 +96,20 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   late bool _isTablet;
   late bool _adaptiveBannerEnabled;
+  late Map<String, String?> extraParameters;
 
   @override
   void initState() {
     super.initState();
-    _adaptiveBannerEnabled = widget.extraParameters?['adaptive_banner'] == 'true' || widget.extraParameters == null;
+
+    extraParameters = Map<String, String?>.from(widget.extraParameters ?? {});
+    if (extraParameters['adaptive_banner'] == null) {
+      // Set the default value for 'adaptive_banner'
+      extraParameters['adaptive_banner'] = 'true';
+      _adaptiveBannerEnabled = true;
+    } else {
+      _adaptiveBannerEnabled = extraParameters['adaptive_banner'] == 'true';
+    }
   }
 
   @override
@@ -164,7 +173,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
       "custom_data": widget.customData,
       "placement": widget.placement,
-      "extra_parameters": widget.extraParameters,
+      "extra_parameters": extraParameters,
       "local_extra_parameters": widget.localExtraParameters,
     };
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatefulWidget {
 }
 
 // Create constants
+/*
 const String _sdkKey = 'YOUR_SDK_KEY';
 
 final String _interstitialAdUnitId = Platform.isAndroid ? 'ANDROID_INTER_AD_UNIT_ID' : 'IOS_INTER_AD_UNIT_ID';
@@ -35,6 +37,22 @@ final String _rewardedAdUnitId = Platform.isAndroid ? 'ANDROID_REWARDED_AD_UNIT_
 final String _bannerAdUnitId = Platform.isAndroid ? 'ANDROID_BANNER_AD_UNIT_ID' : 'IOS_BANNER_AD_UNIT_ID';
 final String _mrecAdUnitId = Platform.isAndroid ? 'ANDROID_MREC_AD_UNIT_ID' : 'IOS_MREC_AD_UNIT_ID';
 final String _nativeAdUnitId = Platform.isAndroid ? 'ANDROID_NATIVE_AD_UNIT_ID' : 'IOS_NATIVE_AD_UNIT_ID';
+*/
+
+// ishihama@nanameue.jp
+// ca-app-pub-2413236655752493~9012581980
+// AdMob, Pangle, LINE, Mintegral
+// ios: com.hiroshichiba.marinchat (marinchat)
+// android: com.marinapps.marinchat (orca_android)
+//const String _sdkKey = 'iPTpI3HBg2vZ_9vXRKrlXG2ilW8ZI3H_Trpmu4yZ6r76-1dQLSAtkDZTli21nJ1E9q-1vxb_mk5llk94BKxwXV';
+const String _sdkKey = 'vLsVeBl2W6LqNvyxrkAecVfLomUvdXIZpCJGHcR9rP-hbWLsHxZS_5Q4cl5r-sT_O_lkos7czMBNKyBO-KS8ob';
+
+final String _interstitialAdUnitId = Platform.isAndroid ? 'd6173bc2ab28d84d' : '177b69112de3de75';
+final String _rewardedAdUnitId = Platform.isAndroid ? '6e4567b5fbd9178d' : '8a0093c2cf3fd644';
+//final String _bannerAdUnitId = Platform.isAndroid ? '516bd2f7e805a569' : 'b56c7ec42568de5a';
+final String _bannerAdUnitId = Platform.isAndroid ? 'fd53b1bf06fde536' : '2bc676a15d458bcf';
+final String _mrecAdUnitId = Platform.isAndroid ? '6a28e8ad7eb02a31' : '34614458775c9eef';
+final String _nativeAdUnitId = Platform.isAndroid ? '84b1abd093789598' : '64939b438bbfdf78';
 
 const int _maxExponentialRetryCount = 6;
 
@@ -54,6 +72,8 @@ AdViewId? _preloadedBannerId;
 AdViewId? _preloadedMRecId;
 AdViewId? _preloadedBanner2Id;
 AdViewId? _preloadedMRec2Id;
+double? _bannerWidth;
+double? _bannerHeight;
 
 var _statusText = '';
 
@@ -83,7 +103,7 @@ class _MyAppState extends State<MyApp> {
 
       // If you need to preload banners/MRECs ahead of time such that the
       // contents are readily available when displayed.
-      preloadAdViewAd();
+      //preloadAdViewAd();
     }
   }
 
@@ -349,7 +369,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            //crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 8),
               AppButton(
@@ -405,8 +425,6 @@ class _MyAppState extends State<MyApp> {
                             //
                             AppLovinMAX.createBanner(_bannerAdUnitId, AdViewPosition.bottomCenter);
 
-                            AppLovinMAX.setBannerExtraParameter(_bannerAdUnitId, "adaptive_banner", "true");
-
                             // Set banner background color to black - PLEASE USE HEX STRINGS ONLY
                             AppLovinMAX.setBannerBackgroundColor(_bannerAdUnitId, '#000000');
 
@@ -427,6 +445,8 @@ class _MyAppState extends State<MyApp> {
               AppButton(
                 onPressed: (_isInitialized && !_isProgrammaticBannerShowing)
                     ? () async {
+                        _bannerWidth = null;
+                        _bannerHeight = null;
                         setState(() {
                           _isWidgetBannerShowing = !_isWidgetBannerShowing;
                         });
@@ -505,9 +525,16 @@ class _MyAppState extends State<MyApp> {
                     adUnitId: _bannerAdUnitId,
                     adFormat: AdFormat.banner,
                     adViewId: _preloadedBannerId,
-                    extraParameters: const {'adaptive_banner': 'true'},
+                    width: _bannerWidth,
+                    height: _bannerHeight,
                     listener: AdViewAdListener(onAdLoadedCallback: (ad) {
                       logStatus('Banner widget ad (${ad.adViewId}) loaded from ${ad.networkName}');
+                      if (ad.size != null) {
+                        setState(() {
+                          _bannerWidth = ad.size?.width;
+                          _bannerHeight = ad.size?.height;
+                        });
+                      }
                     }, onAdLoadFailedCallback: (adUnitId, error) {
                       logStatus('Banner widget ad (${error.adViewId}) failed to load with error code ${error.code} and message: ${error.message}');
                     }, onAdClickedCallback: (ad) {
