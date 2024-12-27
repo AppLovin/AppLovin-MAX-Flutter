@@ -34,8 +34,10 @@
         
         [self.adView stopAutoRefresh];
         
-        // Set a frame size to suppress an error of zero area for MAAdView
+        // Set an initial frame size to avoid zero-area errors.
         self.adView.frame = (CGRect) { CGPointZero, adFormat.size };
+        
+        self.adView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
     return self;
 }

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -69,6 +70,16 @@ public class AppLovinMAX
     private static final String USER_GEOGRAPHY_OTHER   = "O";
     private static final String USER_GEOGRAPHY_UNKNOWN = "U";
 
+    private static final String TOP_CENTER    = "top_center";
+    private static final String TOP_LEFT      = "top_left";
+    private static final String TOP_RIGHT     = "top_right";
+    private static final String CENTERED      = "centered";
+    private static final String CENTER_LEFT   = "center_left";
+    private static final String CENTER_RIGHT  = "center_right";
+    private static final String BOTTOM_LEFT   = "bottom_left";
+    private static final String BOTTOM_CENTER = "bottom_center";
+    private static final String BOTTOM_RIGHT  = "bottom_right";
+
     private static final Map<String, String> ALCompatibleNativeSdkVersions = new HashMap<>();
 
     static
@@ -109,6 +120,8 @@ public class AppLovinMAX
     private final Map<String, String>      mAdViewPositions                    = new HashMap<>( 2 );
     private final List<String>             mAdUnitIdsToShowAfterCreate         = new ArrayList<>( 2 );
     private final Set<String>              mDisabledAutoRefreshAdViewAdUnitIds = new HashSet<>( 2 );
+    private final Map<String, Integer>     mAdViewWidths                       = new HashMap<>( 2 );
+    private final Set<String>              mDisabledAdaptiveBannerAdUnitIds    = new HashSet<>( 2 );
 
     public static AppLovinMAX getInstance()
     {
@@ -422,6 +435,11 @@ public class AppLovinMAX
     public void setBannerPlacement(final String adUnitId, final String placement)
     {
         setAdViewPlacement( adUnitId, getDeviceSpecificBannerAdViewAdFormat(), placement );
+    }
+
+    public void setBannerWidth(final String adUnitId, final int widthDp)
+    {
+        setAdViewWidth( adUnitId, widthDp, getDeviceSpecificBannerAdViewAdFormat() );
     }
 
     public void updateBannerPosition(final String adUnitId, final String bannerPosition)
@@ -985,6 +1003,20 @@ public class AppLovinMAX
         adView.setPlacement( placement );
     }
 
+    private void setAdViewWidth(final String adUnitId, final int widthDp, final MaxAdFormat adFormat)
+    {
+        d( "Setting width " + widthDp + " for \"" + adFormat + "\" with ad unit identifier \"" + adUnitId + "\"" );
+
+        int minWidthDp = adFormat.getSize().getWidth();
+        if ( widthDp < minWidthDp )
+        {
+            e( "The provided width: " + widthDp + "dp is smaller than the minimum required width: " + minWidthDp + "dp for ad format: " + adFormat + ". Please set the width higher than the minimum required." );
+        }
+
+        mAdViewWidths.put( adUnitId, widthDp );
+        positionAdView( adUnitId, adFormat );
+    }
+
     private void updateAdViewPosition(final String adUnitId, final String adViewPosition, final MaxAdFormat adFormat)
     {
         d( "Updating " + adFormat.getLabel() + " position to \"" + adViewPosition + "\" for ad unit id \"" + adUnitId + "\"" );
@@ -1115,6 +1147,20 @@ public class AppLovinMAX
 
             mAdViewAdFormats.put( adUnitId, forcedAdFormat );
             positionAdView( adUnitId, forcedAdFormat );
+        }
+        else if ( "adaptive_banner".equalsIgnoreCase( key ) )
+        {
+            boolean useAdaptiveBannerAdSize = Boolean.parseBoolean( value );
+            if ( useAdaptiveBannerAdSize )
+            {
+                mDisabledAdaptiveBannerAdUnitIds.remove( adUnitId );
+            }
+            else
+            {
+                mDisabledAdaptiveBannerAdUnitIds.add( adUnitId );
+            }
+
+            positionAdView( adUnitId, adFormat );
         }
     }
 
@@ -1253,7 +1299,6 @@ public class AppLovinMAX
             return;
         }
 
-        final String adViewPosition = mAdViewPositions.get( adUnitId );
         final RelativeLayout relativeLayout = (RelativeLayout) adView.getParent();
         if ( relativeLayout == null )
         {
@@ -1261,13 +1306,53 @@ public class AppLovinMAX
             return;
         }
 
-        // Size the ad
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getCurrentActivity().getWindowManager().getDefaultDisplay().getMetrics( displayMetrics );
+
+        final String adViewPosition = mAdViewPositions.get( adUnitId );
         final AdViewSize adViewSize = getAdViewSize( adFormat );
-        final int width = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewSize.widthDp );
-        final int height = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewSize.heightDp );
+        final boolean isAdaptiveBannerDisabled = mDisabledAdaptiveBannerAdUnitIds.contains( adUnitId );
+        final boolean isWidthDpOverridden = mAdViewWidths.containsKey( adUnitId );
+
+        //
+        // Determine ad width
+        //
+        final int adViewWidthDp;
+
+        // Check if publisher has overridden width as dp
+        if ( isWidthDpOverridden )
+        {
+            adViewWidthDp = mAdViewWidths.get( adUnitId );
+        }
+        else if ( TOP_CENTER.equalsIgnoreCase( adViewPosition ) || BOTTOM_CENTER.equalsIgnoreCase( adViewPosition ) )
+        {
+            int adViewWidthPx = displayMetrics.widthPixels;
+            adViewWidthDp = AppLovinSdkUtils.pxToDp( getCurrentActivity(), adViewWidthPx );
+        }
+        else
+        {
+            adViewWidthDp = adViewSize.widthDp;
+        }
+
+        //
+        // Determine ad height
+        //
+        final int adViewHeightDp;
+
+        if ( ( adFormat == MaxAdFormat.BANNER || adFormat == MaxAdFormat.LEADER ) && !isAdaptiveBannerDisabled )
+        {
+            adViewHeightDp = adFormat.getAdaptiveSize( adViewWidthDp, getCurrentActivity() ).getHeight();
+        }
+        else
+        {
+            adViewHeightDp = adViewSize.heightDp;
+        }
+
+        final int widthPx = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewWidthDp );
+        final int heightPx = AppLovinSdkUtils.dpToPx( getCurrentActivity(), adViewHeightDp );
 
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) adView.getLayoutParams();
-        params.height = height;
+        params.height = heightPx;
         adView.setLayoutParams( params );
 
         // Parse gravity
@@ -1298,11 +1383,11 @@ public class AppLovinMAX
             if ( adViewPosition.contains( "center" ) )
             {
                 gravity |= Gravity.CENTER_HORIZONTAL;
-                params.width = ( MaxAdFormat.MREC == adFormat ) ? width : RelativeLayout.LayoutParams.MATCH_PARENT; // Stretch width if banner
+                params.width = ( MaxAdFormat.MREC == adFormat ) ? widthPx : RelativeLayout.LayoutParams.MATCH_PARENT; // Stretch width if banner
             }
             else
             {
-                params.width = width;
+                params.width = widthPx;
 
                 if ( adViewPosition.contains( "left" ) )
                 {
@@ -1331,6 +1416,8 @@ public class AppLovinMAX
         adInfo.put( "revenuePrecision", ad.getRevenuePrecision() );
         adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
+        adInfo.put( "width", ad.getSize().getWidth() );
+        adInfo.put( "height", ad.getSize().getHeight() );
 
         return adInfo;
     }
@@ -1726,6 +1813,14 @@ public class AppLovinMAX
             String adUnitId = call.argument( "ad_unit_id" );
             String placement = call.argument( "placement" );
             setBannerPlacement( adUnitId, placement );
+
+            result.success( null );
+        }
+        else if ( "setBannerWidth".equals( call.method ) )
+        {
+            String adUnitId = call.argument( "ad_unit_id" );
+            Integer width = call.argument( "width" );
+            setBannerWidth( adUnitId, width );
 
             result.success( null );
         }

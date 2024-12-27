@@ -173,7 +173,7 @@ public class AppLovinMAXAdView
     @Override
     public View getView()
     {
-        return widget != null ? widget.getAdView() : null;
+        return widget;
     }
 
     @Override

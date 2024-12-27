@@ -364,6 +364,7 @@ class AppLovinMAX {
       'ad_unit_id': adUnitId,
       'position': position.value,
     });
+    setBannerExtraParameter(adUnitId, "adaptive_banner", "true");
   }
 
   /// Sets a background color for the banner with the specified [adUnitId].
@@ -383,6 +384,13 @@ class AppLovinMAX {
     _methodChannel.invokeMethod('setBannerPlacement', {
       'ad_unit_id': adUnitId,
       'placement': placement,
+    });
+  }
+
+  static void setBannerWidth(String adUnitId, double width) {
+    _methodChannel.invokeMethod('setBannerWidth', {
+      'ad_unit_id': adUnitId,
+      'width': width.round(),
     });
   }
 
@@ -719,12 +727,19 @@ class AppLovinMAX {
     Map<String, String?>? extraParameters,
     Map<String, dynamic>? localExtraParameters,
   }) {
+    Map<String, String?> extraParametersWithAdaptiveBanner = Map<String, String?>.from(extraParameters ?? {});
+
+    if (extraParameters?['adaptive_banner'] == null) {
+      // Set the default value for 'adaptive_banner'
+      extraParametersWithAdaptiveBanner['adaptive_banner'] = 'true';
+    }
+
     return _methodChannel.invokeMethod('preloadWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
       'placement': placement,
       'custom_data': customData,
-      'extra_parameters': extraParameters,
+      'extra_parameters': extraParametersWithAdaptiveBanner,
       'local_extra_parameters': localExtraParameters,
     });
   }
