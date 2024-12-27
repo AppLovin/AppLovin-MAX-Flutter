@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:applovin_max/src/enums.dart';
 
 /// A unique identifier used to reference a specific platform widget AdView instance.
@@ -44,9 +45,12 @@ class MaxAd {
   /// An instance of [MaxNativeAd], available only for native ads.
   final MaxNativeAd? nativeAd;
 
+  /// The size of the AdView format ad.
+  final Size? size;
+
   /// @nodoc
   MaxAd(this.adUnitId, this.adViewId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall,
-      this.nativeAd);
+      this.nativeAd, this.size);
 
   /// @nodoc
   factory MaxAd.fromJson(Map<String, dynamic> json) {
@@ -54,6 +58,10 @@ class MaxAd {
     if (json['nativeAd'] is Map) {
       nativeAd = MaxNativeAd.fromJson(Map<String, dynamic>.from(json['nativeAd']));
     }
+
+    final double? width = json['width'] != null ? (json['width'] as num).toDouble() : null;
+    final double? height = json['height'] != null ? (json['height'] as num).toDouble() : null;
+    final Size? size = (width != null && height != null) ? Size(width, height) : null;
 
     return MaxAd(
       json['adUnitId'] as String,
@@ -66,6 +74,7 @@ class MaxAd {
       json['placement'] as String,
       MaxAdWaterfallInfo.fromJson(Map<String, dynamic>.from(json['waterfall'])),
       nativeAd,
+      size,
     );
   }
 
