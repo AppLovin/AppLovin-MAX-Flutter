@@ -29,7 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 // Create constants
-/*
 const String _sdkKey = 'YOUR_SDK_KEY';
 
 final String _interstitialAdUnitId = Platform.isAndroid ? 'ANDROID_INTER_AD_UNIT_ID' : 'IOS_INTER_AD_UNIT_ID';
@@ -37,22 +36,6 @@ final String _rewardedAdUnitId = Platform.isAndroid ? 'ANDROID_REWARDED_AD_UNIT_
 final String _bannerAdUnitId = Platform.isAndroid ? 'ANDROID_BANNER_AD_UNIT_ID' : 'IOS_BANNER_AD_UNIT_ID';
 final String _mrecAdUnitId = Platform.isAndroid ? 'ANDROID_MREC_AD_UNIT_ID' : 'IOS_MREC_AD_UNIT_ID';
 final String _nativeAdUnitId = Platform.isAndroid ? 'ANDROID_NATIVE_AD_UNIT_ID' : 'IOS_NATIVE_AD_UNIT_ID';
-*/
-
-// ishihama@nanameue.jp
-// ca-app-pub-2413236655752493~9012581980
-// AdMob, Pangle, LINE, Mintegral
-// ios: com.hiroshichiba.marinchat (marinchat)
-// android: com.marinapps.marinchat (orca_android)
-//const String _sdkKey = 'iPTpI3HBg2vZ_9vXRKrlXG2ilW8ZI3H_Trpmu4yZ6r76-1dQLSAtkDZTli21nJ1E9q-1vxb_mk5llk94BKxwXV';
-const String _sdkKey = 'vLsVeBl2W6LqNvyxrkAecVfLomUvdXIZpCJGHcR9rP-hbWLsHxZS_5Q4cl5r-sT_O_lkos7czMBNKyBO-KS8ob';
-
-final String _interstitialAdUnitId = Platform.isAndroid ? 'd6173bc2ab28d84d' : '177b69112de3de75';
-final String _rewardedAdUnitId = Platform.isAndroid ? '6e4567b5fbd9178d' : '8a0093c2cf3fd644';
-//final String _bannerAdUnitId = Platform.isAndroid ? '516bd2f7e805a569' : 'b56c7ec42568de5a';
-final String _bannerAdUnitId = Platform.isAndroid ? 'fd53b1bf06fde536' : '2bc676a15d458bcf';
-final String _mrecAdUnitId = Platform.isAndroid ? '6a28e8ad7eb02a31' : '34614458775c9eef';
-final String _nativeAdUnitId = Platform.isAndroid ? '84b1abd093789598' : '64939b438bbfdf78';
 
 const int _maxExponentialRetryCount = 6;
 
@@ -103,7 +86,7 @@ class _MyAppState extends State<MyApp> {
 
       // If you need to preload banners/MRECs ahead of time such that the
       // contents are readily available when displayed.
-      //preloadAdViewAd();
+      preloadAdViewAd();
     }
   }
 
