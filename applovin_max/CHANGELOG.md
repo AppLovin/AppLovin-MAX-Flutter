@@ -1,5 +1,7 @@
 ## Versions
 
+## 4.2.1
+* Update the example.
 ## 4.2.0
 * Add support for adaptive banners. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
 ## 4.1.2
