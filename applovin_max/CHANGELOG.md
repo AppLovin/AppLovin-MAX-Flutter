@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 4.2.2
 * Update `MaxAd` to include `adFormat`, `networkPlacement`, and `latencyMills`.
 * Depends on Android SDK v13.1.0 and iOS SDK v13.1.0.
 ## 4.2.1

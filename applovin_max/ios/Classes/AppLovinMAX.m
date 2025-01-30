@@ -55,7 +55,7 @@
 @implementation AppLovinMAX
 static NSString *const SDK_TAG = @"AppLovinSdk";
 static NSString *const TAG = @"AppLovinMAX";
-static NSString *const PLUGIN_VERSION = @"4.2.1";
+static NSString *const PLUGIN_VERSION = @"4.2.2";
 
 static NSString *const USER_GEOGRAPHY_GDPR = @"G";
 static NSString *const USER_GEOGRAPHY_OTHER = @"O";
@@ -76,6 +76,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
 {
     ALCompatibleNativeSDKVersions = @{
+        @"4.2.2" : @"13.1.0",
         @"4.2.1" : @"13.0.1",
         @"4.2.0" : @"13.0.1",
         @"4.1.2" : @"13.0.1",
