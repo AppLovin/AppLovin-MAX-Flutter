@@ -9,11 +9,17 @@ class MaxAd {
   /// The ad unit ID for which this ad was loaded.
   final String adUnitId;
 
+  /// The ad format of this ad.
+  final String adFormat;
+
   /// The unique ID of the platform widget AdView.
   final AdViewId? adViewId;
 
   /// The ad network from which this ad was loaded.
   final String networkName;
+
+  /// The ad network placement for which this ad was loaded.
+  final String networkPlacement;
 
   /// The ad’s revenue amount, or 0 if no revenue amount exists.
   final double revenue;
@@ -39,6 +45,9 @@ class MaxAd {
   /// The placement name that you assign when you integrate each ad format.
   final String placement;
 
+  /// The latency of the mediation ad load request in milliseconds.
+  final double latency;
+
   /// The underlying waterfall of ad responses.
   final MaxAdWaterfallInfo waterfall;
 
@@ -49,8 +58,8 @@ class MaxAd {
   final Size? size;
 
   /// @nodoc
-  MaxAd(this.adUnitId, this.adViewId, this.networkName, this.revenue, this.revenuePrecision, this.creativeId, this.dspName, this.placement, this.waterfall,
-      this.nativeAd, this.size);
+  MaxAd(this.adUnitId, this.adFormat, this.adViewId, this.networkName, this.networkPlacement, this.revenue, this.revenuePrecision, this.creativeId,
+      this.dspName, this.placement, this.latency, this.waterfall, this.nativeAd, this.size);
 
   /// @nodoc
   factory MaxAd.fromJson(Map<String, dynamic> json) {
@@ -65,13 +74,16 @@ class MaxAd {
 
     return MaxAd(
       json['adUnitId'] as String,
+      json['adFormat'] as String,
       json['adViewId'] as AdViewId?,
       json['networkName'] as String,
+      json['networkPlacement'] as String,
       double.tryParse(json['revenue']?.toString() ?? '0.0') ?? 0.0,
       json['revenuePrecision'] as String,
       json['creativeId'] as String,
       json['dspName'] as String,
       json['placement'] as String,
+      double.tryParse(json['latencyMillis']?.toString() ?? '0.0') ?? 0.0,
       MaxAdWaterfallInfo.fromJson(Map<String, dynamic>.from(json['waterfall'])),
       nativeAd,
       size,
@@ -81,13 +93,16 @@ class MaxAd {
   @override
   String toString() {
     return '{MaxAd: {adUnitId: $adUnitId'
+        ', adFormat: $adFormat'
         ', adViewId: $adViewId'
         ', networkName: $networkName'
+        ', networkPlacement: $networkPlacement'
         ', revenue: $revenue'
         ', revenuePrecision: $revenuePrecision'
         ', creativeId: $creativeId'
         ', dspName: $dspName'
         ', placement: $placement'
+        ', latency: $latency'
         ', waterfall: $waterfall'
         ', nativeAd: $nativeAd}}';
   }

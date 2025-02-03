@@ -1411,13 +1411,16 @@ public class AppLovinMAX
     {
         Map<String, Object> adInfo = new HashMap<>( 7 );
         adInfo.put( "adUnitId", ad.getAdUnitId() );
-        adInfo.put( "creativeId", AppLovinSdkUtils.isValidString( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
+        adInfo.put( "adFormat", ad.getFormat().getLabel() );
         adInfo.put( "networkName", ad.getNetworkName() );
+        adInfo.put( "networkPlacement", ad.getNetworkPlacement() );
+        adInfo.put( "creativeId", AppLovinSdkUtils.isValidString( ad.getCreativeId() ) ? ad.getCreativeId() : "" );
         adInfo.put( "placement", AppLovinSdkUtils.isValidString( ad.getPlacement() ) ? ad.getPlacement() : "" );
         adInfo.put( "revenue", ad.getRevenue() );
         adInfo.put( "revenuePrecision", ad.getRevenuePrecision() );
-        adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "waterfall", createAdWaterfallInfo( ad.getWaterfall() ) );
+        adInfo.put( "latencyMillis", ad.getRequestLatencyMillis() );
+        adInfo.put( "dspName", AppLovinSdkUtils.isValidString( ad.getDspName() ) ? ad.getDspName() : "" );
         adInfo.put( "width", ad.getSize().getWidth() );
         adInfo.put( "height", ad.getSize().getHeight() );
 
