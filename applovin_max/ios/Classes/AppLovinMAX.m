@@ -1420,13 +1420,16 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 {
     // NOTE: Empty strings might get co-erced into [NSNull null] through Flutter channel and cause issues
     return @{@"adUnitId" : ad.adUnitIdentifier,
-             @"creativeId" : ad.creativeIdentifier ?: @"",
+             @"adFormat" : ad.format.label,
              @"networkName" : ad.networkName,
+             @"networkPlacement" : ad.networkPlacement,
+             @"creativeId" : ad.creativeIdentifier ?: @"",
              @"placement" : ad.placement ?: @"",
              @"revenue" : @(ad.revenue),
              @"revenuePrecision" : ad.revenuePrecision,
-             @"dspName" : ad.DSPName ?: @"",
              @"waterfall": [self createAdWaterfallInfo: ad.waterfall],
+             @"latencyMillis" : @(ad.requestLatency * 1000),
+             @"dspName" : ad.DSPName ?: @"",
              @"width": @(ad.size.width),
              @"height": @(ad.size.height)};
 }
