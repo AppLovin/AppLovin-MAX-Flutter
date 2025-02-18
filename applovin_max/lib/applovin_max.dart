@@ -275,15 +275,6 @@ class AppLovinMAX {
     });
   }
 
-  /// Whether or not the AppLovin SDK will collect the device location. Defaults to true.
-  ///
-  /// [Location Passing](https://developers.applovin.com/en/flutter/overview/data-and-keyword-passing#location-passing)
-  static void setLocationCollectionEnabled(bool enabled) {
-    _methodChannel.invokeMethod('setLocationCollectionEnabled', {
-      'value': enabled,
-    });
-  }
-
   /// Sets an extra parameter to pass to the AppLovin server.
   static void setExtraParameter(String key, String? value) {
     _methodChannel.invokeMethod('setExtraParameter', {

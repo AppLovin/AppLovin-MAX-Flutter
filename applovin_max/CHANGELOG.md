@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Deprecate `AppLovinMAX.setLocationCollectionEnabled()` for removal.
 ## 4.3.0
 * Update `MaxAd` to include `adFormat`, `networkPlacement`, and `latencyMills`.
 * Depends on Android SDK v13.1.0 and iOS SDK v13.1.0.
