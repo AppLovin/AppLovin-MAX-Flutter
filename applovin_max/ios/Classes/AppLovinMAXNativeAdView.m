@@ -281,6 +281,7 @@
     [self.clickableViews addObject: self.titleView];
     
     self.titleView.frame = [self frameForCall: call];
+    self.titleView.userInteractionEnabled = YES;
 }
 
 - (void)addAdvertiserViewForCall:(FlutterMethodCall *)call
@@ -297,6 +298,7 @@
     [self.clickableViews addObject: self.advertiserView];
     
     self.advertiserView.frame = [self frameForCall: call];
+    self.advertiserView.userInteractionEnabled = YES;
 }
 
 - (void)addBodyViewForCall:(FlutterMethodCall *)call
@@ -313,6 +315,7 @@
     [self.clickableViews addObject: self.bodyView];
     
     self.bodyView.frame = [self frameForCall: call];
+    self.bodyView.userInteractionEnabled = YES;
 }
 
 - (void)addCallToActionViewForCall:(FlutterMethodCall *)call
@@ -329,6 +332,7 @@
     [self.clickableViews addObject: self.callToActionView];
     
     self.callToActionView.frame = [self frameForCall: call];
+    self.callToActionView.userInteractionEnabled = YES;
 }
 
 - (void)addIconViewForCall:(FlutterMethodCall *)call
@@ -352,6 +356,7 @@
     [self.clickableViews addObject: self.iconView];
     
     self.iconView.frame = [self frameForCall: call];
+    self.iconView.userInteractionEnabled = YES;
     
     if ( icon )
     {
@@ -416,19 +421,25 @@
 
 - (void)renderAd
 {
-    if ( self.adLoader )
+    if ( !self.adLoader )
     {
+        [self.isLoading set: NO];
+
+        [AppLovinMAX log: @"Attempting to render ad before ad has been loaded for Ad Unit ID %@", self.adUnitId];
+
+        return;
+    }
+    
+    // Flutter calls `renderAd()` multiple times whenever the asset views are updated
+    if ( [self.isLoading compareAndSet: YES update: NO] )
+    {
+        [AppLovinMAX log: @"Render ad for Ad Unit ID %@", self.adUnitId];
+        
         [self.adLoader registerClickableViews: self.clickableViews
                                 withContainer: self.nativeAdView
                                         forAd: self.nativeAd];
         [self.adLoader handleNativeAdViewRenderedForAd: self.nativeAd];
     }
-    else
-    {
-        [AppLovinMAX log: @"Attempting to render ad before ad has been loaded for Ad Unit ID %@", self.adUnitId];
-    }
-    
-    [self.isLoading set: NO];
 }
 
 - (CGRect)frameForCall:(FlutterMethodCall *)call

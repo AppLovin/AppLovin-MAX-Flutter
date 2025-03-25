@@ -1,6 +1,7 @@
 ## Versions
 
 ## x.x.x
+* Fix CTA not clickable.
 * Remove deprecated `AppLovinMAX.setLocationCollectionEnabled()` API.
 ## 4.3.0
 * Update `MaxAd` to include `adFormat`, `networkPlacement`, and `latencyMills`.
