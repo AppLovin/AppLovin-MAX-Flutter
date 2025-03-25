@@ -185,10 +185,10 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
         widget.listener?.onAdLoadedCallback(maxAd);
 
         // Add or update all native ad asset views (e.g., title, body, icon) on the platform.
-        _updateAllAssetViews();
+        await _updateAllAssetViews();
 
         // Register clickable views and initiate the rendering of the native ad on the platform.
-        _renderAd();
+        await _renderAd();
 
         // Update the Flutter asset views with the native ad
         setState(() {
@@ -208,18 +208,20 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     }
   }
 
-  void _updateAllAssetViews() {
-    _updateAssetView(_iconViewKey, "addIconView");
-    _updateAssetView(_optionsViewKey, "addOptionsView");
-    _updateAssetView(_mediaViewKey, "addMediaView");
-    _updateAssetView(_titleViewKey, "addTitleView");
-    _updateAssetView(_advertiserViewKey, "addAdvertiserView");
-    _updateAssetView(_bodyViewKey, "addBodyView");
-    _updateAssetView(_callToActionViewKey, "addCallToActionView");
+  Future _updateAllAssetViews() async {
+    return Future.wait([
+      _updateAssetView(_mediaViewKey, "addMediaView"),
+      _updateAssetView(_iconViewKey, "addIconView"),
+      _updateAssetView(_optionsViewKey, "addOptionsView"),
+      _updateAssetView(_titleViewKey, "addTitleView"),
+      _updateAssetView(_advertiserViewKey, "addAdvertiserView"),
+      _updateAssetView(_bodyViewKey, "addBodyView"),
+      _updateAssetView(_callToActionViewKey, "addCallToActionView")
+    ]);
   }
 
   // Updates the specified asset view's position and size on the platform using the provided method name.
-  void _updateAssetView(GlobalKey? key, String method) {
+  Future _updateAssetView(GlobalKey? key, String method) async {
     if (key == null) return;
 
     Rect rect = _getViewSize(key, _nativeAdViewKey);
@@ -246,11 +248,11 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
       return;
     }
 
-    _methodChannel?.invokeMethod(method, params);
+    return _methodChannel?.invokeMethod(method, params);
   }
 
-  void _renderAd() {
-    _methodChannel?.invokeMethod("renderAd");
+  Future _renderAd() async {
+    return _methodChannel?.invokeMethod("renderAd");
   }
 
   // Returns the frame (rect) size relative to the parent's position
