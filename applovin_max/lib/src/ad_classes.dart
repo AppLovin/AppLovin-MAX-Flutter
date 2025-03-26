@@ -21,7 +21,7 @@ class MaxAd {
   /// The ad network placement for which this ad was loaded.
   final String networkPlacement;
 
-  /// The ad’s revenue amount, or 0 if no revenue amount exists.
+  /// The revenue amount for this ad. Returns `0` if unavailable.
   final double revenue;
 
   /// The precision of the revenue value for this ad.
@@ -38,11 +38,10 @@ class MaxAd {
   /// the corresponding ad network using this ID.
   final String creativeId;
 
-  /// The DSP network that provided the loaded ad when the ad is served through
-  /// AppLovin Exchange.
+  /// The DSP that served the ad when using AppLovin Exchange.
   final String dspName;
 
-  /// The placement name that you assign when you integrate each ad format.
+  /// The custom placement name assigned during integration.
   final String placement;
 
   /// The latency of the mediation ad load request in milliseconds.
@@ -139,19 +138,19 @@ class MaxNativeAd {
   /// The native ad CTA button text.
   final String? callToAction;
 
-  /// The star rating of the native ad in the [0.0, 5.0] range if provided by the network.
+  /// The star rating for the native ad, if available. Ranges from `0.0` to `5.0`.
   final double? starRating;
 
   /// The aspect ratio for the media view if provided by the network.
   final double? mediaContentAspectRatio;
 
-  /// Whether or not the icon image is available.
+  /// Indicates whether an icon image is available.
   final bool isIconImageAvailable;
 
-  /// Whether or not the options image is available.
+  /// Indicates whether an options view is available.
   final bool isOptionsViewAvailable;
 
-  /// Whether or not the media view is available.
+  /// Indicates whether a media view is available.
   final bool isMediaViewAvailable;
 
   /// @nodoc
@@ -186,7 +185,7 @@ class MaxNativeAd {
 
 /// Encapsulates various data for MAX load and display errors.
 class MaxError {
-  /// The error code for the error.
+  /// The error code that describes the failure.
   final ErrorCode code;
 
   /// The error message for the error.
@@ -195,7 +194,7 @@ class MaxError {
   /// The unique ID of the platform widget AdView.
   final AdViewId? adViewId;
 
-  /// The underlying waterfall of ad responses.
+  /// The ad waterfall that resulted in this error, if available.
   final MaxAdWaterfallInfo? waterfall;
 
   /// @nodoc
@@ -235,8 +234,7 @@ class MaxConfiguration {
   /// The user's geography used to determine the type of consent flow shown to the user.
   final ConsentFlowUserGeography? consentFlowUserGeography;
 
-  /// Whether or not the user authorizes access to app-related data that can be
-  /// used for tracking the user or the device.
+  /// Indicates whether the user has authorized tracking via app-related data.
   final AppTrackingStatus? appTrackingStatus;
 
   /// @nodoc
@@ -297,8 +295,7 @@ class MaxCMPError {
   }
 }
 
-/// Represents an ad waterfall, encapsulating various metadata such as total
-/// latency, underlying ad responses, etc.
+/// Represents an ad waterfall in AppLovin's MAX mediation.
 class MaxAdWaterfallInfo {
   /// The ad waterfall name.
   final String name;
@@ -349,9 +346,9 @@ class MaxNetworkResponse {
   /// AppLovin MAX dashboard.
   final Map<String, dynamic> credentials;
 
-  /// The amount of time the network took to load (either successfully or not)
-  /// an ad, in seconds. If an attempt to load an ad has not been made (i.e. the
-  /// loadState is [AdLoadState.adLoadNotAttempted]), the value will be -1.
+  /// The time taken by the network to load the ad (in milliseconds).  If an
+  /// attempt to load an ad has not been made (i.e. the loadState is
+  /// [AdLoadState.adLoadNotAttempted]), the value will be -1.
   final int latencyMills;
 
   /// The ad load error this network response resulted in. Will be null if an
@@ -399,7 +396,7 @@ class MaxNetworkResponse {
 
 /// Represents information for a mediated network.
 class MaxMediatedNetworkInfo {
-  /// The name of the mediated network.
+  /// The name of the network being mediated.
   final String name;
 
   /// The class name of the adapter for the mediated network.

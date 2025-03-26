@@ -14,62 +14,53 @@ const double _mrecHeight = 250;
 
 const String _viewType = "applovin_max/adview";
 
-/// Represents an AdView ad (Banner / MREC).
+/// Represents an AdView ad (Banner or MREC).
 class MaxAdView extends StatefulWidget {
-  /// A string value representing the ad unit ID to load ads for.
+  /// The ad unit ID to load ads for.
   final String adUnitId;
 
-  /// A string value representing the ad format to load ads for. Should be
-  /// either [AdFormat.banner] or [AdFormat.mrec].
+  /// The ad format to load. Must be either [AdFormat.banner] or [AdFormat.mrec].
   final AdFormat adFormat;
 
-  /// A unique identifier representing the platform widget AdView instance.
-  /// Used to manage and track the specific platform widget AdView.
+  /// Unique identifier used to reference the platform AdView instance.
   final AdViewId? adViewId;
 
-  /// A string value representing the placement name that you assign when you
-  /// integrate each ad format, for granular reporting in ad events.
+  /// Placement name assigned for granular ad reporting.
   final String? placement;
 
-  /// A string value representing the customData name that you assign when you
-  /// integrate each ad format, for granular reporting in ad events.
+  /// Custom data string for granular ad reporting.
   final String? customData;
 
-  /// A list of extra parameter key/value pairs for the ad.
+  /// Additional key-value parameters for ad customization, passed to the SDK.
   final Map<String, String?>? extraParameters;
 
-  /// A list of local extra parameters to pass to the adapter instances.
+  /// Local extra parameters provided to mediation adapters for further customization.
   final Map<String, dynamic>? localExtraParameters;
 
-  /// The listener for various ad callbacks.
+  /// Listener for ad event callbacks.
   final AdViewAdListener? listener;
 
-  /// A boolean value representing whether the ad currently has auto-refresh
-  /// enabled or not. Defaults to true.
+  /// Whether auto-refresh is enabled. Defaults to `true`.
   final bool isAutoRefreshEnabled;
 
-  /// If null, the widget will compute an appropriate width based on the ad format
-  /// and the available constraints from the parent widget.
+  /// The ad width. If `null`, a default is computed based on [adFormat] and layout constraints.
   ///
-  /// - For [AdFormat.banner]: Defaults to 320 for phones or 728 for tablets
-  /// - For [AdFormat.mrec]: Defaults to 300.
+  /// - [AdFormat.banner]: 320 (phones) or 728 (tablets)
+  /// - [AdFormat.mrec]: 300
   ///
-  /// If [adaptive_banner] is enabled, the width will match the screen width.
+  /// If [adaptive_banner] is enabled, the width matches the screen width.
   final double? width;
 
-  /// If null, the widget will compute an appropriate height based on the ad format
-  /// and the available constraints from the parent widget.
+  /// The ad height. If `null`, a default is computed based on [adFormat] and layout constraints.
   ///
-  /// - For [AdFormat.banner]: Defaults to 50 for phones or 90 for tablets
-  /// - For [AdFormat.mrec]: Defaults to 250.
+  /// - [AdFormat.banner]: 50 (phones) or 90 (tablets)
+  /// - [AdFormat.mrec]: 250
   ///
-  /// If [adaptive_banner] is enabled, the height will be calculated dynamically
-  /// using [AppLovinMAX.getAdaptiveBannerHeightForWidth(width)].
+  /// If [adaptive_banner] is enabled, the height is calculated using
+  /// [AppLovinMAX.getAdaptiveBannerHeightForWidth].
   final double? height;
 
-  /// Creates a new ad view directly in the user's widget tree.
-  ///
-  /// * [Widget Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#widget-method)
+  /// Creates an AdView ad that embeds directly into the widget tree.
   const MaxAdView({
     Key? key,
     required this.adUnitId,
