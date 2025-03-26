@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -140,7 +138,6 @@ class _MaxAdViewState extends State<MaxAdView> {
         });
   }
 
-  @override
   Widget buildAdView(BuildContext context, double width, double height) {
     return SizedBox(
       width: width,
