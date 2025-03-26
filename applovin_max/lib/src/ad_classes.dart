@@ -102,7 +102,7 @@ class MaxAd {
         ', creativeId: $creativeId'
         ', dspName: $dspName'
         ', placement: $placement'
-        ', latencyMills: $latencyMillis'
+        ', latencyMillis: $latencyMillis'
         ', waterfall: $waterfall'
         ', nativeAd: $nativeAd}}';
   }
@@ -311,10 +311,10 @@ class MaxAdWaterfallInfo {
   final List<MaxNetworkResponse> networkResponses;
 
   /// The total latency in milliseconds for this waterfall to finish processing.
-  final int latencyMills;
+  final int latencyMillis;
 
   /// @nodoc
-  MaxAdWaterfallInfo(this.name, this.testName, this.networkResponses, this.latencyMills);
+  MaxAdWaterfallInfo(this.name, this.testName, this.networkResponses, this.latencyMillis);
 
   /// @nodoc
   factory MaxAdWaterfallInfo.fromJson(Map<String, dynamic> json) {
@@ -322,9 +322,9 @@ class MaxAdWaterfallInfo {
     List<MaxNetworkResponse> networkResponseList =
         networkResponses.map((response) => MaxNetworkResponse.fromJson(Map<String, dynamic>.from(response))).toList();
 
-    int latencyMills = int.tryParse(json['latencyMillis']?.toString() ?? '0') ?? 0;
+    int latencyMillis = int.tryParse(json['latencyMillis']?.toString() ?? '0') ?? 0;
 
-    return MaxAdWaterfallInfo(json['name'] as String? ?? "", json['testName'] as String? ?? "", networkResponseList, latencyMills);
+    return MaxAdWaterfallInfo(json['name'] as String? ?? "", json['testName'] as String? ?? "", networkResponseList, latencyMillis);
   }
 
   @override
@@ -332,7 +332,7 @@ class MaxAdWaterfallInfo {
     return '{MaxAdWaterfallInfo: {name: $name'
         ', testName: $testName'
         ', networkResponses: $networkResponses'
-        ', latencyMills: $latencyMills}}';
+        ', latencyMillis: $latencyMillis}}';
   }
 }
 
@@ -352,7 +352,7 @@ class MaxNetworkResponse {
   /// The amount of time the network took to load (either successfully or not)
   /// an ad, in seconds. If an attempt to load an ad has not been made (i.e. the
   /// loadState is [AdLoadState.adLoadNotAttempted]), the value will be -1.
-  final int latencyMills;
+  final int latencyMillis;
 
   /// The ad load error this network response resulted in. Will be null if an
   /// attempt to load an ad has not been made or an ad was loaded successfully
@@ -360,7 +360,7 @@ class MaxNetworkResponse {
   final MaxError? error;
 
   /// @nodoc
-  MaxNetworkResponse(this.adLoadState, this.mediatedNetwork, this.credentials, this.latencyMills, this.error);
+  MaxNetworkResponse(this.adLoadState, this.mediatedNetwork, this.credentials, this.latencyMillis, this.error);
 
   /// @nodoc
   factory MaxNetworkResponse.fromJson(Map<String, dynamic> json) {
@@ -377,14 +377,14 @@ class MaxNetworkResponse {
 
     Map<String, dynamic> credentials = (json['credentials'] is Map) ? Map<String, dynamic>.from(json['credentials']) : {};
 
-    int latencyMills = int.tryParse(json['latencyMillis']?.toString() ?? '0') ?? 0;
+    int latencyMillis = int.tryParse(json['latencyMillis']?.toString() ?? '0') ?? 0;
 
     MaxError? error;
     if (json['error'] is Map) {
       error = MaxError.fromJson(Map<String, dynamic>.from(json['error']));
     }
 
-    return MaxNetworkResponse(adLoadState, mediatedNetwork, credentials, latencyMills, error);
+    return MaxNetworkResponse(adLoadState, mediatedNetwork, credentials, latencyMillis, error);
   }
 
   @override
@@ -392,7 +392,7 @@ class MaxNetworkResponse {
     return '{MaxNetworkResponse: {adLoadState: $adLoadState'
         ', mediatedNetwork: $mediatedNetwork'
         ', credentials: $credentials'
-        ', latencyMills: $latencyMills'
+        ', latencyMillis: $latencyMillis'
         ', error: $error}}';
   }
 }
