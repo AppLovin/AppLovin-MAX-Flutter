@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 4.3.1
 * Fix CTA not clickable.
 * Remove deprecated `AppLovinMAX.setLocationCollectionEnabled()` API.
 ## 4.3.0
