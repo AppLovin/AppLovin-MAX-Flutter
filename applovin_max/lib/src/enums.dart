@@ -2,220 +2,208 @@ import 'package:flutter/foundation.dart';
 
 /// Represents an ad format.
 enum AdFormat {
-  /// The banner ad.
+  /// Banner ad format.
   banner("banner"),
 
-  /// The MREC ad.
+  /// MREC ad format.
   mrec("mrec");
 
   /// @nodoc
   final String value;
-
-  /// @nodoc
   const AdFormat(this.value);
 }
 
 /// Represents an AdView ad position.
 enum AdViewPosition {
+  /// Top center of the screen.
   topCenter("top_center"),
+
+  /// Top right of the screen.
   topRight("top_right"),
+
+  /// Center of the screen.
   centered("centered"),
+
+  /// Center left of the screen.
   centerLeft("center_left"),
+
+  /// Center right of the screen.
   centerRight("center_right"),
+
+  /// Bottom left of the screen.
   bottomLeft("bottom_left"),
+
+  /// Bottom center of the screen.
   bottomCenter("bottom_center"),
+
+  /// Bottom right of the screen.
   bottomRight("bottom_right");
 
   /// @nodoc
   final String value;
-
-  /// @nodoc
   const AdViewPosition(this.value);
 }
 
-/// Represents content ratings for the ads shown to users.
+/// Represents content ratings for ads shown to users.
 ///
-/// These ratings correspond to IQG Media Ratings.
+/// Corresponds to IQG media content ratings.
 enum AdContentRating {
+  /// No content rating.
   none(0),
+
+  /// Suitable for all audiences.
   allAudiences(1),
+
+  /// Suitable for users aged 12 and above.
   everyoneOverTwelve(2),
+
+  /// Suitable for mature audiences only.
   matureAudiences(3);
 
   /// @nodoc
   final int value;
-
-  /// @nodoc
   const AdContentRating(this.value);
 }
 
-/// Represents gender.
+/// User's gender for ad targeting.
 enum UserGender {
+  /// Unknown gender.
   unknown('U'),
+
+  /// Female.
   female('F'),
+
+  /// Male.
   male('M'),
+
+  /// Other or non-binary.
   other('O');
 
   /// @nodoc
   final String value;
-
-  /// @nodoc
   const UserGender(this.value);
 }
 
-/// Represents the user's geography used to determine the type of consent flow
-/// shown to the user.
+/// User's geography for determining consent flow.
 enum ConsentFlowUserGeography {
   /// User's geography is unknown.
   unknown('U'),
 
-  /// The user is in GDPR region.
+  /// Located in a GDPR-regulated region.
   gdpr('G'),
 
-  /// The user is in a non-GDPR region.
+  /// Located in a non-GDPR region.
   other('O');
 
   /// @nodoc
   final String value;
-
-  /// @nodoc
   const ConsentFlowUserGeography(this.value);
 }
 
-/// AppLovin SDK-defined app tracking transparency status values (extended to
-/// include "unavailable" state on iOS before iOS14).
+/// App tracking transparency status (iOS only).
 enum AppTrackingStatus {
-  /// Device is on iOS before iOS14, AppTrackingTransparency.framework is not
-  /// available.
+  /// Unavailable (iOS < 14).
   unavailable('U'),
 
-  /// The user has not yet received an authorization request to authorize access
-  /// to app-related data that can be used for tracking the user or the device.
+  /// User has not responded to the tracking prompt.
   notDetermined('N'),
 
-  /// Authorization to access app-related data that can be used for tracking the
-  /// user or the device is restricted.
+  /// Tracking is restricted by system settings.
   restricted('R'),
 
-  /// The user denies authorization to access app-related data that can be used
-  /// for tracking the user or the device.
+  /// User denied tracking permission.
   denied('D'),
 
-  /// The user authorizes access to app-related data that can be used for
-  /// tracking the user or the device.
+  /// User granted tracking permission.
   authorized('A');
 
   /// @nodoc
   final String value;
-
-  /// @nodoc
   const AppTrackingStatus(this.value);
 }
 
-/// Represents errors for CMP flow.
+/// Error codes for CMP flow.
 enum CMPErrorCode {
-  /// Indicates that an unspecified error has occurred.
+  /// Unspecified error.
   unspecified(-1),
 
-  /// Indicates that the CMP has not been integrated correctly.
+  /// CMP not integrated correctly.
   integrationError(1),
 
-  /// Indicates that the CMP form is unavailable.
+  /// CMP form is unavailable.
   formUnavailable(2),
 
-  /// Indicates that the CMP form is not required.
+  /// CMP form is not required.
   formNotRequired(3);
 
   /// @nodoc
   final int value;
-
-  /// @nodoc
   const CMPErrorCode(this.value);
 }
 
-/// Represents the load state of an ad in the waterfall.
-///
-/// This enum contains possible states of an ad in the waterfall the adapter
-/// response info could represent.
+/// Load state of an ad in the waterfall.
 enum AdLoadState {
-  /// The AppLovin MAX SDK did not attempt to load an ad from this network in
-  /// the waterfall because an ad higher in the waterfall loaded successfully.
+  /// SDK did not attempt to load this ad (a prior ad already loaded).
   adLoadNotAttempted,
 
-  /// An ad successfully loaded from this network.
+  /// Ad loaded successfully.
   adLoaded,
 
-  /// An ad failed to load from this network.
+  /// Ad failed to load.
   adFailedToLoad;
 }
 
-/// This enum contains various error codes that the SDK can return when a MAX ad fails to load or display.
+/// SDK error codes for load/display failures.
 enum ErrorCode {
-  /// This error code represents an error that could not be categorized into one of the other defined
-  /// errors. See the message field in the error object for more details.
+  /// Fallback error when no specific category applies. See [message] for details.
   unspecified(-1),
 
-  /// This error code indicates that MAX returned no eligible ads from any mediated networks for this
-  /// app/device.
+  /// No eligible ads returned from mediated networks.
   noFill(204),
 
-  /// This error code indicates that MAX returned eligible ads from mediated networks, but all ads
-  /// failed to load. See the adLoadFailureInfo field in the error object for more details.
+  /// Eligible ads found, but all failed to load.
   adLoadFailed(-5001),
 
-  /// This error code represents an error that was encountered when showing an ad.
+  /// Error occurred while displaying the ad.
   adDisplayFailed(-4205),
 
-  /// This error code indicates that the ad request failed due to a generic network error. See the
-  /// message field in the error object for more details.
+  /// Network error during ad request.
   networkError(-1000),
 
-  /// This error code indicates that the ad request timed out due to a slow internet connection.
+  /// Network timeout during ad request.
   networkTimeout(-1001),
 
-  /// This error code indicates that the ad request failed because the device is not connected to the
-  /// internet.
+  /// Device is offline.
   noNetwork(-1009),
 
-  /// This error code indicates that you attempted to show a fullscreen ad while another fullscreen ad
-  /// is still showing.
+  /// Fullscreen ad is already showing.
   fullscreenAdAlreadyShowing(-23),
 
-  /// This error code indicates you are attempting to show a fullscreen ad before the one has been
-  /// loaded.
+  /// Fullscreen ad was not loaded before showing.
   fullscreenAdNotReady(-24),
 
-  /// This error code indicates you attempted to present a fullscreen ad from an invalid view controller.
-  ///
-  /// Note: iOS only.
+  /// Invalid view controller used for fullscreen ad (iOS only).
   fullscreenAdInvalidViewController(-25),
 
-  /// This error code indicates that the SDK failed to display an ad because the
-  /// user has the "Don't Keep Activities" developer setting enabled.
-  ///
-  /// Note: Android only.
+  /// "Don't Keep Activities" is enabled (Android only).
   dontKeepActivitiesEnabled(-5602),
 
-  /// This error code indicates that the SDK failed to load an ad because the publisher provided an
-  /// invalid ad unit identifier.
+  /// Invalid ad unit ID.
   ///
-  /// Possible reasons for an invalid ad unit identifier:
-  /// 1. Ad unit identifier is malformed or does not exist.
-  /// 2. Ad unit is disabled.
-  /// 3. Ad unit is not associated with the current app's package name.
-  /// 4. Ad unit was created within the last 30-60 minutes.
+  /// Possible reasons:
+  /// - Malformed or non-existent ad unit ID.
+  /// - Disabled ad unit.
+  /// - Package name mismatch.
+  /// - Created recently (within the last 30-60 minutes).
   invalidAdUnitId(-5603);
 
   /// @nodoc
   final int value;
-
-  /// @nodoc
   const ErrorCode(this.value);
 
-  /// Returns the corresponding [ErrorCode] enum for a given integer value.
+  /// Returns the matching [ErrorCode] for a given integer value.
   ///
-  /// If the provided integer value does not match any defined [ErrorCode],
-  /// the method returns `null`.
+  /// Returns [ErrorCode.unspecified] if no match is found.
   static ErrorCode fromValue(int value) {
     try {
       return ErrorCode.values.firstWhere((e) => e.value == value);

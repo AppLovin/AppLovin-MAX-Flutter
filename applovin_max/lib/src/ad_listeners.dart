@@ -1,17 +1,17 @@
 import 'package:applovin_max/src/ad_classes.dart';
 
-/// Defines a base listener to be notified about ad events.
+/// Base listener interface for receiving general ad events.
 abstract class AdListener {
-  /// The SDK invokes this method when a new ad has been loaded.
+  /// Called when a new ad has been loaded.
   final Function(MaxAd ad) onAdLoadedCallback;
 
-  /// The SDK invokes this method when an ad could not be retrieved.
+  /// Called when an ad fails to load.
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
 
-  /// The SDK invokes this method when the ad is clicked.
+  /// Called when the ad is clicked.
   final Function(MaxAd ad) onAdClickedCallback;
 
-  /// The SDK invokes this method when a revenue event is detected for the ad.
+  /// Called when a revenue event is detected for the ad.
   final Function(MaxAd ad)? onAdRevenuePaidCallback;
 
   /// @nodoc
@@ -23,15 +23,15 @@ abstract class AdListener {
   });
 }
 
-/// Defines a fullscreen ad listener.
+/// Listener for fullscreen ad events (e.g., Interstitial, Rewarded, App Open).
 abstract class FullscreenAdListener extends AdListener {
-  /// The SDK invokes this method when the ad has been successfully displayed.
+  /// Called when the ad is displayed.
   final Function(MaxAd ad) onAdDisplayedCallback;
 
-  /// The SDK invokes this method when the ad could not be displayed.
+  /// Called when the ad fails to display.
   final Function(MaxAd ad, MaxError error) onAdDisplayFailedCallback;
 
-  /// The SDK invokes this method when the ad has been dismissed.
+  /// Called when the ad is dismissed.
   final Function(MaxAd ad) onAdHiddenCallback;
 
   /// @nodoc
@@ -51,12 +51,12 @@ abstract class FullscreenAdListener extends AdListener {
         );
 }
 
-/// Defines an [AdView] ad (Banner / MREC) listener to be notified about ad view events.
+/// Listener for [AdView] ads (Banner / MREC) to receive ad view events.
 class AdViewAdListener extends AdListener {
-  /// The SDK invokes this method when the [MaxAdView] has expanded to the full screen.
+  /// Called when the [MaxAdView] expands to fullscreen.
   final Function(MaxAd ad) onAdExpandedCallback;
 
-  /// The SDK invokes this method when the [MaxAdView] has collapsed back to its original size.
+  /// Called when the [MaxAdView] collapses back to its original size.
   final Function(MaxAd ad) onAdCollapsedCallback;
 
   /// @nodoc
@@ -75,7 +75,7 @@ class AdViewAdListener extends AdListener {
         );
 }
 
-/// Defines a [NativeAdView] ad listener to be notified about native ad view events.
+/// Listener for [NativeAdView] to receive native ad events.
 class NativeAdListener extends AdListener {
   /// @nodoc
   const NativeAdListener({
@@ -91,7 +91,7 @@ class NativeAdListener extends AdListener {
         );
 }
 
-/// Defines an interstitial ad listener.
+/// Listener for interstitial ad events.
 class InterstitialListener extends FullscreenAdListener {
   /// @nodoc
   const InterstitialListener({
@@ -113,9 +113,9 @@ class InterstitialListener extends FullscreenAdListener {
         );
 }
 
-/// Defines a rewarded ad listener.
+/// Listener for rewarded ad events.
 class RewardedAdListener extends FullscreenAdListener {
-  /// The SDK invokes this method when a reward was granted.
+  /// Called when the user has earned a reward.
   final Function(MaxAd ad, MaxReward reward) onAdReceivedRewardCallback;
 
   /// @nodoc
@@ -139,7 +139,7 @@ class RewardedAdListener extends FullscreenAdListener {
         );
 }
 
-/// Defines an app open ad listener.
+/// Listener for app open ad events.
 class AppOpenAdListener extends FullscreenAdListener {
   /// @nodoc
   const AppOpenAdListener({
@@ -161,13 +161,12 @@ class AppOpenAdListener extends FullscreenAdListener {
         );
 }
 
-/// Defines a platform widget listener for an [AdView] ad (Banner / MREC) to be
-/// notified about ad view events.
+/// Listener for a platform [AdView] widget (Banner / MREC) to receive ad view events.
 class WidgetAdViewAdListener {
-  /// The SDK invokes this method when a new ad has been loaded.
+  /// Called when a new ad has been loaded.
   final Function(MaxAd ad) onAdLoadedCallback;
 
-  /// The SDK invokes this method when an ad could not be retrieved.
+  /// Called when an ad fails to load.
   final Function(String adUnitId, MaxError error) onAdLoadFailedCallback;
 
   /// @nodoc

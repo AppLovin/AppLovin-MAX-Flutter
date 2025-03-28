@@ -32,12 +32,12 @@ class AppLovinMAX {
 
   /// @nodoc
   ///
-  /// Disabled dartdoc.
+  /// Private constructor to prevent instantiation.
   AppLovinMAX();
 
-  /// Initializes the SDK with the provided [sdkKey].
+  /// Initializes the AppLovin MAX SDK with the provided [sdkKey].
   ///
-  /// For more information, see the [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration).
+  /// For details, see: [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration)
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
     if (_hasInitializeInvoked) {
       // Return a future object even when the actual value is not ready.
@@ -170,12 +170,10 @@ class AppLovinMAX {
     }
   }
 
-  /// Displays the Mediation Debugger.
+  /// Launches the Mediation Debugger.
   ///
-  /// Mediation Debugger is a suite of testing tools.
-  /// These tools help you integrate and launch faster with MAX.
-  /// You can use them to confirm the validity of network integrations.
-  /// This ensures that you can successfully load and show ads, among other things.
+  /// Mediation Debugger is a suite of testing tools that help verify your integration,
+  /// confirm network setups, and debug ad loading/display issues.
   ///
   /// [Mediation Debugger](https://developers.applovin.com/en/flutter/testing-networks/mediation-debugger)
   static void showMediationDebugger() {
@@ -202,9 +200,7 @@ class AppLovinMAX {
     return _methodChannel.invokeMethod('hasUserConsent');
   }
 
-  /// Sets true to indicate that the user has opted out of interest-based advertising.
-  ///
-  /// Or, sets false to indicate that the user has not opted out of interest-based advertising.
+  /// Sets whether the user has opted out of interest-based advertising.
   ///
   /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static void setDoNotSell(bool isDoNotSell) {
@@ -213,9 +209,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Returns true if the user has opted out of interest-based advertising.
-  ///
-  /// Or, returns false if the user has not opted out of interest-based advertising.
+  /// Returns whether the user has opted out of interest-based advertising.
   ///
   /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static Future<bool?> isDoNotSell() {
@@ -239,7 +233,7 @@ class AppLovinMAX {
 
   /// Sets whether to begin video ads in a muted state or not.
   ///
-  /// Note that this functionality is not available for all networks.
+  /// **Note:** Not all networks support this setting.
   ///
   /// [Mute Audio](https://developers.applovin.com/en/flutter/overview/advanced-settings#mute-audio)
   static void setMuted(bool muted) {
@@ -323,7 +317,8 @@ class AppLovinMAX {
   }
 
   /// Shows the CMP flow to an existing user.
-  /// Note that this resets the user’s existing consent information.
+  ///
+  /// **Note:** This resets the user’s existing consent information.
   ///
   /// The function returns when the flow finishes showing. On success, returns
   /// null. On failure, returns [MaxCMPError].
@@ -439,9 +434,10 @@ class AppLovinMAX {
     });
   }
 
-  /// Load a new banner ad.
-  /// NOTE: The [createBanner] method loads the first banner ad and initiates an automated banner refresh process.
-  /// You only need to call this method if you pause banner refresh.
+  /// Loads a new banner ad.
+  ///
+  /// **Note:** The [createBanner] method automatically loads the first banner ad and
+  /// starts auto-refresh. You only need to call this method if you paused the refresh.
   static void loadBanner(String adUnitId) {
     _methodChannel.invokeMethod('loadBanner', {
       'ad_unit_id': adUnitId,
@@ -455,7 +451,7 @@ class AppLovinMAX {
     });
   }
 
-  /// Gets the adaptive banner size for the provided width.
+  /// Returns the adaptive banner height for the given width.
   static Future<double?> getAdaptiveBannerHeightForWidth(double width) {
     return _methodChannel.invokeMethod('getAdaptiveBannerHeightForWidth', {
       'width': width,
@@ -536,9 +532,10 @@ class AppLovinMAX {
     });
   }
 
-  /// Load a new MREC ad.
-  /// NOTE: The [createMRec] method loads the first MREC ad and initiates an automated MREC refresh process.
-  /// You only need to call this method if you pause MREC refresh.
+  /// Loads a new MREC ad.
+  ///
+  /// **Note:** The [createMRec] method automatically loads the first MREC ad and
+  /// starts auto-refresh. You only need to call this method if you paused the refresh.
   static void loadMRec(String adUnitId) {
     _methodChannel.invokeMethod('loadMRec', {
       'ad_unit_id': adUnitId,
@@ -707,9 +704,8 @@ class AppLovinMAX {
   /// - **Important**: Preloaded platform widgets must be destroyed manually using
   ///   [destroyWidgetAdView] when they are no longer needed to free up resources.
   ///
-  /// - **Return**:
-  ///   A `Future<AdViewId?>` that completes when the preload operation starts
-  ///   successfully. If the operation fails, the `Future` completes with an error.
+  /// - **Return:** A `Future<AdViewId?>` that completes once the preload operation starts.
+  ///   If the operation fails, the future completes with an error.
   static Future<AdViewId?> preloadWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
