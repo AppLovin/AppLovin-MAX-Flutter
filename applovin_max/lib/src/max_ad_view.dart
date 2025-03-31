@@ -117,6 +117,7 @@ class _MaxAdViewState extends State<MaxAdView> {
   /// Unique [MethodChannel] to this [MaxAdView] instance.
   MethodChannel? _methodChannel;
 
+  late Size _screenSize;
   late bool _isTablet;
   late bool _adaptiveBannerEnabled;
   late Map<String, String?> extraParameters;
@@ -151,39 +152,49 @@ class _MaxAdViewState extends State<MaxAdView> {
   @override
   Widget build(BuildContext context) {
     // https://stackoverflow.com/questions/49484549/can-we-check-the-device-to-be-a-smartphone-or-a-tablet-in-flutter
-    _isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+    _screenSize = MediaQuery.of(context).size;
+    _isTablet = _screenSize.shortestSide >= 600;
 
     return FutureBuilder(
         future: _getAdViewSize(widget.width, widget.height),
         builder: (BuildContext context, AsyncSnapshot<Size> snapshot) {
           if (snapshot.hasData) {
-            return buildAdView(context, snapshot.data!.width, snapshot.data!.height);
+            return _buildAdView(context, snapshot.data!.width, snapshot.data!.height);
           }
-          return Container(); // Return an empty container while waiting for the size.
+          return const SizedBox.shrink(); // Return an empty container while waiting for the size.
         });
   }
 
-  Widget buildAdView(BuildContext context, double width, double height) {
+  Widget _buildAdView(BuildContext context, double width, double height) {
     return SizedBox(
       width: width,
       height: height,
       child: OverflowBox(
         alignment: Alignment.bottomCenter,
-        child: defaultTargetPlatform == TargetPlatform.android
-            ? AndroidView(
-                viewType: _viewType,
-                creationParams: _createParams(),
-                creationParamsCodec: const StandardMessageCodec(),
-                onPlatformViewCreated: _onMaxAdViewCreated,
-              )
-            : UiKitView(
-                viewType: _viewType,
-                creationParams: _createParams(),
-                creationParamsCodec: const StandardMessageCodec(),
-                onPlatformViewCreated: _onMaxAdViewCreated,
-              ),
+        child: _buildPlatformView(),
       ),
     );
+  }
+
+  Widget _buildPlatformView() {
+    final params = _createParams();
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return AndroidView(
+        viewType: _viewType,
+        creationParams: params,
+        creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: _onMaxAdViewCreated,
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return UiKitView(
+        viewType: _viewType,
+        creationParams: params,
+        creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: _onMaxAdViewCreated,
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   /// Constructs the parameters to be sent to the platform-specific ad view.
@@ -248,7 +259,7 @@ class _MaxAdViewState extends State<MaxAdView> {
     } else if (widget.adFormat == AdFormat.banner) {
       // Return the screen size when adaptive banner is enabled.
       if (_adaptiveBannerEnabled) {
-        return MediaQuery.of(context).size.width;
+        return _screenSize.width;
       }
       return _isTablet ? _leaderWidth : _bannerWidth;
     } else {

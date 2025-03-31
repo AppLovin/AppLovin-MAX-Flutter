@@ -121,6 +121,10 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
   GlobalKey? _starRatingViewKey;
   GlobalKey? _mediaViewKey;
 
+  // Prevents multiple redundant renderAd() calls in the same frame.
+  // This flag ensures that _renderAd() is called at most once per frame.
+  bool _renderScheduled = false;
+
   @override
   void initState() {
     super.initState();
@@ -200,7 +204,6 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
 
       if ("OnNativeAdLoadedEvent" == method) {
         MaxAd maxAd = AppLovinMAX.createMaxAd(arguments);
-        widget.listener?.onAdLoadedCallback(maxAd);
 
         // Add or update all native ad asset views (e.g., title, body, icon) on the platform.
         await _updateAllAssetViews();
@@ -212,6 +215,8 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
         setState(() {
           _nativeAd = maxAd.nativeAd;
         });
+
+        widget.listener?.onAdLoadedCallback(maxAd);
       } else if ("OnNativeAdLoadFailedEvent" == method) {
         widget.listener?.onAdLoadFailedCallback(arguments["adUnitId"], AppLovinMAX.createMaxError(arguments));
       } else if ("OnNativeAdClickedEvent" == method) {
@@ -270,6 +275,18 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     return _methodChannel?.invokeMethod(method, params);
   }
 
+  // Schedules a single `renderAd()` call after the current frame completes.
+  void _scheduleRenderAd() {
+    if (_renderScheduled) return;
+
+    _renderScheduled = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _renderAd();
+      _renderScheduled = false;
+    });
+  }
+
   // Requests the platform to render the loaded native ad.
   Future _renderAd() async {
     return _methodChannel?.invokeMethod("renderAd");
@@ -280,8 +297,9 @@ class _MaxNativeAdViewState extends State<MaxNativeAdView> {
     RenderBox? renderedObject = key.currentContext?.findRenderObject() as RenderBox?;
     if (renderedObject == null) return Rect.zero;
     Offset globalPosition = renderedObject.localToGlobal(Offset.zero);
-    RenderBox parentRenderedObject = parentKey.currentContext?.findRenderObject() as RenderBox;
-    Offset relativePosition = parentRenderedObject.globalToLocal(globalPosition);
+    final parentBox = parentKey.currentContext?.findRenderObject();
+    if (parentBox is! RenderBox) return Rect.zero;
+    Offset relativePosition = parentBox.globalToLocal(globalPosition);
     return relativePosition & renderedObject.size;
   }
 }
@@ -318,19 +336,21 @@ class MaxNativeAdTitleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._titleViewKey = _NativeAdViewScope.of(context)._titleViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._titleViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._titleViewKey, "addTitleView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._titleViewKey == null) return;
+          scope._updateAssetView(scope._titleViewKey, "addTitleView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Text(
-          _NativeAdViewScope.of(context)._nativeAd?.title ?? '',
-          key: _NativeAdViewScope.of(context)._titleViewKey,
+          scope._nativeAd?.title ?? '',
+          key: scope._titleViewKey,
           style: style,
           textAlign: textAlign,
           softWrap: softWrap,
@@ -374,19 +394,21 @@ class MaxNativeAdAdvertiserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._advertiserViewKey = _NativeAdViewScope.of(context)._advertiserViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._advertiserViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._advertiserViewKey, "addAdvertiserView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._advertiserViewKey == null) return;
+          scope._updateAssetView(scope._advertiserViewKey, "addAdvertiserView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Text(
-          _NativeAdViewScope.of(context)._nativeAd?.advertiser ?? '',
-          key: _NativeAdViewScope.of(context)._advertiserViewKey,
+          scope._nativeAd?.advertiser ?? '',
+          key: scope._advertiserViewKey,
           style: style,
           textAlign: textAlign,
           softWrap: softWrap,
@@ -430,19 +452,21 @@ class MaxNativeAdBodyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._bodyViewKey = _NativeAdViewScope.of(context)._bodyViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._bodyViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._bodyViewKey, "addBodyView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._bodyViewKey == null) return;
+          scope._updateAssetView(scope._bodyViewKey, "addBodyView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Text(
-          _NativeAdViewScope.of(context)._nativeAd?.body ?? '',
-          key: _NativeAdViewScope.of(context)._bodyViewKey,
+          scope._nativeAd?.body ?? '',
+          key: scope._bodyViewKey,
           style: style,
           textAlign: textAlign,
           softWrap: softWrap,
@@ -468,22 +492,24 @@ class MaxNativeAdCallToActionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._callToActionViewKey = _NativeAdViewScope.of(context)._callToActionViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._callToActionViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._callToActionViewKey, "addCallToActionView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._callToActionViewKey == null) return;
+          scope._updateAssetView(scope._callToActionViewKey, "addCallToActionView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: ElevatedButton(
-          key: _NativeAdViewScope.of(context)._callToActionViewKey,
+          key: scope._callToActionViewKey,
           style: style,
           onPressed: () {},
           child: Text(
-            _NativeAdViewScope.of(context)._nativeAd?.callToAction?.toUpperCase() ?? '',
+            scope._nativeAd?.callToAction?.toUpperCase() ?? '',
           ),
         ),
       ),
@@ -509,18 +535,20 @@ class MaxNativeAdIconView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._iconViewKey = _NativeAdViewScope.of(context)._iconViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._iconViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._iconViewKey, "addIconView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._iconViewKey == null) return;
+          scope._updateAssetView(scope._iconViewKey, "addIconView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Container(
-          key: _NativeAdViewScope.of(context)._iconViewKey,
+          key: scope._iconViewKey,
           width: width,
           height: height,
           color: Colors.transparent,
@@ -548,18 +576,20 @@ class MaxNativeAdOptionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._optionsViewKey = _NativeAdViewScope.of(context)._optionsViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._optionsViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._optionsViewKey, "addOptionsView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._optionsViewKey == null) return;
+          scope._updateAssetView(scope._optionsViewKey, "addOptionsView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Container(
-          key: _NativeAdViewScope.of(context)._optionsViewKey,
+          key: scope._optionsViewKey,
           width: width,
           height: height,
           color: Colors.transparent,
@@ -589,18 +619,20 @@ class MaxNativeAdMediaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._mediaViewKey = _NativeAdViewScope.of(context)._mediaViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._mediaViewKey ??= GlobalKey();
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (SizeChangedLayoutNotification notification) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _NativeAdViewScope.of(context)._updateAssetView(_NativeAdViewScope.of(context)._mediaViewKey, "addMediaView");
-          _NativeAdViewScope.of(context)._renderAd();
+          if (scope._mediaViewKey == null) return;
+          scope._updateAssetView(scope._mediaViewKey, "addMediaView");
+          scope._scheduleRenderAd();
         });
         return false;
       },
       child: SizeChangedLayoutNotifier(
         child: Container(
-          key: _NativeAdViewScope.of(context)._mediaViewKey,
+          key: scope._mediaViewKey,
           width: width,
           height: height,
           color: Colors.transparent,
@@ -614,15 +646,18 @@ class _StarRating extends StatelessWidget {
   const _StarRating({
     this.rating,
     this.color,
+    this.shadowColor,
     this.size,
   });
 
   static const int kStarCount = 5;
-  static const Color kStartColor = Color(0xffffe234);
+  static const Color kStarColor = Color(0xffffe234);
+  static const Color kShadowColor = Color(0xffdedede);
   static const double kStarSize = 8.0;
 
   final double? rating;
   final Color? color;
+  final Color? shadowColor;
   final double? size;
 
   Widget buildStar(BuildContext context, int index) {
@@ -631,19 +666,19 @@ class _StarRating extends StatelessWidget {
     if (index >= theRating) {
       icon = Icon(
         Icons.star_border,
-        color: color ?? kStartColor,
+        color: shadowColor ?? kShadowColor,
         size: size ?? kStarSize,
       );
     } else if (index > theRating - 1 && index < theRating) {
       icon = Icon(
         Icons.star_half,
-        color: color ?? kStartColor,
+        color: color ?? kStarColor,
         size: size ?? kStarSize,
       );
     } else {
       icon = Icon(
         Icons.star,
-        color: color ?? kStartColor,
+        color: color ?? kStarColor,
         size: size ?? kStarSize,
       );
     }
@@ -667,6 +702,7 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
     this.height,
     this.size,
     this.color,
+    this.shadowColor,
   });
 
   /// If non-null, the widget will have exactly this width.
@@ -678,14 +714,18 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
   /// The color of each star. The default value is 0xffffe234.
   final Color? color;
 
+  /// The shadow color of each star. The default value is 0xffdedede.
+  final Color? shadowColor;
+
   /// The size of each star. The default value is 8.0.
   final double? size;
 
   @override
   Widget build(BuildContext context) {
-    _NativeAdViewScope.of(context)._starRatingViewKey = _NativeAdViewScope.of(context)._starRatingViewKey ?? GlobalKey();
+    final scope = _NativeAdViewScope.of(context);
+    scope._starRatingViewKey ??= GlobalKey();
     return Container(
-        key: _NativeAdViewScope.of(context)._starRatingViewKey,
+        key: scope._starRatingViewKey,
         // minimum size
         constraints: BoxConstraints(
           minHeight: size ?? _StarRating.kStarSize,
@@ -693,11 +733,12 @@ class MaxNativeAdStarRatingView extends StatelessWidget {
         ),
         width: width,
         height: height,
-        child: (_NativeAdViewScope.of(context)._nativeAd?.starRating != null)
+        child: (scope._nativeAd?.starRating != null)
             ? _StarRating(
                 size: size,
                 color: color,
-                rating: _NativeAdViewScope.of(context)._nativeAd?.starRating!,
+                shadowColor: shadowColor,
+                rating: scope._nativeAd?.starRating ?? 0,
               )
             : null);
   }
