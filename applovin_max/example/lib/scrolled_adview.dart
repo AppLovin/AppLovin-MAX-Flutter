@@ -63,16 +63,13 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                         final String adUnitId = isBanner ? widget.bannerAdUnitId : widget.mrecAdUnitId;
                         final AdFormat adFormat = isBanner ? AdFormat.banner : AdFormat.mrec;
 
-                        AdViewId? adViewId;
-                        if (index == 0) {
-                          adViewId = widget.preloadedBannerId;
-                        } else if (index == 1) {
-                          adViewId = widget.preloadedMRecId;
-                        } else if (index == 2) {
-                          adViewId = widget.preloadedBanner2Id;
-                        } else if (index == 3) {
-                          adViewId = widget.preloadedMRec2Id;
-                        }
+                        final adViewIds = [
+                          widget.preloadedBannerId,
+                          widget.preloadedMRecId,
+                          widget.preloadedBanner2Id,
+                          widget.preloadedMRec2Id,
+                        ];
+                        final adViewId = adViewIds[index];
 
                         return ListItem(
                           key: ValueKey('item_$index'),
