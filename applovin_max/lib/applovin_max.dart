@@ -52,27 +52,28 @@ class AppLovinMAX {
       // isInitialized() returns true when Flutter is performing hot restart
       bool isPlatformSDKInitialized = await isInitialized() ?? false;
       if (isPlatformSDKInitialized) {
-        Map conf = await _methodChannel.invokeMethod('getConfiguration');
-        _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
+        final Map<String, dynamic> conf = Map<String, dynamic>.from(await _methodChannel.invokeMethod('getConfiguration'));
+        _initializeCompleter.complete(MaxConfiguration.fromJson(conf));
         return _initializeCompleter.future;
       }
 
-      var conf = await _methodChannel.invokeMethod('initialize', {
+      final Map<String, dynamic> conf = Map<String, dynamic>.from(await _methodChannel.invokeMethod('initialize', {
         'plugin_version': _version,
         'sdk_key': sdkKey,
-      }) as Map;
+      }));
 
-      _initializeCompleter.complete(MaxConfiguration.fromJson(Map<String, dynamic>.from(conf)));
-
+      _initializeCompleter.complete(MaxConfiguration.fromJson(conf));
       return _initializeCompleter.future;
-    } catch (e) {
+    } catch (e, stack) {
+      if (!_initializeCompleter.isCompleted) {
+        _initializeCompleter.completeError(e, stack);
+      }
       debugPrint('Error initializing AppLovin SDK: $e');
-      _initializeCompleter.completeError(e);
       return null;
     }
   }
 
-  static Future<dynamic> _handleNativeMethodCall(MethodCall call) async {
+  static Future<void> _handleNativeMethodCall(MethodCall call) async {
     try {
       final String method = call.method;
       final Map<dynamic, dynamic>? arguments = call.arguments;

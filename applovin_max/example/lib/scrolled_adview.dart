@@ -55,80 +55,31 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                     text: _isAdEnabled ? 'Disable ADs' : 'Enable ADs',
                   ),
                   Expanded(
-                    child: ListView(padding: const EdgeInsets.all(4), shrinkWrap: true, children: [
-                      Column(children: [
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        _isAdEnabled
-                            ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner, adViewId: widget.preloadedBannerId)
-                            : const SizedBox(
-                                height: 50,
-                                child: Center(child: Text('AD Placeholder')),
-                              ),
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                      ]),
-                      Column(children: [
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        _isAdEnabled
-                            ? MaxAdView(adUnitId: widget.mrecAdUnitId, adFormat: AdFormat.mrec, adViewId: widget.preloadedMRecId)
-                            : const SizedBox(
-                                height: 50,
-                                child: Center(child: Text('AD Placeholder')),
-                              ),
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                      ]),
-                      Column(children: [
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        _isAdEnabled
-                            ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner, adViewId: widget.preloadedBanner2Id)
-                            : const SizedBox(
-                                height: 50,
-                                child: Center(child: Text('AD Placeholder')),
-                              ),
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                      ]),
-                      Column(children: [
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        _isAdEnabled
-                            ? MaxAdView(adUnitId: widget.mrecAdUnitId, adFormat: AdFormat.mrec, adViewId: widget.preloadedMRec2Id)
-                            : const SizedBox(
-                                height: 50,
-                                child: Center(child: Text('AD Placeholder')),
-                              ),
-                        const Text(
-                          _sampleText,
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                      ])
-                    ]),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(4),
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        final bool isBanner = index % 2 == 0;
+                        final String adUnitId = isBanner ? widget.bannerAdUnitId : widget.mrecAdUnitId;
+                        final AdFormat adFormat = isBanner ? AdFormat.banner : AdFormat.mrec;
+
+                        final adViewIds = [
+                          widget.preloadedBannerId,
+                          widget.preloadedMRecId,
+                          widget.preloadedBanner2Id,
+                          widget.preloadedMRec2Id,
+                        ];
+                        final adViewId = adViewIds[index];
+
+                        return ListItem(
+                          key: ValueKey('item_$index'),
+                          isAdEnabled: _isAdEnabled,
+                          adUnitId: adUnitId,
+                          adFormat: adFormat,
+                          adViewId: adViewId,
+                        );
+                      },
+                    ),
                   ),
                   _isAdEnabled
                       ? MaxAdView(adUnitId: widget.bannerAdUnitId, adFormat: AdFormat.banner)
@@ -137,5 +88,50 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                           child: Center(child: Text('AD Placeholder')),
                         ),
                 ]))));
+  }
+}
+
+class ListItem extends StatelessWidget {
+  const ListItem({
+    super.key,
+    required this.isAdEnabled,
+    required this.adUnitId,
+    required this.adFormat,
+    this.adViewId,
+  });
+
+  final bool isAdEnabled;
+  final String adUnitId;
+  final AdFormat adFormat;
+  final AdViewId? adViewId;
+
+  static const String _sampleText = ScrolledAdViewState._sampleText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          _sampleText,
+          textAlign: TextAlign.justify,
+          style: TextStyle(fontSize: 18.0),
+        ),
+        isAdEnabled
+            ? MaxAdView(
+                adUnitId: adUnitId,
+                adFormat: adFormat,
+                adViewId: adViewId,
+              )
+            : const SizedBox(
+                height: 50,
+                child: Center(child: Text('AD Placeholder')),
+              ),
+        const Text(
+          _sampleText,
+          textAlign: TextAlign.justify,
+          style: TextStyle(fontSize: 18.0),
+        ),
+      ],
+    );
   }
 }
