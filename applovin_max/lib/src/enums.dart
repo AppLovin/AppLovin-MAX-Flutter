@@ -44,46 +44,6 @@ enum AdViewPosition {
   const AdViewPosition(this.value);
 }
 
-/// Represents content ratings for ads shown to users.
-///
-/// Corresponds to IQG media content ratings.
-enum AdContentRating {
-  /// No content rating.
-  none(0),
-
-  /// Suitable for all audiences.
-  allAudiences(1),
-
-  /// Suitable for users aged 12 and above.
-  everyoneOverTwelve(2),
-
-  /// Suitable for mature audiences only.
-  matureAudiences(3);
-
-  /// @nodoc
-  final int value;
-  const AdContentRating(this.value);
-}
-
-/// User's gender for ad targeting.
-enum UserGender {
-  /// Unknown gender.
-  unknown('U'),
-
-  /// Female.
-  female('F'),
-
-  /// Male.
-  male('M'),
-
-  /// Other or non-binary.
-  other('O');
-
-  /// @nodoc
-  final String value;
-  const UserGender(this.value);
-}
-
 /// User's geography for determining consent flow.
 enum ConsentFlowUserGeography {
   /// User's geography is unknown.
