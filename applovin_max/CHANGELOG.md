@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Depends on Android SDK v13.2.0 and iOS SDK v13.2.0.
 ## 4.3.1
 * Fix CTA not clickable.
 * Remove deprecated `AppLovinMAX.setLocationCollectionEnabled()` API.
