@@ -13,7 +13,7 @@ export 'package:applovin_max/src/max_ad_view.dart';
 export 'package:applovin_max/src/max_native_ad_view.dart';
 
 /// The current version of the SDK.
-const String _version = "4.3.1";
+const String _version = "4.4.0";
 
 /// Represents the AppLovin SDK.
 class AppLovinMAX {
