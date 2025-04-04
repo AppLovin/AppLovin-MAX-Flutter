@@ -40,28 +40,34 @@ class NativeAdViewState extends State<NativeAdView> {
           Container(
             margin: const EdgeInsets.fromLTRB(4, 8, 4, 8),
             height: 300,
-            child: MaxNativeAdView(
-              adUnitId: widget.adUnitId,
-              controller: _nativeAdViewController,
-              listener: NativeAdListener(
-                onAdLoadedCallback: (ad) {
-                  logStatus('Native ad loaded from ${ad.networkName}');
-                  setState(() {
-                    _mediaViewAspectRatio = ad.nativeAd?.mediaContentAspectRatio ?? _kMediaViewAspectRatio;
-                  });
-                },
-                onAdLoadFailedCallback: (adUnitId, error) => logStatus('Native ad failed to load with error code ${error.code} and message: ${error.message}'),
-                onAdClickedCallback: (ad) => logStatus('Native ad clicked'),
-                onAdRevenuePaidCallback: (ad) => logStatus('Native ad revenue paid: ${ad.revenue}'),
-              ),
-              child: _buildAssetViews(),
-            ),
+            child: _buildNativeAd(),
           ),
           AppButton(
             onPressed: () => _nativeAdViewController.loadAd(),
             text: 'Reload',
           ),
         ])));
+  }
+
+  // Render MaxNativeAdView within a container
+  Widget _buildNativeAd() {
+    return MaxNativeAdView(
+      adUnitId: widget.adUnitId,
+      controller: _nativeAdViewController,
+      listener: NativeAdListener(
+        onAdLoadedCallback: (ad) {
+          logStatus('Native ad loaded from ${ad.networkName}');
+          // Dynamically update the MediaView aspect ratio based on the loaded ad
+          setState(() {
+            _mediaViewAspectRatio = ad.nativeAd?.mediaContentAspectRatio ?? _kMediaViewAspectRatio;
+          });
+        },
+        onAdLoadFailedCallback: (adUnitId, error) => logStatus('Native ad failed to load with error code ${error.code} and message: ${error.message}'),
+        onAdClickedCallback: (ad) => logStatus('Native ad clicked'),
+        onAdRevenuePaidCallback: (ad) => logStatus('Native ad revenue paid: ${ad.revenue}'),
+      ),
+      child: _buildAssetViews(),
+    );
   }
 
   // Layout the asset views inside MaxNativeAdView

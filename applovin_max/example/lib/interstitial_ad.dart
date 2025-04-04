@@ -85,7 +85,7 @@ class _InterstitialAdState extends State<InterstitialAd> {
     }
   }
 
-  void _createAndShowInterstitialAd() async {
+  void _loadAndShowInterstitialAd() async {
     final isReady = await AppLovinMAX.isInterstitialReady(widget.adUnitId) ?? false;
     if (isReady) {
       AppLovinMAX.showInterstitial(widget.adUnitId);
@@ -100,7 +100,7 @@ class _InterstitialAdState extends State<InterstitialAd> {
   Widget build(BuildContext context) {
     return AppButton(
       text: _buttonText,
-      onPressed: widget.isInitialized && _loadState != InterstitialAdLoadState.loading ? _createAndShowInterstitialAd : null,
+      onPressed: widget.isInitialized && _loadState != InterstitialAdLoadState.loading ? _loadAndShowInterstitialAd : null,
     );
   }
 }

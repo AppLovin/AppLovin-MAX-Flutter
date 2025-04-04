@@ -86,7 +86,7 @@ class _RewardedAdState extends State<RewardedAd> {
     }
   }
 
-  void _createAndShowRewardedAd() async {
+  void _loadAndShowRewardedAd() async {
     final isReady = await AppLovinMAX.isRewardedAdReady(widget.adUnitId) ?? false;
     if (isReady) {
       AppLovinMAX.showRewardedAd(widget.adUnitId);
@@ -101,7 +101,7 @@ class _RewardedAdState extends State<RewardedAd> {
   Widget build(BuildContext context) {
     return AppButton(
       text: _buttonText,
-      onPressed: widget.isInitialized && _loadState != RewardedAdLoadState.loading ? _createAndShowRewardedAd : null,
+      onPressed: widget.isInitialized && _loadState != RewardedAdLoadState.loading ? _loadAndShowRewardedAd : null,
     );
   }
 }
