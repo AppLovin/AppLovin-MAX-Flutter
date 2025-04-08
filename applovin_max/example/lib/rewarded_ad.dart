@@ -1,10 +1,11 @@
 import 'dart:math';
 
-import 'package:applovin_flutter/utils.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
 
-enum RewardedAdLoadState { notLoaded, loading, loaded }
+import 'utils.dart';
+
+enum _RewardedAdLoadState { notLoaded, loading, loaded }
 
 class RewardedAd extends StatefulWidget {
   final String adUnitId;
@@ -25,7 +26,7 @@ class RewardedAd extends StatefulWidget {
 class _RewardedAdState extends State<RewardedAd> {
   static const int _maxRetryCount = 6;
 
-  RewardedAdLoadState _loadState = RewardedAdLoadState.notLoaded;
+  _RewardedAdLoadState _loadState = _RewardedAdLoadState.notLoaded;
   int _retryAttempt = 0;
 
   @override
@@ -34,12 +35,12 @@ class _RewardedAdState extends State<RewardedAd> {
 
     AppLovinMAX.setRewardedAdListener(RewardedAdListener(
       onAdLoadedCallback: (ad) {
-        setState(() => _loadState = RewardedAdLoadState.loaded);
+        setState(() => _loadState = _RewardedAdLoadState.loaded);
         _retryAttempt = 0;
         widget.log('Rewarded ad loaded from ${ad.networkName}');
       },
       onAdLoadFailedCallback: (adUnitId, error) {
-        setState(() => _loadState = RewardedAdLoadState.notLoaded);
+        setState(() => _loadState = _RewardedAdLoadState.notLoaded);
 
         // Increment the retry attempt counter
         _retryAttempt++;
@@ -56,19 +57,19 @@ class _RewardedAdState extends State<RewardedAd> {
 
         // Retry after a delay by setting the state to loading and attempting to load again
         Future.delayed(Duration(seconds: retryDelay), () {
-          setState(() => _loadState = RewardedAdLoadState.loading);
+          setState(() => _loadState = _RewardedAdLoadState.loading);
           widget.log('Rewarded ad retrying to load...');
           AppLovinMAX.loadRewardedAd(widget.adUnitId);
         });
       },
       onAdDisplayedCallback: (ad) => widget.log('Rewarded ad displayed'),
       onAdDisplayFailedCallback: (ad, error) {
-        setState(() => _loadState = RewardedAdLoadState.notLoaded);
+        setState(() => _loadState = _RewardedAdLoadState.notLoaded);
         widget.log('Rewarded ad failed to display with code ${error.code} and message ${error.message}');
       },
       onAdClickedCallback: (ad) => widget.log('Rewarded ad clicked'),
       onAdHiddenCallback: (ad) {
-        setState(() => _loadState = RewardedAdLoadState.notLoaded);
+        setState(() => _loadState = _RewardedAdLoadState.notLoaded);
         widget.log('Rewarded ad hidden');
       },
       onAdReceivedRewardCallback: (ad, reward) => widget.log('Rewarded ad granted reward'),
@@ -77,9 +78,9 @@ class _RewardedAdState extends State<RewardedAd> {
   }
 
   String get _buttonText {
-    if (_loadState == RewardedAdLoadState.notLoaded) {
+    if (_loadState == _RewardedAdLoadState.notLoaded) {
       return 'Load Rewarded Ad';
-    } else if (_loadState == RewardedAdLoadState.loading) {
+    } else if (_loadState == _RewardedAdLoadState.loading) {
       return 'Loading...';
     } else {
       return 'Show Rewarded Ad';
@@ -92,7 +93,7 @@ class _RewardedAdState extends State<RewardedAd> {
       AppLovinMAX.showRewardedAd(widget.adUnitId);
     } else {
       widget.log('Loading rewarded ad...');
-      setState(() => _loadState = RewardedAdLoadState.loading);
+      setState(() => _loadState = _RewardedAdLoadState.loading);
       AppLovinMAX.loadRewardedAd(widget.adUnitId);
     }
   }
@@ -101,7 +102,7 @@ class _RewardedAdState extends State<RewardedAd> {
   Widget build(BuildContext context) {
     return AppButton(
       text: _buttonText,
-      onPressed: widget.isInitialized && _loadState != RewardedAdLoadState.loading ? _loadAndShowRewardedAd : null,
+      onPressed: widget.isInitialized && _loadState != _RewardedAdLoadState.loading ? _loadAndShowRewardedAd : null,
     );
   }
 }

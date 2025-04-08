@@ -1,6 +1,7 @@
-import 'package:applovin_flutter/utils.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
+
+import 'utils.dart';
 
 class ProgrammaticMRec extends StatefulWidget {
   final String adUnitId;

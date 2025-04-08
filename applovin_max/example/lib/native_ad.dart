@@ -1,6 +1,7 @@
-import 'package:applovin_flutter/utils.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
+
+import 'utils.dart';
 
 class NativeAdView extends StatefulWidget {
   const NativeAdView({
@@ -11,10 +12,10 @@ class NativeAdView extends StatefulWidget {
   final String adUnitId;
 
   @override
-  State createState() => NativeAdViewState();
+  State createState() => _NativeAdViewState();
 }
 
-class NativeAdViewState extends State<NativeAdView> {
+class _NativeAdViewState extends State<NativeAdView> {
   static const double _kMediaViewAspectRatio = 16 / 9;
 
   final MaxNativeAdViewController _nativeAdViewController = MaxNativeAdViewController();
@@ -22,7 +23,7 @@ class NativeAdViewState extends State<NativeAdView> {
   String _statusText = '';
   double _mediaViewAspectRatio = _kMediaViewAspectRatio;
 
-  void logStatus(String status) {
+  void _logStatus(String status) {
     /// ignore: avoid_print
     print(status);
     setState(() => _statusText = '$_statusText\n$status');
@@ -56,15 +57,15 @@ class NativeAdViewState extends State<NativeAdView> {
       controller: _nativeAdViewController,
       listener: NativeAdListener(
         onAdLoadedCallback: (ad) {
-          logStatus('Native ad loaded from ${ad.networkName}');
+          _logStatus('Native ad loaded from ${ad.networkName}');
           // Dynamically update the MediaView aspect ratio based on the loaded ad
           setState(() {
             _mediaViewAspectRatio = ad.nativeAd?.mediaContentAspectRatio ?? _kMediaViewAspectRatio;
           });
         },
-        onAdLoadFailedCallback: (adUnitId, error) => logStatus('Native ad failed to load with error code ${error.code} and message: ${error.message}'),
-        onAdClickedCallback: (ad) => logStatus('Native ad clicked'),
-        onAdRevenuePaidCallback: (ad) => logStatus('Native ad revenue paid: ${ad.revenue}'),
+        onAdLoadFailedCallback: (adUnitId, error) => _logStatus('Native ad failed to load with error code ${error.code} and message: ${error.message}'),
+        onAdClickedCallback: (ad) => _logStatus('Native ad clicked'),
+        onAdRevenuePaidCallback: (ad) => _logStatus('Native ad revenue paid: ${ad.revenue}'),
       ),
       child: _buildAssetViews(),
     );
@@ -126,7 +127,6 @@ class NativeAdViewState extends State<NativeAdView> {
             child: MaxNativeAdCallToActionView(
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll<Color>(Colors.white),
-                textStyle: WidgetStatePropertyAll<TextStyle>(TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               ),
             ),
           ),

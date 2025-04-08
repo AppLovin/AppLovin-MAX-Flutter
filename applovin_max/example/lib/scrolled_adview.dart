@@ -1,6 +1,7 @@
-import 'package:applovin_flutter/utils.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
+
+import 'utils.dart';
 
 const String kSampleText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
     'eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad '
@@ -29,10 +30,10 @@ class ScrolledAdView extends StatefulWidget {
   final AdViewId? preloadedMRec2Id;
 
   @override
-  State createState() => ScrolledAdViewState();
+  State createState() => _ScrolledAdViewState();
 }
 
-class ScrolledAdViewState extends State<ScrolledAdView> {
+class _ScrolledAdViewState extends State<ScrolledAdView> {
   static const int _adViewSize = 4;
 
   bool _isAdEnabled = true;
@@ -54,7 +55,7 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                         _isAdEnabled = !_isAdEnabled;
                       });
                     },
-                    text: _isAdEnabled ? 'Disable AdViews' : 'Enable AdViews',
+                    text: _isAdEnabled ? 'Hide Ads' : 'Show Ads',
                   ),
                   Expanded(
                     child: ListView.separated(
@@ -73,7 +74,7 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
                         ];
                         final adViewId = index < adViewIds.length ? adViewIds[index] : null;
 
-                        return ListItem(
+                        return _ListItem(
                           key: ValueKey('item_$index'),
                           isAdEnabled: _isAdEnabled,
                           adUnitId: adUnitId,
@@ -93,8 +94,8 @@ class ScrolledAdViewState extends State<ScrolledAdView> {
   }
 }
 
-class ListItem extends StatelessWidget {
-  const ListItem({
+class _ListItem extends StatelessWidget {
+  const _ListItem({
     super.key,
     required this.isAdEnabled,
     required this.adUnitId,
