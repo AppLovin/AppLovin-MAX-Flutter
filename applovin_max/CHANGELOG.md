@@ -1,5 +1,8 @@
 ## Versions
 
+## x.x.x
+* Add `adaptiveBannerEnabled` prop to `MaxAdView`.
+* Rename `isAutoRefreshEnabled` to `autoRefreshEnabled` in `MaxAdView` for consistency.
 ## 4.4.0
 * Depends on Android SDK v13.2.0 and iOS SDK v13.2.0.
 ## 4.3.1
