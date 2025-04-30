@@ -107,6 +107,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
                      adViewId:(nullable NSNumber *)adViewId
+      isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
          isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
@@ -167,6 +168,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
         [self.widget setCustomData: customData];
         [self.widget setExtraParameters: extraParameters];
         [self.widget setLocalExtraParameters: localExtraParameters];
+        [self.widget setAdaptiveBannerEnabled: isAdaptiveBannerEnabled];
         [self.widget setAutoRefreshEnabled: isAutoRefreshEnabled];
         
         [self.widget attachAdView: self];

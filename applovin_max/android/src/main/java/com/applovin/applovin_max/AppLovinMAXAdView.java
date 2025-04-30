@@ -107,6 +107,7 @@ public class AppLovinMAXAdView
                              final String adUnitId,
                              final int adViewId,
                              final MaxAdFormat adFormat,
+                             final boolean isAdaptiveBannerEnabled,
                              final boolean isAutoRefreshEnabled,
                              @Nullable final String placement,
                              @Nullable final String customData,
@@ -145,6 +146,7 @@ public class AppLovinMAXAdView
                 AppLovinMAX.d( "Mounting the preloaded AdView (" + adViewId + ") for Ad Unit ID " + adUnitId );
 
                 this.adViewId = adViewId;
+                widget.setAdaptiveBannerEnabled( isAdaptiveBannerEnabled );
                 widget.setAutoRefreshEnabled( isAutoRefreshEnabled );
                 widget.attachAdView( this );
                 return;
@@ -161,6 +163,7 @@ public class AppLovinMAXAdView
         widget.setCustomData( customData );
         widget.setExtraParameters( extraParameters );
         widget.setLocalExtraParameters( localExtraParameters );
+        widget.setAdaptiveBannerEnabled( isAdaptiveBannerEnabled );
         widget.setAutoRefreshEnabled( isAutoRefreshEnabled );
 
         widget.attachAdView( this );

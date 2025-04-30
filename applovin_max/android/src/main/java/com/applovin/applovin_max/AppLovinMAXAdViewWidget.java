@@ -41,6 +41,7 @@ class AppLovinMAXAdViewWidget
         adView = new MaxAdView( adUnitId, adFormat, sdk, context );
         adView.setListener( this );
         adView.setRevenueListener( this );
+        adView.setExtraParameter( "adaptive_banner", "true" );
 
         // Set this extra parameter to work around a SDK bug that ignores calls to stopAutoRefresh()
         adView.setExtraParameter( "allow_pause_auto_refresh_immediately", "true" );
@@ -75,6 +76,11 @@ class AppLovinMAXAdViewWidget
     public void setCustomData(@Nullable final String value)
     {
         adView.setCustomData( value );
+    }
+
+    public void setAdaptiveBannerEnabled(final boolean enabled)
+    {
+        adView.setExtraParameter( "adaptive_banner", Boolean.toString( enabled ) );
     }
 
     public void setAutoRefreshEnabled(final boolean enabled)

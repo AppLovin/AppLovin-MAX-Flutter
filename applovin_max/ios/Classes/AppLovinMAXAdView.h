@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
                      adViewId:(nullable NSNumber *)adViewId
+      isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
          isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData

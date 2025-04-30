@@ -29,6 +29,8 @@
         self.adView.delegate = self;
         self.adView.revenueDelegate = self;
         
+        [self.adView setExtraParameterForKey: @"adaptive_banner" value: @"true"];
+
         // Set this extra parameter to work around a SDK bug that ignores calls to stopAutoRefresh()
         [self.adView setExtraParameterForKey: @"allow_pause_auto_refresh_immediately" value: @"true"];
         
@@ -72,6 +74,11 @@
         id value = localExtraParameters[key];
         [self.adView setLocalExtraParameterForKey: key value: (value != [NSNull null] ? value : nil)];
     }
+}
+
+- (void)setAdaptiveBannerEnabled:(BOOL)adaptiveBannerEnabled
+{
+    [self.adView setExtraParameterForKey: @"adaptive_banner" value: adaptiveBannerEnabled ? @"true" : @"false"];
 }
 
 - (void)setAutoRefreshEnabled:(BOOL)autoRefreshEnabled

@@ -204,6 +204,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       "ad_format": widget.adFormat.value,
       "ad_view_id": widget.adViewId,
       "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+      "is_adaptive_banner_enabled": _adaptiveBannerEnabled,
       "custom_data": widget.customData,
       "placement": widget.placement,
       "extra_parameters": extraParameters,
