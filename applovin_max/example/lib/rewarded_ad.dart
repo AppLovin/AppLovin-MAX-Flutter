@@ -87,15 +87,16 @@ class _RewardedAdState extends State<RewardedAd> {
     }
   }
 
-  void _loadAndShowRewardedAd() async {
-    final isReady = await AppLovinMAX.isRewardedAdReady(widget.adUnitId) ?? false;
-    if (isReady) {
-      AppLovinMAX.showRewardedAd(widget.adUnitId);
-    } else {
-      widget.log('Loading rewarded ad...');
-      setState(() => _loadState = _RewardedAdLoadState.loading);
-      AppLovinMAX.loadRewardedAd(widget.adUnitId);
-    }
+  void _loadAndShowRewardedAd() {
+    AppLovinMAX.isRewardedAdReady(widget.adUnitId).then((isReady) {
+      if (isReady ?? false) {
+        AppLovinMAX.showRewardedAd(widget.adUnitId);
+      } else {
+        widget.log('Loading rewarded ad...');
+        setState(() => _loadState = _RewardedAdLoadState.loading);
+        AppLovinMAX.loadRewardedAd(widget.adUnitId);
+      }
+    });
   }
 
   @override

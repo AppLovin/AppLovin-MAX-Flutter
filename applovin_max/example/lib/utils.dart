@@ -86,7 +86,7 @@ class AppButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8, left: 40, right: 40),
       child: SizedBox(
-        height: 36, // Set button height
+        height: 34, // Set button height
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(

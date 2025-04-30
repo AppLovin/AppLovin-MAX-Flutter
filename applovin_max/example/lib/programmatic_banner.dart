@@ -45,6 +45,7 @@ class _ProgrammaticBannerState extends State<ProgrammaticBanner> {
   void _createAndToggleBannerAd() {
     if (widget.isShowing) {
       AppLovinMAX.hideBanner(widget.adUnitId);
+      widget.setShowing(false);
     } else {
       if (!_isCreated) {
         AppLovinMAX.createBanner(widget.adUnitId, AdViewPosition.bottomCenter);
@@ -52,8 +53,8 @@ class _ProgrammaticBannerState extends State<ProgrammaticBanner> {
         _isCreated = true;
       }
       AppLovinMAX.showBanner(widget.adUnitId);
+      widget.setShowing(true);
     }
-    widget.setShowing(!widget.isShowing);
   }
 
   @override

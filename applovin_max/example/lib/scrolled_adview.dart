@@ -38,6 +38,14 @@ class _ScrolledAdViewState extends State<ScrolledAdView> {
 
   bool _isAdEnabled = true;
 
+  AdViewId? _getPreloadedAdViewId(int index, bool isBanner) {
+    if (index == 0 && isBanner) return widget.preloadedBannerId;
+    if (index == 1 && !isBanner) return widget.preloadedMRecId;
+    if (index == 2 && isBanner) return widget.preloadedBanner2Id;
+    if (index == 3 && !isBanner) return widget.preloadedMRec2Id;
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,14 +73,7 @@ class _ScrolledAdViewState extends State<ScrolledAdView> {
                         final bool isBanner = index % 2 == 0;
                         final String adUnitId = isBanner ? widget.bannerAdUnitId : widget.mrecAdUnitId;
                         final AdFormat adFormat = isBanner ? AdFormat.banner : AdFormat.mrec;
-
-                        final adViewIds = [
-                          widget.preloadedBannerId,
-                          widget.preloadedMRecId,
-                          widget.preloadedBanner2Id,
-                          widget.preloadedMRec2Id,
-                        ];
-                        final adViewId = index < adViewIds.length ? adViewIds[index] : null;
+                        final AdViewId? adViewId = _getPreloadedAdViewId(index, isBanner);
 
                         return _ListItem(
                           key: ValueKey('item_$index'),

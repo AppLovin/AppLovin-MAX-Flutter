@@ -86,15 +86,16 @@ class _InterstitialAdState extends State<InterstitialAd> {
     }
   }
 
-  void _loadAndShowInterstitialAd() async {
-    final isReady = await AppLovinMAX.isInterstitialReady(widget.adUnitId) ?? false;
-    if (isReady) {
-      AppLovinMAX.showInterstitial(widget.adUnitId);
-    } else {
-      widget.log('Loading interstitial ad...');
-      setState(() => _loadState = _InterstitialAdLoadState.loading);
-      AppLovinMAX.loadInterstitial(widget.adUnitId);
-    }
+  void _loadAndShowInterstitialAd() {
+    AppLovinMAX.isInterstitialReady(widget.adUnitId).then((isReady) {
+      if (isReady ?? false) {
+        AppLovinMAX.showInterstitial(widget.adUnitId);
+      } else {
+        widget.log('Loading interstitial ad...');
+        setState(() => _loadState = _InterstitialAdLoadState.loading);
+        AppLovinMAX.loadInterstitial(widget.adUnitId);
+      }
+    });
   }
 
   @override

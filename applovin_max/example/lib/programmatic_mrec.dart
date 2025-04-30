@@ -45,14 +45,15 @@ class _ProgrammaticMRecState extends State<ProgrammaticMRec> {
   void _createAndToggleMRecAd() {
     if (widget.isShowing) {
       AppLovinMAX.hideMRec(widget.adUnitId);
+      widget.setShowing(false);
     } else {
       if (!_isCreated) {
         AppLovinMAX.createMRec(widget.adUnitId, AdViewPosition.bottomCenter);
         _isCreated = true;
       }
       AppLovinMAX.showMRec(widget.adUnitId);
+      widget.setShowing(true);
     }
-    widget.setShowing(!widget.isShowing);
   }
 
   @override

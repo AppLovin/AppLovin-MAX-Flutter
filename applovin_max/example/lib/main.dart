@@ -73,11 +73,11 @@ class _MyAppState extends State<MyApp> {
       _logStatus('SDK Initialized in ${configuration.countryCode}');
 
       // Optionally preload widget-based banner and MREC ads. Comment out if preloading isn't needed.
-      _preloadAdViewAd();
+      _preloadWidgetAdViews();
     }
   }
 
-  void _preloadAdViewAd() async {
+  void _preloadWidgetAdViews() async {
     AppLovinMAX.setWidgetAdViewAdListener(WidgetAdViewAdListener(
       onAdLoadedCallback: (ad) => _logStatus('${ad.adFormat} ad (${ad.adViewId}) preloaded from ${ad.networkName}'),
       onAdLoadFailedCallback: (adUnitId, error) => _logStatus('Failed to preload $adUnitId: ${error.message}'),
@@ -114,7 +114,6 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           StatusBar(statusText: _statusText),
           AppButton(
@@ -149,11 +148,11 @@ class _MyAppState extends State<MyApp> {
           ),
           AppButton(
             text: (_isInitialized && _isWidgetBannerShowing) ? 'Hide Widget Banner' : 'Show Widget Banner',
-            onPressed: (_isInitialized && !_isProgrammaticBannerShowing) ? () async => setState(() => _isWidgetBannerShowing = !_isWidgetBannerShowing) : null,
+            onPressed: (_isInitialized && !_isProgrammaticBannerShowing) ? () => setState(() => _isWidgetBannerShowing = !_isWidgetBannerShowing) : null,
           ),
           AppButton(
             text: (_isInitialized && _isWidgetMRecShowing) ? 'Hide Widget MREC' : 'Show Widget MREC',
-            onPressed: (_isInitialized && !_isProgrammaticMRecShowing) ? () async => setState(() => _isWidgetMRecShowing = !_isWidgetMRecShowing) : null,
+            onPressed: (_isInitialized && !_isProgrammaticMRecShowing) ? () => setState(() => _isWidgetMRecShowing = !_isWidgetMRecShowing) : null,
           ),
           AppButton(
             onPressed: (_isInitialized)
