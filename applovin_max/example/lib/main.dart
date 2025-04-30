@@ -55,11 +55,11 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initializePlugin();
+    _initializePlugin();
   }
 
-  Future<void> initializePlugin() async {
-    logStatus('Initializing SDK...');
+  Future<void> _initializePlugin() async {
+    _logStatus('Initializing SDK...');
 
     AppLovinMAX.setTermsAndPrivacyPolicyFlowEnabled(true);
     AppLovinMAX.setPrivacyPolicyUrl('https://your_company_name.com/privacy');
@@ -67,20 +67,20 @@ class _MyAppState extends State<MyApp> {
 
     MaxConfiguration? configuration = await AppLovinMAX.initialize(_sdkKey);
     if (configuration == null) {
-      logStatus('SDK failed to initialize.');
+      _logStatus('SDK failed to initialize.');
     } else {
       setState(() => _isInitialized = true);
-      logStatus('SDK Initialized in ${configuration.countryCode}');
+      _logStatus('SDK Initialized in ${configuration.countryCode}');
 
       // Optionally preload widget-based banner and MREC ads. Comment out if preloading isn't needed.
-      preloadAdViewAd();
+      _preloadWidgetAdViews();
     }
   }
 
-  void preloadAdViewAd() async {
+  void _preloadWidgetAdViews() async {
     AppLovinMAX.setWidgetAdViewAdListener(WidgetAdViewAdListener(
-      onAdLoadedCallback: (ad) => logStatus('${ad.adFormat} ad (${ad.adViewId}) preloaded from ${ad.networkName}'),
-      onAdLoadFailedCallback: (adUnitId, error) => logStatus('Failed to preload $adUnitId: ${error.message}'),
+      onAdLoadedCallback: (ad) => _logStatus('${ad.adFormat} ad (${ad.adViewId}) preloaded from ${ad.networkName}'),
+      onAdLoadFailedCallback: (adUnitId, error) => _logStatus('Failed to preload $adUnitId: ${error.message}'),
     ));
 
     _preloadedBannerId = await AppLovinMAX.preloadWidgetAdView(_bannerAdUnitId, AdFormat.banner);
@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> {
     _preloadedMRec2Id = await AppLovinMAX.preloadWidgetAdView(_mrecAdUnitId, AdFormat.mrec);
   }
 
-  void logStatus(String status) {
+  void _logStatus(String status) {
     // ignore_for_file: avoid_print
     print(status);
     setState(() => _statusText = status);
@@ -114,7 +114,6 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           StatusBar(statusText: _statusText),
           AppButton(
@@ -123,12 +122,12 @@ class _MyAppState extends State<MyApp> {
           ),
           InterstitialAd(
             adUnitId: _interstitialAdUnitId,
-            log: logStatus,
+            log: _logStatus,
             isInitialized: _isInitialized,
           ),
           RewardedAd(
             adUnitId: _rewardedAdUnitId,
-            log: logStatus,
+            log: _logStatus,
             isInitialized: _isInitialized,
           ),
           ProgrammaticBanner(
@@ -137,7 +136,7 @@ class _MyAppState extends State<MyApp> {
             isWidgetBannerShowing: _isWidgetBannerShowing,
             isShowing: _isProgrammaticBannerShowing,
             setShowing: (showing) => setState(() => _isProgrammaticBannerShowing = showing),
-            log: logStatus,
+            log: _logStatus,
           ),
           ProgrammaticMRec(
             adUnitId: _mrecAdUnitId,
@@ -145,15 +144,15 @@ class _MyAppState extends State<MyApp> {
             isWidgetMRecShowing: _isWidgetMRecShowing,
             isShowing: _isProgrammaticMRecShowing,
             setShowing: (showing) => setState(() => _isProgrammaticMRecShowing = showing),
-            log: logStatus,
+            log: _logStatus,
           ),
           AppButton(
             text: (_isInitialized && _isWidgetBannerShowing) ? 'Hide Widget Banner' : 'Show Widget Banner',
-            onPressed: (_isInitialized && !_isProgrammaticBannerShowing) ? () async => setState(() => _isWidgetBannerShowing = !_isWidgetBannerShowing) : null,
+            onPressed: (_isInitialized && !_isProgrammaticBannerShowing) ? () => setState(() => _isWidgetBannerShowing = !_isWidgetBannerShowing) : null,
           ),
           AppButton(
             text: (_isInitialized && _isWidgetMRecShowing) ? 'Hide Widget MREC' : 'Show Widget MREC',
-            onPressed: (_isInitialized && !_isProgrammaticMRecShowing) ? () async => setState(() => _isWidgetMRecShowing = !_isWidgetMRecShowing) : null,
+            onPressed: (_isInitialized && !_isProgrammaticMRecShowing) ? () => setState(() => _isWidgetMRecShowing = !_isWidgetMRecShowing) : null,
           ),
           AppButton(
             onPressed: (_isInitialized)
@@ -184,13 +183,13 @@ class _MyAppState extends State<MyApp> {
             adUnitId: _bannerAdUnitId,
             adViewId: _preloadedBannerId,
             isShowing: _isWidgetBannerShowing,
-            log: logStatus,
+            log: _logStatus,
           ),
           WidgetMRecAdView(
             adUnitId: _mrecAdUnitId,
             adViewId: _preloadedMRecId,
             isShowing: _isWidgetMRecShowing,
-            log: logStatus,
+            log: _logStatus,
           ),
         ],
       ),

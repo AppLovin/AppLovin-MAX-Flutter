@@ -12,12 +12,13 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity, // Expands to the screen width
-      padding: const EdgeInsets.all(10.0), // Padding inside the banner
+      padding: const EdgeInsets.all(8.0), // Padding inside the banner
       color: Colors.green, // Background color of the banner
       child: Text(
         statusText,
-        style: const TextStyle(fontSize: 20),
+        style: const TextStyle(fontSize: 16),
         textAlign: TextAlign.center,
+        maxLines: 2,
       ),
     );
   }
@@ -52,7 +53,7 @@ class _ScrolledStatusBarState extends State<ScrolledStatusBar> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(8.0),
       color: Colors.green,
       child: SizedBox(
         height: 100,
@@ -61,7 +62,7 @@ class _ScrolledStatusBarState extends State<ScrolledStatusBar> {
           scrollDirection: Axis.vertical,
           child: Text(
             widget.statusText,
-            style: const TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ),
@@ -85,7 +86,7 @@ class AppButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8, left: 40, right: 40),
       child: SizedBox(
-        height: 36, // Set button height
+        height: 34, // Set button height
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(

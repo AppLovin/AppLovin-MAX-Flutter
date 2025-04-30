@@ -1,10 +1,11 @@
 import 'dart:math';
 
-import 'package:applovin_flutter/utils.dart';
 import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
 
-enum InterstitialAdLoadState { notLoaded, loading, loaded }
+import 'utils.dart';
+
+enum _InterstitialAdLoadState { notLoaded, loading, loaded }
 
 class InterstitialAd extends StatefulWidget {
   final String adUnitId;
@@ -25,7 +26,7 @@ class InterstitialAd extends StatefulWidget {
 class _InterstitialAdState extends State<InterstitialAd> {
   static const int _maxRetryCount = 6;
 
-  InterstitialAdLoadState _loadState = InterstitialAdLoadState.notLoaded;
+  _InterstitialAdLoadState _loadState = _InterstitialAdLoadState.notLoaded;
   int _retryAttempt = 0;
 
   @override
@@ -34,12 +35,12 @@ class _InterstitialAdState extends State<InterstitialAd> {
 
     AppLovinMAX.setInterstitialListener(InterstitialListener(
       onAdLoadedCallback: (ad) {
-        setState(() => _loadState = InterstitialAdLoadState.loaded);
+        setState(() => _loadState = _InterstitialAdLoadState.loaded);
         _retryAttempt = 0;
         widget.log('Interstitial ad loaded from ${ad.networkName}');
       },
       onAdLoadFailedCallback: (adUnitId, error) {
-        setState(() => _loadState = InterstitialAdLoadState.notLoaded);
+        setState(() => _loadState = _InterstitialAdLoadState.notLoaded);
 
         // Increment the retry attempt counter
         _retryAttempt++;
@@ -56,19 +57,19 @@ class _InterstitialAdState extends State<InterstitialAd> {
 
         // Retry after a delay by setting the state to loading and attempting to load again
         Future.delayed(Duration(seconds: retryDelay), () {
-          setState(() => _loadState = InterstitialAdLoadState.loading);
+          setState(() => _loadState = _InterstitialAdLoadState.loading);
           widget.log('Interstitial ad retrying to load...');
           AppLovinMAX.loadInterstitial(widget.adUnitId);
         });
       },
       onAdDisplayedCallback: (ad) => widget.log('Interstitial ad displayed'),
       onAdDisplayFailedCallback: (ad, error) {
-        setState(() => _loadState = InterstitialAdLoadState.notLoaded);
+        setState(() => _loadState = _InterstitialAdLoadState.notLoaded);
         widget.log('Interstitial ad failed to display with code ${error.code} and message ${error.message}');
       },
       onAdClickedCallback: (ad) => widget.log('Interstitial ad clicked'),
       onAdHiddenCallback: (ad) {
-        setState(() => _loadState = InterstitialAdLoadState.notLoaded);
+        setState(() => _loadState = _InterstitialAdLoadState.notLoaded);
         widget.log('Interstitial ad hidden');
       },
       onAdRevenuePaidCallback: (ad) => widget.log('Interstitial ad revenue paid: ${ad.revenue}'),
@@ -76,31 +77,32 @@ class _InterstitialAdState extends State<InterstitialAd> {
   }
 
   String get _buttonText {
-    if (_loadState == InterstitialAdLoadState.notLoaded) {
+    if (_loadState == _InterstitialAdLoadState.notLoaded) {
       return 'Load Interstitial Ad';
-    } else if (_loadState == InterstitialAdLoadState.loading) {
+    } else if (_loadState == _InterstitialAdLoadState.loading) {
       return 'Loading...';
     } else {
       return 'Show Interstitial Ad';
     }
   }
 
-  void _loadAndShowInterstitialAd() async {
-    final isReady = await AppLovinMAX.isInterstitialReady(widget.adUnitId) ?? false;
-    if (isReady) {
-      AppLovinMAX.showInterstitial(widget.adUnitId);
-    } else {
-      widget.log('Loading interstitial ad...');
-      setState(() => _loadState = InterstitialAdLoadState.loading);
-      AppLovinMAX.loadInterstitial(widget.adUnitId);
-    }
+  void _loadAndShowInterstitialAd() {
+    AppLovinMAX.isInterstitialReady(widget.adUnitId).then((isReady) {
+      if (isReady ?? false) {
+        AppLovinMAX.showInterstitial(widget.adUnitId);
+      } else {
+        widget.log('Loading interstitial ad...');
+        setState(() => _loadState = _InterstitialAdLoadState.loading);
+        AppLovinMAX.loadInterstitial(widget.adUnitId);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return AppButton(
       text: _buttonText,
-      onPressed: widget.isInitialized && _loadState != InterstitialAdLoadState.loading ? _loadAndShowInterstitialAd : null,
+      onPressed: widget.isInitialized && _loadState != _InterstitialAdLoadState.loading ? _loadAndShowInterstitialAd : null,
     );
   }
 }
