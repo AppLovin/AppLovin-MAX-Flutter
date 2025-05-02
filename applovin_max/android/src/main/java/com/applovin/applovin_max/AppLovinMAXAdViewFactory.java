@@ -33,9 +33,6 @@ public class AppLovinMAXAdViewFactory
     @Override
     public PlatformView create(@Nullable final Context context, final int viewId, final Object args)
     {
-        // Ensure plugin has been initialized
-        AppLovinSdk sdk = AppLovinMAX.getInstance().getSdk();
-
         Map<String, Object> params = (Map<String, Object>) args;
 
         String adUnitId = (String) params.get( "ad_unit_id" );
@@ -52,6 +49,6 @@ public class AppLovinMAXAdViewFactory
         Map<String, Object> extraParameters = params.containsKey( "extra_parameters" ) ? (Map<String, Object>) params.get( "extra_parameters" ) : null;
         Map<String, Object> localExtraParameters = params.containsKey( "local_extra_parameters" ) ? (Map<String, Object>) params.get( "local_extra_parameters" ) : null;
 
-        return new AppLovinMAXAdView( viewId, adUnitId, adViewId, adFormat, isAdaptiveBannerEnabled, isAutoRefreshEnabled, placement, customData, extraParameters, localExtraParameters, messenger, sdk, context );
+        return new AppLovinMAXAdView( viewId, adUnitId, adViewId, adFormat, isAdaptiveBannerEnabled, isAutoRefreshEnabled, placement, customData, extraParameters, localExtraParameters, messenger, context );
     }
 }

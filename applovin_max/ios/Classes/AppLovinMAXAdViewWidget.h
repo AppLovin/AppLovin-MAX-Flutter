@@ -12,7 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setCustomData:(nullable NSString *)customData;
 - (void)setExtraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters;
 - (void)setLocalExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters;
-- (void)setAdaptiveBannerEnabled:(BOOL)adaptiveBannerEnabled;
 - (void)setAutoRefreshEnabled:(BOOL)autoRefreshEnabled;
 
 - (void)loadAd;
@@ -20,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)detachAdView;
 - (void)destroy;
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat;
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat shouldPreload:(BOOL)shouldPreload;
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled;
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled shouldPreload:(BOOL)shouldPreload;
 
 @end
 
