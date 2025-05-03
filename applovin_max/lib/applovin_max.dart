@@ -76,79 +76,99 @@ class AppLovinMAX {
   static Future<void> _handleNativeMethodCall(MethodCall call) async {
     try {
       final String method = call.method;
-      final Map<dynamic, dynamic>? arguments = call.arguments;
+      final Map<String, dynamic> arguments = Map<String, dynamic>.from(call.arguments ?? {});
 
-      if (arguments == null) {
+      if (arguments.isEmpty) {
         throw ArgumentError('Arguments for method $method cannot be null.');
       }
 
-      final MaxAd? ad = arguments.containsKey('networkName') ? createMaxAd(arguments) : null;
+      MaxAd? ad;
+      MaxError? error;
 
-      final methodHandlers = {
-        /// Banner Ad Events
-        "OnBannerAdLoadedEvent": () => _bannerAdListener?.onAdLoadedCallback(ad!),
-        "OnBannerAdLoadFailedEvent": () => _bannerAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-        "OnBannerAdClickedEvent": () => _bannerAdListener?.onAdClickedCallback(ad!),
-        "OnBannerAdExpandedEvent": () => _bannerAdListener?.onAdExpandedCallback(ad!),
-        "OnBannerAdCollapsedEvent": () => _bannerAdListener?.onAdCollapsedCallback(ad!),
-        "OnBannerAdRevenuePaid": () => _bannerAdListener?.onAdRevenuePaidCallback?.call(ad!),
+      if (method.endsWith('DisplayEvent')) {
+        ad = createMaxAd(arguments['ad'] ?? {});
+        error = createMaxError(arguments['error'] ?? {});
+      } else if (method.endsWith('FailedEvent')) {
+        error = createMaxError(arguments);
+      } else {
+        ad = createMaxAd(arguments);
+      }
 
-        /// MREC Ad Events
-        "OnMRecAdLoadedEvent": () => _mrecAdListener?.onAdLoadedCallback(ad!),
-        "OnMRecAdLoadFailedEvent": () => _mrecAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-        "OnMRecAdClickedEvent": () => _mrecAdListener?.onAdClickedCallback(ad!),
-        "OnMRecAdExpandedEvent": () => _mrecAdListener?.onAdExpandedCallback(ad!),
-        "OnMRecAdCollapsedEvent": () => _mrecAdListener?.onAdCollapsedCallback(ad!),
-        "OnMRecAdRevenuePaid": () => _mrecAdListener?.onAdRevenuePaidCallback?.call(ad!),
-
-        /// Interstitial Ad Events
-        "OnInterstitialLoadedEvent": () => _interstitialListener?.onAdLoadedCallback(ad!),
-        "OnInterstitialLoadFailedEvent": () => _interstitialListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-        "OnInterstitialClickedEvent": () => _interstitialListener?.onAdClickedCallback(ad!),
-        "OnInterstitialDisplayedEvent": () => _interstitialListener?.onAdDisplayedCallback(ad!),
-        "OnInterstitialAdFailedToDisplayEvent": () =>
-            _interstitialListener?.onAdDisplayFailedCallback(createMaxAd(arguments['ad']), createMaxError(arguments['error'])),
-        "OnInterstitialHiddenEvent": () => _interstitialListener?.onAdHiddenCallback(ad!),
-        "OnInterstitialAdRevenuePaid": () => _interstitialListener?.onAdRevenuePaidCallback?.call(ad!),
-
-        /// Rewarded Ad Events
-        "OnRewardedAdLoadedEvent": () => _rewardedAdListener?.onAdLoadedCallback(ad!),
-        "OnRewardedAdLoadFailedEvent": () => _rewardedAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-        "OnRewardedAdClickedEvent": () => _rewardedAdListener?.onAdClickedCallback(ad!),
-        "OnRewardedAdDisplayedEvent": () => _rewardedAdListener?.onAdDisplayedCallback(ad!),
-        "OnRewardedAdFailedToDisplayEvent": () =>
-            _rewardedAdListener?.onAdDisplayFailedCallback(createMaxAd(arguments['ad']), createMaxError(arguments['error'])),
-        "OnRewardedAdHiddenEvent": () => _rewardedAdListener?.onAdHiddenCallback(ad!),
-        "OnRewardedAdReceivedRewardEvent": () {
-          final MaxReward reward = MaxReward(arguments["rewardAmount"], arguments["rewardLabel"]);
-          _rewardedAdListener?.onAdReceivedRewardCallback(ad!, reward);
-        },
-        "OnRewardedAdRevenuePaid": () => _rewardedAdListener?.onAdRevenuePaidCallback?.call(ad!),
-
-        /// App Open Ad Events
-        "OnAppOpenAdLoadedEvent": () => _appOpenAdListener?.onAdLoadedCallback(ad!),
-        "OnAppOpenAdLoadFailedEvent": () => _appOpenAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-        "OnAppOpenAdClickedEvent": () => _appOpenAdListener?.onAdClickedCallback(ad!),
-        "OnAppOpenAdDisplayedEvent": () => _appOpenAdListener?.onAdDisplayedCallback(ad!),
-        "OnAppOpenAdFailedToDisplayEvent": () =>
-            _appOpenAdListener?.onAdDisplayFailedCallback(createMaxAd(arguments['ad']), createMaxError(arguments['error'])),
-        "OnAppOpenAdHiddenEvent": () => _appOpenAdListener?.onAdHiddenCallback(ad!),
-        "OnAppOpenAdRevenuePaid": () => _appOpenAdListener?.onAdRevenuePaidCallback?.call(ad!),
-
-        /// Widget AdView Ad Events
-        "OnWidgetAdViewAdLoadedEvent": () => _widgetAdViewAdListener?.onAdLoadedCallback(ad!),
-        "OnWidgetAdViewAdLoadFailedEvent": () => _widgetAdViewAdListener?.onAdLoadFailedCallback(arguments["adUnitId"], createMaxError(arguments)),
-      };
-
+      final methodHandlers = _buildMethodHandlers(method, ad, error, arguments);
       final handler = methodHandlers[method];
+
       if (handler != null) {
         handler();
       } else {
-        throw MissingPluginException('No handler for method $method');
+        debugPrint('Unhandled method: $method');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Error handling native method call ${call.method} with arguments ${call.arguments}: $e');
+      debugPrint('$stackTrace');
     }
+  }
+
+  static Map<String, void Function()> _buildMethodHandlers(
+    String method,
+    MaxAd? ad,
+    MaxError? error,
+    Map<String, dynamic> arguments,
+  ) {
+    return {
+      // Banner Ad Events
+      'OnBannerAdLoadedEvent': () => _bannerAdListener?.onAdLoadedCallback(ad!),
+      'OnBannerAdLoadFailedEvent': () => _bannerAdListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+      'OnBannerAdClickedEvent': () => _bannerAdListener?.onAdClickedCallback(ad!),
+      'OnBannerAdExpandedEvent': () => _bannerAdListener?.onAdExpandedCallback(ad!),
+      'OnBannerAdCollapsedEvent': () => _bannerAdListener?.onAdCollapsedCallback(ad!),
+      'OnBannerAdRevenuePaid': () => _bannerAdListener?.onAdRevenuePaidCallback?.call(ad!),
+
+      // MREC Ad Events
+      'OnMRecAdLoadedEvent': () => _mrecAdListener?.onAdLoadedCallback(ad!),
+      'OnMRecAdLoadFailedEvent': () => _mrecAdListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+      'OnMRecAdClickedEvent': () => _mrecAdListener?.onAdClickedCallback(ad!),
+      'OnMRecAdExpandedEvent': () => _mrecAdListener?.onAdExpandedCallback(ad!),
+      'OnMRecAdCollapsedEvent': () => _mrecAdListener?.onAdCollapsedCallback(ad!),
+      'OnMRecAdRevenuePaid': () => _mrecAdListener?.onAdRevenuePaidCallback?.call(ad!),
+
+      // Interstitial Ad Events
+      'OnInterstitialLoadedEvent': () => _interstitialListener?.onAdLoadedCallback(ad!),
+      'OnInterstitialLoadFailedEvent': () => _interstitialListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+      'OnInterstitialClickedEvent': () => _interstitialListener?.onAdClickedCallback(ad!),
+      'OnInterstitialDisplayedEvent': () => _interstitialListener?.onAdDisplayedCallback(ad!),
+      'OnInterstitialAdFailedToDisplayEvent': () => _interstitialListener?.onAdDisplayFailedCallback(ad!, error!),
+      'OnInterstitialHiddenEvent': () => _interstitialListener?.onAdHiddenCallback(ad!),
+      'OnInterstitialAdRevenuePaid': () => _interstitialListener?.onAdRevenuePaidCallback?.call(ad!),
+
+      // Rewarded Ad Events
+      'OnRewardedAdLoadedEvent': () => _rewardedAdListener?.onAdLoadedCallback(ad!),
+      'OnRewardedAdLoadFailedEvent': () => _rewardedAdListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+      'OnRewardedAdClickedEvent': () => _rewardedAdListener?.onAdClickedCallback(ad!),
+      'OnRewardedAdDisplayedEvent': () => _rewardedAdListener?.onAdDisplayedCallback(ad!),
+      'OnRewardedAdFailedToDisplayEvent': () => _rewardedAdListener?.onAdDisplayFailedCallback(ad!, error!),
+      'OnRewardedAdHiddenEvent': () => _rewardedAdListener?.onAdHiddenCallback(ad!),
+      'OnRewardedAdReceivedRewardEvent': () => _rewardedAdListener?.onAdReceivedRewardCallback(
+            ad!,
+            MaxReward(
+              arguments['rewardAmount'] ?? 0,
+              arguments['rewardLabel'] ?? '',
+            ),
+          ),
+      'OnRewardedAdRevenuePaid': () => _rewardedAdListener?.onAdRevenuePaidCallback?.call(ad!),
+
+      // App Open Ad Events
+      'OnAppOpenAdLoadedEvent': () => _appOpenAdListener?.onAdLoadedCallback(ad!),
+      'OnAppOpenAdLoadFailedEvent': () => _appOpenAdListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+      'OnAppOpenAdClickedEvent': () => _appOpenAdListener?.onAdClickedCallback(ad!),
+      'OnAppOpenAdDisplayedEvent': () => _appOpenAdListener?.onAdDisplayedCallback(ad!),
+      'OnAppOpenAdFailedToDisplayEvent': () => _appOpenAdListener?.onAdDisplayFailedCallback(ad!, error!),
+      'OnAppOpenAdHiddenEvent': () => _appOpenAdListener?.onAdHiddenCallback(ad!),
+      'OnAppOpenAdRevenuePaid': () => _appOpenAdListener?.onAdRevenuePaidCallback?.call(ad!),
+
+      // Widget AdView Ad Events
+      'OnWidgetAdViewAdLoadedEvent': () => _widgetAdViewAdListener?.onAdLoadedCallback(ad!),
+      'OnWidgetAdViewAdLoadFailedEvent': () => _widgetAdViewAdListener?.onAdLoadFailedCallback(arguments['adUnitId'], error!),
+    };
   }
 
   /// @nodoc
