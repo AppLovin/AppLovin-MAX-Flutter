@@ -12,9 +12,9 @@
 @property (nonatomic, strong, readonly, class) AppLovinMAX *shared;
 
 /**
- * The instance of the AppLovin SDK the module is using.
+ * Whether the AppLovin SDK is initialized or not.
  */
-@property (nonatomic, weak, readonly) ALSdk *sdk;
+- (BOOL)isInitialized;
 
 /**
  * Returns a dictionay value of adInfo for the specified ad.

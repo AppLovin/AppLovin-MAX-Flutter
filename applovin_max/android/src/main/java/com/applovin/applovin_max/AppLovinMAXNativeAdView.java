@@ -43,7 +43,6 @@ public class AppLovinMAXNativeAdView
 
     private final Context       context;
     private final MethodChannel channel;
-    private final AppLovinSdk   sdk;
 
     @Nullable
     private       MaxNativeAdLoader adLoader;
@@ -86,13 +85,11 @@ public class AppLovinMAXNativeAdView
                                    @Nullable final Map<String, Object> extraParameters,
                                    @Nullable final Map<String, Object> localExtraParameters,
                                    final BinaryMessenger messenger,
-                                   final AppLovinSdk sdk,
                                    final Context context)
     {
         this.adUnitId = adUnitId;
         this.placement = placement;
         this.customData = customData;
-        this.sdk = sdk;
         this.context = context;
         this.extraParameters = extraParameters;
         this.localExtraParameters = localExtraParameters;
@@ -222,7 +219,7 @@ public class AppLovinMAXNativeAdView
 
             if ( adLoader == null || !adUnitId.equals( adLoader.getAdUnitId() ) )
             {
-                adLoader = new MaxNativeAdLoader( adUnitId, sdk, context );
+                adLoader = new MaxNativeAdLoader( adUnitId );
                 adLoader.setRevenueListener( this );
                 adLoader.setNativeAdListener( new NativeAdListener() );
             }
@@ -406,7 +403,7 @@ public class AppLovinMAXNativeAdView
         {
             if ( icon.getUri() != null )
             {
-                AppLovinSdkUtils.setImageUrl( icon.getUri().toString(), iconView, sdk );
+                AppLovinSdkUtils.setImageUrl( icon.getUri().toString(), iconView, AppLovinSdk.getInstance( context ) );
             }
             else if ( icon.getDrawable() != null )
             {

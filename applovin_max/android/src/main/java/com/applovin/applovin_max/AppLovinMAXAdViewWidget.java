@@ -22,21 +22,21 @@ class AppLovinMAXAdViewWidget
         implements MaxAdListener, MaxAdViewAdListener, MaxAdRevenueListener
 {
     private final MaxAdView adView;
-    private final boolean   shouldPreloadWidget;
+    private final boolean   isPreloaded;
 
     @Nullable
     private AppLovinMAXAdView containerView;
 
     public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final Context context)
     {
-        this( adUnitId, adFormat, isAdaptiveBannerEnabled, false, context );
+        this( adUnitId, adFormat, isAdaptiveBannerEnabled, context, false );
     }
 
-    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final boolean shouldPreloadWidget, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final Context context, final boolean isPreloaded)
     {
         super( context );
 
-        this.shouldPreloadWidget = shouldPreloadWidget;
+        this.isPreloaded = isPreloaded;
 
         MaxAdViewConfiguration config = MaxAdViewConfiguration.builder()
                 .setAdaptiveType( isAdaptiveBannerEnabled ? MaxAdViewConfiguration.AdaptiveType.ANCHORED : MaxAdViewConfiguration.AdaptiveType.NONE )
@@ -148,7 +148,7 @@ class AppLovinMAXAdViewWidget
         Map<String, Object> params = AppLovinMAX.getInstance().getAdInfo( ad );
         params.put( "adViewId", hashCode() );
 
-        if ( shouldPreloadWidget )
+        if ( isPreloaded )
         {
             // Copy the `params` for the next sending, as they are consumed (i.e., released) by
             // `MethodChannel.invokeMethod()` through `fireCallback()`.
@@ -167,7 +167,7 @@ class AppLovinMAXAdViewWidget
         Map<String, Object> params = AppLovinMAX.getInstance().getAdLoadFailedInfo( adUnitId, error );
         params.put( "adViewId", hashCode() );
 
-        if ( shouldPreloadWidget )
+        if ( isPreloaded )
         {
             // Copy the `params` for the next sending, as they are consumed (i.e., released) by
             // `MethodChannel.invokeMethod()` through `fireCallback()`.

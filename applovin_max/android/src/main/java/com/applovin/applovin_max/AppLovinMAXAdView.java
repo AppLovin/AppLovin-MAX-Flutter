@@ -66,7 +66,7 @@ public class AppLovinMAXAdView
                                            final Result result,
                                            final Context context)
     {
-        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptiveBannerEnabled, true, context );
+        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptiveBannerEnabled, context, true );
         preloadedWidgetInstances.put( preloadedWidget.hashCode(), preloadedWidget );
 
         preloadedWidget.setPlacement( placement );

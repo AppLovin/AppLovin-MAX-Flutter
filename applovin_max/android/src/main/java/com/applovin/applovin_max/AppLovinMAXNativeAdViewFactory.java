@@ -1,8 +1,7 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
-
-import com.applovin.sdk.AppLovinSdk;
+import android.view.View;
 
 import java.util.Map;
 
@@ -29,8 +28,23 @@ public class AppLovinMAXNativeAdViewFactory
     @Override
     public PlatformView create(@Nullable final Context context, final int viewId, final Object args)
     {
-        // Ensure plugin has been initialized
-        AppLovinSdk sdk = AppLovinMAX.getInstance().getSdk();
+        if ( !AppLovinMAX.instance.isInitialized() )
+        {
+            AppLovinMAX.e( "Failed to create MaxNativeAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!" );
+
+            return new PlatformView()
+            {
+                @NonNull
+                @Override
+                public View getView()
+                {
+                    return new View( context );
+                }
+
+                @Override
+                public void dispose() { }
+            };
+        }
 
         Map<String, Object> params = (Map<String, Object>) args;
 
@@ -44,6 +58,6 @@ public class AppLovinMAXNativeAdViewFactory
         Map<String, Object> extraParameters = params.containsKey( "extra_parameters" ) ? (Map<String, Object>) params.get( "extra_parameters" ) : null;
         Map<String, Object> localExtraParameters = params.containsKey( "local_extra_parameters" ) ? (Map<String, Object>) params.get( "local_extra_parameters" ) : null;
 
-        return new AppLovinMAXNativeAdView( viewId, adUnitId, placement, customData, extraParameters, localExtraParameters, messenger, sdk, context );
+        return new AppLovinMAXNativeAdView( viewId, adUnitId, placement, customData, extraParameters, localExtraParameters, messenger, context );
     }
 }

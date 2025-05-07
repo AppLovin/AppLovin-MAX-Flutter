@@ -1,9 +1,9 @@
 package com.applovin.applovin_max;
 
 import android.content.Context;
+import android.view.View;
 
 import com.applovin.mediation.MaxAdFormat;
-import com.applovin.sdk.AppLovinSdk;
 
 import java.util.Map;
 
@@ -33,6 +33,24 @@ public class AppLovinMAXAdViewFactory
     @Override
     public PlatformView create(@Nullable final Context context, final int viewId, final Object args)
     {
+        if ( !AppLovinMAX.getInstance().isInitialized() )
+        {
+            AppLovinMAX.e( "Failed to create MaxAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!" );
+
+            return new PlatformView()
+            {
+                @NonNull
+                @Override
+                public View getView()
+                {
+                    return new View( context );
+                }
+
+                @Override
+                public void dispose() { }
+            };
+        }
+
         Map<String, Object> params = (Map<String, Object>) args;
 
         String adUnitId = (String) params.get( "ad_unit_id" );

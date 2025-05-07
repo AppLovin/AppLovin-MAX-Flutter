@@ -34,8 +34,7 @@
 - (id<FlutterPlatformView>)createWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id _Nullable)args
 {
     // Ensure plugin has been initialized
-    ALSdk *sdk = AppLovinMAX.shared.sdk;
-    if ( !sdk )
+    if ( ![AppLovinMAX.shared isInitialized] )
     {
         [AppLovinMAX log: @"Failed to create MaxAdView widget - please ensure the AppLovin MAX plugin has been initialized by calling 'AppLovinMAX.initialize(...);'!"];
         return nil;
@@ -65,8 +64,7 @@
                                          customData: customData
                                     extraParameters: extraParameters
                                localExtraParameters: localExtraParameters
-                                          messenger: self.messenger
-                                                sdk: sdk];
+                                          messenger: self.messenger];
 }
 
 @end
