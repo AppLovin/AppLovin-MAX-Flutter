@@ -58,13 +58,14 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
 
 + (void)preloadWidgetAdView:(NSString *)adUnitIdentifier
                    adFormat:(MAAdFormat *)adFormat
+    isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
                   placement:(nullable NSString *)placement
                  customData:(nullable NSString *)customData
             extraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters
        localExtraParameters:(nullable NSDictionary<NSString *, id> *)localExtraParameters
                  withResult:(FlutterResult)result
 {
-    AppLovinMAXAdViewWidget *preloadedWidget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: YES];
+    AppLovinMAXAdViewWidget *preloadedWidget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled shouldPreload: YES];
     preloadedWidgetInstances[@(preloadedWidget.hash)] = preloadedWidget;
     
     [preloadedWidget setPlacement: placement];
@@ -107,6 +108,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
                      adUnitId:(NSString *)adUnitId
                      adFormat:(MAAdFormat *)adFormat
                      adViewId:(nullable NSNumber *)adViewId
+      isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
          isAutoRefreshEnabled:(BOOL)isAutoRefreshEnabled
                     placement:(nullable NSString *)placement
                    customData:(nullable NSString *)customData
@@ -156,7 +158,7 @@ static NSMutableDictionary<NSNumber *, AppLovinMAXAdViewWidget *> *preloadedWidg
             }
         }
         
-        self.widget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat];
+        self.widget = [[AppLovinMAXAdViewWidget alloc] initWithAdUnitIdentifier: adUnitId adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled];
         self.widget.adView.frame = frame;
         self.adViewId = @(self.widget.hash);
         widgetInstances[self.adViewId] = self.widget;

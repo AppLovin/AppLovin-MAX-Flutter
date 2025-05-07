@@ -2069,11 +2069,13 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *adFormatStr = call.arguments[@"ad_format"];
+        id rawIsAdaptiveBannerEnabled = call.arguments[@"is_adaptive_banner_enabled"];
         id rawPlacement = call.arguments[@"placement"];
         id rawCustomData = call.arguments[@"custom_data"];
         id rawExtraParameters = call.arguments[@"extra_parameters"];
         id rawLocalExtraParameters = call.arguments[@"local_extra_parameters"];
         
+        BOOL isAdaptiveBannerEnabled = ( rawIsAdaptiveBannerEnabled != [NSNull null] ) ? ((NSNumber *)rawIsAdaptiveBannerEnabled).boolValue : YES;
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
         NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
         NSDictionary<NSString *, id> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
@@ -2097,6 +2099,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         
         [AppLovinMAXAdView preloadWidgetAdView: adUnitId
                                       adFormat: adFormat
+                       isAdaptiveBannerEnabled: isAdaptiveBannerEnabled
                                      placement: placement
                                     customData: customData
                                extraParameters: extraParameters

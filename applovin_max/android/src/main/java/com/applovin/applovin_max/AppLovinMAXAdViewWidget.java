@@ -8,9 +8,9 @@ import com.applovin.mediation.MaxAdFormat;
 import com.applovin.mediation.MaxAdListener;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxAdViewConfiguration;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.ads.MaxAdView;
-import com.applovin.sdk.AppLovinSdk;
 
 import java.util.Map;
 
@@ -27,18 +27,22 @@ class AppLovinMAXAdViewWidget
     @Nullable
     private AppLovinMAXAdView containerView;
 
-    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final Context context)
     {
-        this( adUnitId, adFormat, false, sdk, context );
+        this( adUnitId, adFormat, isAdaptiveBannerEnabled, false, context );
     }
 
-    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean shouldPreloadWidget, final AppLovinSdk sdk, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final boolean shouldPreloadWidget, final Context context)
     {
         super( context );
 
         this.shouldPreloadWidget = shouldPreloadWidget;
 
-        adView = new MaxAdView( adUnitId, adFormat, sdk, context );
+        MaxAdViewConfiguration config = MaxAdViewConfiguration.builder()
+                .setAdaptiveType( isAdaptiveBannerEnabled ? MaxAdViewConfiguration.AdaptiveType.ANCHORED : MaxAdViewConfiguration.AdaptiveType.NONE )
+                .build();
+
+        adView = new MaxAdView( adUnitId, adFormat, config );
         adView.setListener( this );
         adView.setRevenueListener( this );
 

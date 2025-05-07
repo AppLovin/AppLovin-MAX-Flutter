@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Fix support for adaptive banners. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
 ## 4.4.0
 * Depends on Android SDK v13.2.0 and iOS SDK v13.2.0.
 ## 4.3.1

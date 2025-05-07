@@ -13,19 +13,23 @@
 
 @implementation AppLovinMAXAdViewWidget
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
 {
-    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat shouldPreload: NO];
+    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled shouldPreload: NO];
 }
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat shouldPreload:(BOOL)shouldPreload
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled shouldPreload:(BOOL)shouldPreload
 {
     self = [super init];
     if ( self )
     {
         self.shouldPreload = shouldPreload;
         
-        self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat sdk: [AppLovinMAX shared].sdk];
+        MAAdViewConfiguration *config = [MAAdViewConfiguration configurationWithBuilderBlock:^(MAAdViewConfigurationBuilder *builder) {
+            builder.adaptiveType = isAdaptiveBannerEnabled ? MAAdViewAdaptiveTypeAnchored : MAAdViewAdaptiveTypeNone;
+        }];
+        
+        self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat configuration: config];
         self.adView.delegate = self;
         self.adView.revenueDelegate = self;
         

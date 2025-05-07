@@ -710,24 +710,19 @@ class AppLovinMAX {
   static Future<AdViewId?> preloadWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
+    bool? isAdaptiveBannerEnabled,
     String? placement,
     String? customData,
     Map<String, String?>? extraParameters,
     Map<String, dynamic>? localExtraParameters,
   }) {
-    Map<String, String?> extraParametersWithAdaptiveBanner = Map<String, String?>.from(extraParameters ?? {});
-
-    if (extraParameters?['adaptive_banner'] == null) {
-      // Set the default value for 'adaptive_banner'
-      extraParametersWithAdaptiveBanner['adaptive_banner'] = 'true';
-    }
-
     return _methodChannel.invokeMethod('preloadWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
+      'is_adaptive_banner_enabled': isAdaptiveBannerEnabled ?? true,
       'placement': placement,
       'custom_data': customData,
-      'extra_parameters': extraParametersWithAdaptiveBanner,
+      'extra_parameters': extraParameters,
       'local_extra_parameters': localExtraParameters,
     });
   }

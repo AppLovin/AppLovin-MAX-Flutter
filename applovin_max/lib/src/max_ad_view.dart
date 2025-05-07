@@ -75,6 +75,9 @@ class MaxAdView extends StatefulWidget {
   /// Whether auto-refresh is enabled. Defaults to `true`.
   final bool isAutoRefreshEnabled;
 
+  /// Whether adaptive banner sizing is enabled. Defaults to `true`.
+  final bool isAdaptiveBannerEnabled;
+
   /// The ad width. If `null`, a default is computed based on [adFormat] and layout constraints.
   ///
   /// - [AdFormat.banner]: 320 (phones) or 728 (tablets)
@@ -104,6 +107,7 @@ class MaxAdView extends StatefulWidget {
     this.localExtraParameters,
     this.listener,
     this.isAutoRefreshEnabled = true,
+    this.isAdaptiveBannerEnabled = true,
     this.width,
     this.height,
   }) : super(key: key);
@@ -119,22 +123,6 @@ class _MaxAdViewState extends State<MaxAdView> {
 
   late Size _screenSize;
   late bool _isTablet;
-  late bool _adaptiveBannerEnabled;
-  late Map<String, String?> extraParameters;
-
-  @override
-  void initState() {
-    super.initState();
-
-    extraParameters = Map<String, String?>.from(widget.extraParameters ?? {});
-    if (extraParameters['adaptive_banner'] == null) {
-      // Set the default value for 'adaptive_banner'
-      extraParameters['adaptive_banner'] = 'true';
-      _adaptiveBannerEnabled = true;
-    } else {
-      _adaptiveBannerEnabled = extraParameters['adaptive_banner'] == 'true';
-    }
-  }
 
   @override
   void didUpdateWidget(MaxAdView oldWidget) {
@@ -204,9 +192,10 @@ class _MaxAdViewState extends State<MaxAdView> {
       "ad_format": widget.adFormat.value,
       "ad_view_id": widget.adViewId,
       "is_auto_refresh_enabled": widget.isAutoRefreshEnabled,
+      "is_adaptive_banner_enabled": widget.isAdaptiveBannerEnabled,
       "custom_data": widget.customData,
       "placement": widget.placement,
-      "extra_parameters": extraParameters,
+      "extra_parameters": widget.extraParameters,
       "local_extra_parameters": widget.localExtraParameters,
     };
   }
@@ -258,7 +247,7 @@ class _MaxAdViewState extends State<MaxAdView> {
       return _mrecWidth;
     } else if (widget.adFormat == AdFormat.banner) {
       // Return the screen size when adaptive banner is enabled.
-      if (_adaptiveBannerEnabled) {
+      if (widget.isAdaptiveBannerEnabled) {
         return _screenSize.width;
       }
       return _isTablet ? _leaderWidth : _bannerWidth;
@@ -271,7 +260,7 @@ class _MaxAdViewState extends State<MaxAdView> {
     if (widget.adFormat == AdFormat.mrec) {
       return _mrecHeight;
     } else if (widget.adFormat == AdFormat.banner) {
-      if (_adaptiveBannerEnabled) {
+      if (widget.isAdaptiveBannerEnabled) {
         return await AppLovinMAX.getAdaptiveBannerHeightForWidth(width) ?? (_isTablet ? _leaderHeight : _bannerHeight);
       }
       return _isTablet ? _leaderHeight : _bannerHeight;

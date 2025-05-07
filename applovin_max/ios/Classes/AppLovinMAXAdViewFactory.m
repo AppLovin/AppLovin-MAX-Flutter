@@ -47,6 +47,7 @@
     
     // Optional params
     NSNumber *adViewId = [args[@"ad_view_id"] isKindOfClass: [NSNumber class]] ? args[@"ad_view_id"] : nil; // May be NSNull
+    BOOL isAdaptiveBannerEnabled = ((NSNumber *) args[@"is_adaptive_banner_enabled"]).boolValue; // Defaults to true
     BOOL isAutoRefreshEnabled = ((NSNumber *) args[@"is_auto_refresh_enabled"]).boolValue; // Defaults to true
     NSString *placement = [args[@"placement"] isKindOfClass: [NSString class]] ? args[@"placement"] : nil; // May be NSNull
     NSString *customData = [args[@"custom_data"] isKindOfClass: [NSString class]] ? args[@"custom_data"] : nil; // May be NSNull
@@ -58,6 +59,7 @@
                                            adUnitId: adUnitId
                                            adFormat: adFormat
                                            adViewId: adViewId
+                            isAdaptiveBannerEnabled: isAdaptiveBannerEnabled
                                isAutoRefreshEnabled: isAutoRefreshEnabled
                                           placement: placement
                                          customData: customData

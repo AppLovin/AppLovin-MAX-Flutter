@@ -5,7 +5,6 @@ import android.view.View;
 
 import com.applovin.mediation.MaxAdFormat;
 import com.applovin.mediation.ads.MaxAdView;
-import com.applovin.sdk.AppLovinSdk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +26,8 @@ public class AppLovinMAXAdView
     private static final Map<Integer, AppLovinMAXAdViewWidget> preloadedWidgetInstances = new HashMap<>( 2 );
 
     @Nullable
-    private AppLovinMAXAdViewWidget widget;
-    private int                     adViewId;
+    private       AppLovinMAXAdViewWidget widget;
+    private final int                     adViewId;
 
     private final MethodChannel channel;
 
@@ -59,15 +58,15 @@ public class AppLovinMAXAdView
 
     public static void preloadWidgetAdView(final String adUnitId,
                                            final MaxAdFormat adFormat,
+                                           final boolean isAdaptiveBannerEnabled,
                                            @Nullable final String placement,
                                            @Nullable final String customData,
                                            @Nullable final Map<String, Object> extraParameters,
                                            @Nullable final Map<String, Object> localExtraParameters,
                                            final Result result,
-                                           final AppLovinSdk sdk,
                                            final Context context)
     {
-        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, true, sdk, context );
+        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptiveBannerEnabled, true, context );
         preloadedWidgetInstances.put( preloadedWidget.hashCode(), preloadedWidget );
 
         preloadedWidget.setPlacement( placement );
@@ -107,13 +106,13 @@ public class AppLovinMAXAdView
                              final String adUnitId,
                              final int adViewId,
                              final MaxAdFormat adFormat,
+                             final boolean isAdaptiveBannerEnabled,
                              final boolean isAutoRefreshEnabled,
                              @Nullable final String placement,
                              @Nullable final String customData,
                              @Nullable final Map<String, Object> extraParameters,
                              @Nullable final Map<String, Object> localExtraParameters,
                              final BinaryMessenger messenger,
-                             final AppLovinSdk sdk,
                              final Context context)
     {
         String uniqueChannelName = "applovin_max/adview_" + viewId;
@@ -151,7 +150,7 @@ public class AppLovinMAXAdView
             }
         }
 
-        widget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, sdk, context );
+        widget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptiveBannerEnabled, context );
         this.adViewId = widget.hashCode();
         widgetInstances.put( this.adViewId, widget );
 

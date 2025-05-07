@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)detachAdView;
 - (void)destroy;
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat;
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat shouldPreload:(BOOL)shouldPreload;
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled;
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled shouldPreload:(BOOL)shouldPreload;
 
 @end
 
