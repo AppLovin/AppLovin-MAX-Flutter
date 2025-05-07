@@ -719,7 +719,7 @@ class AppLovinMAX {
     return _methodChannel.invokeMethod('preloadWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
-      'is_adaptive_banner_enabled': isAdaptiveBannerEnabled,
+      'is_adaptive_banner_enabled': isAdaptiveBannerEnabled ?? true,
       'placement': placement,
       'custom_data': customData,
       'extra_parameters': extraParameters,

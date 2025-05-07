@@ -2065,7 +2065,7 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String adFormatStr = call.argument( "ad_format" );
-            boolean isAdaptiveBannerEnabled = call.argument( "isAdaptiveBannerEnabled" );
+            boolean isAdaptiveBannerEnabled = call.argument( "is_adaptive_banner_enabled" );
             String placement = call.argument( "placement" );
             String customData = call.argument( "custom_data" );
             Map<String, Object> extraParameters = call.argument( "extra_parameters" );

@@ -26,7 +26,7 @@
         self.shouldPreload = shouldPreload;
         
         MAAdViewConfiguration *config = [MAAdViewConfiguration configurationWithBuilderBlock:^(MAAdViewConfigurationBuilder *builder) {
-            builder.adaptiveType =  isAdaptiveBannerEnabled ? MAAdViewAdaptiveTypeAnchored : MAAdViewAdaptiveTypeNone;
+            builder.adaptiveType = isAdaptiveBannerEnabled ? MAAdViewAdaptiveTypeAnchored : MAAdViewAdaptiveTypeNone;
         }];
         
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat configuration: config];
