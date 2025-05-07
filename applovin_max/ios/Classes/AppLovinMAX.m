@@ -1150,7 +1150,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     MAInterstitialAd *result = self.interstitials[adUnitIdentifier];
     if ( !result )
     {
-        result = [[MAInterstitialAd alloc] initWithAdUnitIdentifier: adUnitIdentifier sdk: self.sdk];
+        result = [[MAInterstitialAd alloc] initWithAdUnitIdentifier: adUnitIdentifier];
         result.delegate = self;
         
         self.interstitials[adUnitIdentifier] = result;
@@ -1165,7 +1165,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     MARewardedAd *result = self.rewardedAds[adUnitIdentifier];
     if ( !result )
     {
-        result = [MARewardedAd sharedWithAdUnitIdentifier: adUnitIdentifier sdk: self.sdk];
+        result = [MARewardedAd sharedWithAdUnitIdentifier: adUnitIdentifier];
         result.delegate = self;
         
         self.rewardedAds[adUnitIdentifier] = result;
@@ -1180,7 +1180,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     MAAppOpenAd *result = self.appOpenAds[adUnitIdentifier];
     if ( !result )
     {
-        result = [[MAAppOpenAd alloc] initWithAdUnitIdentifier: adUnitIdentifier sdk: self.sdk];
+        result = [[MAAppOpenAd alloc] initWithAdUnitIdentifier: adUnitIdentifier];
         result.delegate = self;
         
         self.appOpenAds[adUnitIdentifier] = result;
@@ -1205,7 +1205,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     MAAdView *result = self.adViews[adUnitIdentifier];
     if ( !result && adViewPosition )
     {
-        result = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat sdk: self.sdk];
+        result = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat];
         result.delegate = self;
         result.userInteractionEnabled = NO;
         result.translatesAutoresizingMaskIntoConstraints = NO;

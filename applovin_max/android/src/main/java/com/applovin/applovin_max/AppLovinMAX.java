@@ -133,11 +133,6 @@ public class AppLovinMAX
         return instance;
     }
 
-    public AppLovinSdk getSdk()
-    {
-        return sdk;
-    }
-
     @Override
     public void onAttachedToEngine(@NonNull final FlutterPluginBinding binding)
     {
@@ -177,13 +172,16 @@ public class AppLovinMAX
         sharedChannel.setMethodCallHandler( null );
     }
 
+    public boolean isInitialized()
+    {
+        return isPluginInitialized && isSdkInitialized;
+    }
+
     private void isInitialized(@Nullable final Result result)
     {
-        boolean isInitialized = isPluginInitialized && isSdkInitialized;
-
         if ( result != null )
         {
-            result.success( isInitialized );
+            result.success( isInitialized() );
         }
     }
 
@@ -204,7 +202,7 @@ public class AppLovinMAX
             throw new IllegalStateException( "Unable to initialize AppLovin SDK - no SDK key provided!" );
         }
 
-        AppLovinSdkInitializationConfiguration.Builder initConfigBuilder = AppLovinSdkInitializationConfiguration.builder( sdkKey, applicationContext );
+        AppLovinSdkInitializationConfiguration.Builder initConfigBuilder = AppLovinSdkInitializationConfiguration.builder( sdkKey );
         initConfigBuilder.setPluginVersion( "Flutter-" + pluginVersion );
         initConfigBuilder.setMediationProvider( AppLovinMediationProvider.MAX );
         initConfigBuilder.setSegmentCollection( segmentCollectionBuilder.build() );
@@ -561,7 +559,7 @@ public class AppLovinMAX
     public void showInterstitial(final String adUnitId, final String placement, final String customData)
     {
         MaxInterstitialAd interstitial = retrieveInterstitial( adUnitId );
-        interstitial.showAd( placement, customData );
+        interstitial.showAd( placement, customData, getCurrentActivity() );
     }
 
     public void setInterstitialExtraParameter(final String adUnitId, final String key, final String value)
@@ -587,7 +585,7 @@ public class AppLovinMAX
     public void showRewardedAd(final String adUnitId, final String placement, final String customData)
     {
         MaxRewardedAd rewardedAd = retrieveRewardedAd( adUnitId );
-        rewardedAd.showAd( placement, customData );
+        rewardedAd.showAd( placement, customData, getCurrentActivity() );
     }
 
     public void setRewardedAdExtraParameter(final String adUnitId, final String key, final String value)
@@ -1223,7 +1221,7 @@ public class AppLovinMAX
         MaxInterstitialAd result = mInterstitials.get( adUnitId );
         if ( result == null )
         {
-            result = new MaxInterstitialAd( adUnitId, sdk, getCurrentActivity() );
+            result = new MaxInterstitialAd( adUnitId );
             result.setListener( this );
             result.setRevenueListener( this );
 
@@ -1239,7 +1237,7 @@ public class AppLovinMAX
         MaxRewardedAd result = mRewardedAds.get( adUnitId );
         if ( result == null )
         {
-            result = MaxRewardedAd.getInstance( adUnitId, sdk, getCurrentActivity() );
+            result = MaxRewardedAd.getInstance( adUnitId );
             result.setListener( this );
             result.setRevenueListener( this );
 
@@ -1255,7 +1253,7 @@ public class AppLovinMAX
         MaxAppOpenAd result = mAppOpenAds.get( adUnitId );
         if ( result == null )
         {
-            result = new MaxAppOpenAd( adUnitId, sdk );
+            result = new MaxAppOpenAd( adUnitId );
             result.setListener( this );
             result.setRevenueListener( this );
 
@@ -1276,7 +1274,7 @@ public class AppLovinMAX
         MaxAdView result = mAdViews.get( adUnitId );
         if ( result == null && adViewPosition != null )
         {
-            result = new MaxAdView( adUnitId, adFormat, sdk, getCurrentActivity() );
+            result = new MaxAdView( adUnitId, adFormat );
             result.setListener( this );
             result.setRevenueListener( this );
 
@@ -1694,7 +1692,7 @@ public class AppLovinMAX
         }
         else if ( "setHasUserConsent".equals( call.method ) )
         {
-            boolean hasUserConsent = call.argument( "value" );
+            boolean hasUserConsent = Boolean.TRUE.equals( call.argument( "value" ) );
             setHasUserConsent( hasUserConsent );
 
             result.success( null );
@@ -1705,7 +1703,7 @@ public class AppLovinMAX
         }
         else if ( "setDoNotSell".equals( call.method ) )
         {
-            boolean isDoNotSell = call.argument( "value" );
+            boolean isDoNotSell = Boolean.TRUE.equals( call.argument( "value" ) );
             setDoNotSell( isDoNotSell );
 
             result.success( null );
@@ -1723,21 +1721,21 @@ public class AppLovinMAX
         }
         else if ( "setMuted".equals( call.method ) )
         {
-            boolean isMuted = call.argument( "value" );
+            boolean isMuted = Boolean.TRUE.equals( call.argument( "value" ) );
             setMuted( isMuted );
 
             result.success( null );
         }
         else if ( "setVerboseLogging".equals( call.method ) )
         {
-            boolean isVerboseLogging = call.argument( "value" );
+            boolean isVerboseLogging = Boolean.TRUE.equals( call.argument( "value" ) );
             setVerboseLogging( isVerboseLogging );
 
             result.success( null );
         }
         else if ( "setCreativeDebuggerEnabled".equals( call.method ) )
         {
-            boolean isCreativeDebuggerEnabled = call.argument( "value" );
+            boolean isCreativeDebuggerEnabled = Boolean.TRUE.equals( call.argument( "value" ) );
             setCreativeDebuggerEnabled( isCreativeDebuggerEnabled );
 
             result.success( null );
@@ -1766,7 +1764,7 @@ public class AppLovinMAX
         }
         else if ( "setTermsAndPrivacyPolicyFlowEnabled".equals( call.method ) )
         {
-            boolean value = call.argument( "value" );
+            boolean value = Boolean.TRUE.equals( call.argument( "value" ) );
             setTermsAndPrivacyPolicyFlowEnabled( value );
 
             result.success( null );
@@ -1893,7 +1891,7 @@ public class AppLovinMAX
         }
         else if ( "getAdaptiveBannerHeightForWidth".equals( call.method ) )
         {
-            double width = call.argument( "width" );
+            Double width = call.argument( "width" );
             getAdaptiveBannerHeightForWidth( width, result );
         }
         else if ( "createMRec".equals( call.method ) )

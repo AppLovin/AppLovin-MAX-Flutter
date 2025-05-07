@@ -57,7 +57,6 @@
               extraParameters:(nullable NSDictionary *)extraParameters
          localExtraParameters:(nullable NSDictionary *)localExtraParameters
                     messenger:(id<FlutterBinaryMessenger>)messenger
-                          sdk:(ALSdk *)sdk
 {
     self = [super init];
     if ( self )
@@ -193,7 +192,7 @@
     
     if ( ![self.adUnitId isEqualToString: _adLoader.adUnitIdentifier] )
     {
-        _adLoader = [[MANativeAdLoader alloc] initWithAdUnitIdentifier: self.adUnitId sdk: [AppLovinMAX shared].sdk];
+        _adLoader = [[MANativeAdLoader alloc] initWithAdUnitIdentifier: self.adUnitId];
         _adLoader.nativeAdDelegate = self;
         _adLoader.revenueDelegate = self;
     }

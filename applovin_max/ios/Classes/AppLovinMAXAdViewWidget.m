@@ -7,7 +7,7 @@
 
 @property (nonatomic, strong) MAAdView *adView;
 @property (nonatomic, weak, nullable) AppLovinMAXAdView *containerView;
-@property (nonatomic, assign) BOOL shouldPreload;
+@property (nonatomic, assign) BOOL isPreloaded;
 
 @end
 
@@ -15,15 +15,15 @@
 
 - (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
 {
-    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled shouldPreload: NO];
+    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled isPreloaded: NO];
 }
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled shouldPreload:(BOOL)shouldPreload
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled isPreloaded:(BOOL)isPreloaded
 {
     self = [super init];
     if ( self )
     {
-        self.shouldPreload = shouldPreload;
+        self.isPreloaded = isPreloaded;
         
         MAAdViewConfiguration *config = [MAAdViewConfiguration configurationWithBuilderBlock:^(MAAdViewConfigurationBuilder *builder) {
             builder.adaptiveType = isAdaptiveBannerEnabled ? MAAdViewAdaptiveTypeAnchored : MAAdViewAdaptiveTypeNone;
@@ -127,7 +127,7 @@
     NSMutableDictionary *adInfo = [@{@"adViewId": @(self.hash)} mutableCopy];
     [adInfo addEntriesFromDictionary: [[AppLovinMAX shared] adInfoForAd: ad]];
     
-    if ( self.shouldPreload )
+    if ( self.isPreloaded )
     {
         [[AppLovinMAX shared] sendEventWithName: @"OnWidgetAdViewAdLoadedEvent" body: adInfo];
     }
@@ -143,7 +143,7 @@
     NSMutableDictionary *adLoadFailedInfo = [@{@"adViewId": @(self.hash)} mutableCopy];
     [adLoadFailedInfo addEntriesFromDictionary: [[AppLovinMAX shared] adLoadFailedInfoForAdUnitIdentifier: adUnitIdentifier withError: error]];
     
-    if ( self.shouldPreload )
+    if ( self.isPreloaded )
     {
         [[AppLovinMAX shared] sendEventWithName: @"OnWidgetAdViewAdLoadFailedEvent" body: adLoadFailedInfo];
     }
