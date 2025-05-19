@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)preloadWidgetAdView:(NSString *)adUnitIdentifier 
                    adFormat:(MAAdFormat *)adFormat
-    isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
+                 isAdaptive:(BOOL)isAdaptive
                   placement:(nullable NSString *)placement
                  customData:(nullable NSString *)customData
             extraParameters:(nullable NSDictionary<NSString *, id> *)extraParameters

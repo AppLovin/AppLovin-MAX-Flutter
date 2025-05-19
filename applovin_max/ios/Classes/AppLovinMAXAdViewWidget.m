@@ -13,12 +13,12 @@
 
 @implementation AppLovinMAXAdViewWidget
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptive:(BOOL)isAdaptive
 {
-    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptiveBannerEnabled: isAdaptiveBannerEnabled shouldPreload: NO];
+    return [self initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat isAdaptive: isAdaptive shouldPreload: NO];
 }
 
-- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptiveBannerEnabled:(BOOL)isAdaptiveBannerEnabled shouldPreload:(BOOL)shouldPreload
+- (instancetype)initWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat isAdaptive:(BOOL)isAdaptive shouldPreload:(BOOL)shouldPreload
 {
     self = [super init];
     if ( self )
@@ -26,9 +26,20 @@
         self.shouldPreload = shouldPreload;
         
         MAAdViewConfiguration *config = [MAAdViewConfiguration configurationWithBuilderBlock:^(MAAdViewConfigurationBuilder *builder) {
-            builder.adaptiveType = isAdaptiveBannerEnabled ? MAAdViewAdaptiveTypeAnchored : MAAdViewAdaptiveTypeNone;
+
+            if ( [adFormat isBannerOrLeaderAd] )
+            {
+                if ( isAdaptive )
+                {
+                    builder.adaptiveType = MAAdViewAdaptiveTypeAnchored;
+                }
+                else
+                {
+                    builder.adaptiveType = MAAdViewAdaptiveTypeNone;
+                }
+            }
         }];
-        
+
         self.adView = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat configuration: config];
         self.adView.delegate = self;
         self.adView.revenueDelegate = self;
