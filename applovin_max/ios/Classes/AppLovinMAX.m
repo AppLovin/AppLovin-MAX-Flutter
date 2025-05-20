@@ -413,9 +413,9 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 
 #pragma mark - Banners
 
-- (void)createBannerForAdUnitIdentifier:(NSString *)adUnitIdentifier position:(NSString *)position
+- (void)createBannerForAdUnitIdentifier:(NSString *)adUnitIdentifier position:(NSString *)position isAdaptive:(BOOL)isAdaptive
 {
-    [self createAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT atPosition: position];
+    [self createAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: DEVICE_SPECIFIC_ADVIEW_AD_FORMAT atPosition: position isAdaptive: isAdaptive];
 }
 
 - (void)setBannerBackgroundColorForAdUnitIdentifier:(NSString *)adUnitIdentifier color:(NSString *)hexColorCode
@@ -477,7 +477,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 
 - (void)createMRecForAdUnitIdentifier:(NSString *)adUnitIdentifier position:(NSString *)position
 {
-    [self createAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec atPosition: position];
+    [self createAdViewWithAdUnitIdentifier: adUnitIdentifier adFormat: MAAdFormat.mrec atPosition: position isAdaptive: NO];
 }
 
 - (void)setMRecPlacementForAdUnitIdentifier:(NSString *)adUnitIdentifier placement:(NSString *)placement
@@ -871,12 +871,12 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 
 #pragma mark - Internal Methods
 
-- (void)createAdViewWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition
+- (void)createAdViewWithAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition isAdaptive:(BOOL)isAdaptive
 {
     [self log: @"Creating %@ with ad unit identifier \"%@\" and position: \"%@\"", adFormat, adUnitIdentifier, adViewPosition];
     
     // Retrieve ad view from the map
-    MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: adViewPosition];
+    MAAdView *adView = [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: adViewPosition isAdaptive: isAdaptive];
     adView.hidden = YES;
     self.safeAreaBackground.hidden = YES;
     
@@ -973,6 +973,8 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     }
     else if ( [@"adaptive_banner" isEqualToString: key] )
     {
+        [self log: @"Setting adaptive banners via extra parameters is deprecated and will be removed in a future plugin version. Please use the AppLovinMAX.createBanner(String adUnitId, AdViewPosition position, [bool isAdaptive = true]) API to properly configure adaptive banners."];
+
         BOOL shouldUseAdaptiveBanner = [NSNumber al_numberWithString: value].boolValue;
         if ( shouldUseAdaptiveBanner )
         {
@@ -1192,20 +1194,37 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
 // NOTE: Do not update signature as some integrations depend on it via Objective-C runtime
 - (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat
 {
-    return [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: nil];
+    return [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: nil isAdaptive: YES];
 }
 
-- (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition
+- (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition isAdaptive:(BOOL)isAdaptive
 {
-    return [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: adViewPosition attach: YES];
+    return [self retrieveAdViewForAdUnitIdentifier: adUnitIdentifier adFormat: adFormat atPosition: adViewPosition attach: YES isAdaptive: isAdaptive];
 }
 
-- (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition attach:(BOOL)attach
+- (MAAdView *)retrieveAdViewForAdUnitIdentifier:(NSString *)adUnitIdentifier adFormat:(MAAdFormat *)adFormat atPosition:(NSString *)adViewPosition attach:(BOOL)attach isAdaptive:(BOOL)isAdaptive
 {
     MAAdView *result = self.adViews[adUnitIdentifier];
     if ( !result && adViewPosition )
     {
-        result = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat sdk: self.sdk];
+        MAAdViewConfiguration *config = [MAAdViewConfiguration configurationWithBuilderBlock:^(MAAdViewConfigurationBuilder *builder) {
+
+            // Set adaptive type only for banner ads. If adaptive is enabled, use ANCHORED; otherwise, fall back to NONE.
+            if ( [adFormat isBannerOrLeaderAd] )
+            {
+                if ( isAdaptive )
+                {
+                    builder.adaptiveType = MAAdViewAdaptiveTypeAnchored;
+                }
+                else
+                {
+                    builder.adaptiveType = MAAdViewAdaptiveTypeNone;
+                    [self.disabledAdaptiveBannerAdUnitIdentifiers addObject: adUnitIdentifier];
+                }
+            }
+        }];
+
+        result = [[MAAdView alloc] initWithAdUnitIdentifier: adUnitIdentifier adFormat: adFormat configuration: config];
         result.delegate = self;
         result.userInteractionEnabled = NO;
         result.translatesAutoresizingMaskIntoConstraints = NO;
@@ -1807,7 +1826,8 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *position = call.arguments[@"position"];
-        [self createBannerForAdUnitIdentifier: adUnitId position: position];
+        BOOL isAdaptive = ((NSNumber *)call.arguments[@"is_adaptive"]).boolValue;
+        [self createBannerForAdUnitIdentifier: adUnitId position: position isAdaptive: isAdaptive];
         
         result(nil);
     }
@@ -2069,13 +2089,13 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
     {
         NSString *adUnitId = call.arguments[@"ad_unit_id"];
         NSString *adFormatStr = call.arguments[@"ad_format"];
-        id rawIsAdaptiveBannerEnabled = call.arguments[@"is_adaptive_banner_enabled"];
+        id rawIsAdaptive = call.arguments[@"is_adaptive"];
         id rawPlacement = call.arguments[@"placement"];
         id rawCustomData = call.arguments[@"custom_data"];
         id rawExtraParameters = call.arguments[@"extra_parameters"];
         id rawLocalExtraParameters = call.arguments[@"local_extra_parameters"];
         
-        BOOL isAdaptiveBannerEnabled = ( rawIsAdaptiveBannerEnabled != [NSNull null] ) ? ((NSNumber *)rawIsAdaptiveBannerEnabled).boolValue : YES;
+        BOOL isAdaptive = ( rawIsAdaptive != [NSNull null] ) ? ((NSNumber *)rawIsAdaptive).boolValue : YES;
         NSString *placement = ( rawPlacement != [NSNull null] ) ? rawPlacement : nil;
         NSString *customData = ( rawCustomData != [NSNull null] ) ? rawCustomData : nil;
         NSDictionary<NSString *, id> *extraParameters = ( rawExtraParameters != [NSNull null] ) ? rawExtraParameters : nil;
@@ -2099,7 +2119,7 @@ static NSDictionary<NSString *, NSString *> *ALCompatibleNativeSDKVersions;
         
         [AppLovinMAXAdView preloadWidgetAdView: adUnitId
                                       adFormat: adFormat
-                       isAdaptiveBannerEnabled: isAdaptiveBannerEnabled
+                                    isAdaptive: isAdaptive
                                      placement: placement
                                     customData: customData
                                extraParameters: extraParameters

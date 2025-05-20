@@ -20,6 +20,7 @@ import com.applovin.mediation.MaxAdFormat;
 import com.applovin.mediation.MaxAdListener;
 import com.applovin.mediation.MaxAdRevenueListener;
 import com.applovin.mediation.MaxAdViewAdListener;
+import com.applovin.mediation.MaxAdViewConfiguration;
 import com.applovin.mediation.MaxAdWaterfallInfo;
 import com.applovin.mediation.MaxError;
 import com.applovin.mediation.MaxErrorCode;
@@ -427,9 +428,9 @@ public class AppLovinMAX
 
     // BANNERS
 
-    public void createBanner(final String adUnitId, final String bannerPosition)
+    public void createBanner(final String adUnitId, final String bannerPosition, final boolean isAdaptive)
     {
-        createAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat(), bannerPosition );
+        createAdView( adUnitId, getDeviceSpecificBannerAdViewAdFormat(), bannerPosition, isAdaptive );
     }
 
     public void setBannerBackgroundColor(final String adUnitId, final String hexColorCode)
@@ -496,7 +497,7 @@ public class AppLovinMAX
 
     public void createMRec(final String adUnitId, final String mrecPosition)
     {
-        createAdView( adUnitId, MaxAdFormat.MREC, mrecPosition );
+        createAdView( adUnitId, MaxAdFormat.MREC, mrecPosition, false );
     }
 
     public void setMRecPlacement(final String adUnitId, final String placement)
@@ -895,12 +896,12 @@ public class AppLovinMAX
 
     // INTERNAL METHODS
 
-    private void createAdView(final String adUnitId, final MaxAdFormat adFormat, final String adViewPosition)
+    private void createAdView(final String adUnitId, final MaxAdFormat adFormat, final String adViewPosition, final boolean isAdaptive)
     {
         d( "Creating " + adFormat.getLabel() + " with ad unit id \"" + adUnitId + "\" and position: \"" + adViewPosition + "\"" );
 
         // Retrieve ad view from the map
-        final MaxAdView adView = retrieveAdView( adUnitId, adFormat, adViewPosition );
+        final MaxAdView adView = retrieveAdView( adUnitId, adFormat, adViewPosition, isAdaptive );
         if ( adView == null )
         {
             e( adFormat.getLabel() + " does not exist" );
@@ -1155,6 +1156,8 @@ public class AppLovinMAX
         }
         else if ( "adaptive_banner".equalsIgnoreCase( key ) )
         {
+            e( "Setting adaptive banners via extra parameters is deprecated and will be removed in a future plugin version. Please use the AppLovinMAX.createBanner(String adUnitId, AdViewPosition position, [bool isAdaptive = true]) API to properly configure adaptive banners." );
+
             boolean useAdaptiveBannerAdSize = Boolean.parseBoolean( value );
             if ( useAdaptiveBannerAdSize )
             {
@@ -1268,15 +1271,31 @@ public class AppLovinMAX
     // NOTE: Do not update signature as some integrations depend on it via Java reflection
     private MaxAdView retrieveAdView(String adUnitId, MaxAdFormat adFormat)
     {
-        return retrieveAdView( adUnitId, adFormat, null );
+        return retrieveAdView( adUnitId, adFormat, null, true );
     }
 
-    public MaxAdView retrieveAdView(String adUnitId, MaxAdFormat adFormat, String adViewPosition)
+    public MaxAdView retrieveAdView(String adUnitId, MaxAdFormat adFormat, String adViewPosition, final boolean isAdaptive)
     {
         MaxAdView result = mAdViews.get( adUnitId );
         if ( result == null && adViewPosition != null )
         {
-            result = new MaxAdView( adUnitId, adFormat, sdk, getCurrentActivity() );
+            MaxAdViewConfiguration.Builder builder = MaxAdViewConfiguration.builder();
+
+            // Set adaptive type only for banner ads. If adaptive is enabled, use ANCHORED; otherwise, fall back to NONE.
+            if ( adFormat.isBannerOrLeaderAd() )
+            {
+                if ( isAdaptive )
+                {
+                    builder.setAdaptiveType( MaxAdViewConfiguration.AdaptiveType.ANCHORED );
+                }
+                else
+                {
+                    builder.setAdaptiveType( MaxAdViewConfiguration.AdaptiveType.NONE );
+                    mDisabledAdaptiveBannerAdUnitIds.add( adUnitId );
+                }
+            }
+
+            result = new MaxAdView( adUnitId, adFormat, builder.build() );
             result.setListener( this );
             result.setRevenueListener( this );
 
@@ -1804,7 +1823,8 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String position = call.argument( "position" );
-            createBanner( adUnitId, position );
+            boolean isAdaptive = call.argument( "is_adaptive" );
+            createBanner( adUnitId, position, isAdaptive );
 
             result.success( null );
         }
@@ -2065,7 +2085,7 @@ public class AppLovinMAX
         {
             String adUnitId = call.argument( "ad_unit_id" );
             String adFormatStr = call.argument( "ad_format" );
-            boolean isAdaptiveBannerEnabled = call.argument( "is_adaptive_banner_enabled" );
+            boolean isAdaptive = call.argument( "is_adaptive" );
             String placement = call.argument( "placement" );
             String customData = call.argument( "custom_data" );
             Map<String, Object> extraParameters = call.argument( "extra_parameters" );
@@ -2089,7 +2109,7 @@ public class AppLovinMAX
 
             AppLovinMAXAdView.preloadWidgetAdView( adUnitId,
                                                    adFormat,
-                                                   isAdaptiveBannerEnabled,
+                                                   isAdaptive,
                                                    placement,
                                                    customData,
                                                    extraParameters,

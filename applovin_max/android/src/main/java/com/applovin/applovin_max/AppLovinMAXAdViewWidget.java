@@ -27,22 +27,32 @@ class AppLovinMAXAdViewWidget
     @Nullable
     private AppLovinMAXAdView containerView;
 
-    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptive, final Context context)
     {
-        this( adUnitId, adFormat, isAdaptiveBannerEnabled, false, context );
+        this( adUnitId, adFormat, isAdaptive, false, context );
     }
 
-    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptiveBannerEnabled, final boolean shouldPreloadWidget, final Context context)
+    public AppLovinMAXAdViewWidget(final String adUnitId, final MaxAdFormat adFormat, final boolean isAdaptive, final boolean shouldPreloadWidget, final Context context)
     {
         super( context );
 
         this.shouldPreloadWidget = shouldPreloadWidget;
 
-        MaxAdViewConfiguration config = MaxAdViewConfiguration.builder()
-                .setAdaptiveType( isAdaptiveBannerEnabled ? MaxAdViewConfiguration.AdaptiveType.ANCHORED : MaxAdViewConfiguration.AdaptiveType.NONE )
-                .build();
+        MaxAdViewConfiguration.Builder builder = MaxAdViewConfiguration.builder();
 
-        adView = new MaxAdView( adUnitId, adFormat, config );
+        if ( adFormat.isBannerOrLeaderAd() )
+        {
+            if ( isAdaptive )
+            {
+                builder.setAdaptiveType( MaxAdViewConfiguration.AdaptiveType.ANCHORED );
+            }
+            else
+            {
+                builder.setAdaptiveType( MaxAdViewConfiguration.AdaptiveType.NONE );
+            }
+        }
+
+        adView = new MaxAdView( adUnitId, adFormat, builder.build() );
         adView.setListener( this );
         adView.setRevenueListener( this );
 

@@ -346,12 +346,12 @@ class AppLovinMAX {
   /// Creates a banner using your [adUnitId] at the specified [AdViewPosition] position.
   ///
   /// [Creating a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads)
-  static void createBanner(String adUnitId, AdViewPosition position) {
+  static void createBanner(String adUnitId, AdViewPosition position, [bool isAdaptive = true]) {
     _methodChannel.invokeMethod('createBanner', {
       'ad_unit_id': adUnitId,
       'position': position.value,
+      'is_adaptive': isAdaptive,
     });
-    setBannerExtraParameter(adUnitId, "adaptive_banner", "true");
   }
 
   /// Sets a background color for the banner with the specified [adUnitId].
@@ -710,7 +710,7 @@ class AppLovinMAX {
   static Future<AdViewId?> preloadWidgetAdView(
     String adUnitId,
     AdFormat adFormat, {
-    bool? isAdaptiveBannerEnabled,
+    bool? isAdaptive,
     String? placement,
     String? customData,
     Map<String, String?>? extraParameters,
@@ -719,7 +719,7 @@ class AppLovinMAX {
     return _methodChannel.invokeMethod('preloadWidgetAdView', {
       'ad_unit_id': adUnitId,
       'ad_format': adFormat.value,
-      'is_adaptive_banner_enabled': isAdaptiveBannerEnabled ?? true,
+      'is_adaptive': isAdaptive ?? true,
       'placement': placement,
       'custom_data': customData,
       'extra_parameters': extraParameters,

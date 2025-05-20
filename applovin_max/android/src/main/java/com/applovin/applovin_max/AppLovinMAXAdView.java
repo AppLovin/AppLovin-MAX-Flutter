@@ -58,7 +58,7 @@ public class AppLovinMAXAdView
 
     public static void preloadWidgetAdView(final String adUnitId,
                                            final MaxAdFormat adFormat,
-                                           final boolean isAdaptiveBannerEnabled,
+                                           final boolean isAdaptive,
                                            @Nullable final String placement,
                                            @Nullable final String customData,
                                            @Nullable final Map<String, Object> extraParameters,
@@ -66,7 +66,7 @@ public class AppLovinMAXAdView
                                            final Result result,
                                            final Context context)
     {
-        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptiveBannerEnabled, true, context );
+        AppLovinMAXAdViewWidget preloadedWidget = new AppLovinMAXAdViewWidget( adUnitId, adFormat, isAdaptive, true, context );
         preloadedWidgetInstances.put( preloadedWidget.hashCode(), preloadedWidget );
 
         preloadedWidget.setPlacement( placement );
