@@ -18,7 +18,7 @@ DESC
   s.platform = :ios, '12.0'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'AppLovinSDK', '13.2.0'
+  s.dependency 'AppLovinSDK', '13.3.0'
   
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
