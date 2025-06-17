@@ -1,5 +1,7 @@
 ## Versions
 
+## x.x.x
+* Depends on Android SDK v13.3.1 and iOS SDK v13.3.1.
 ## 4.5.0
 * Depends on Android SDK v13.3.0 and iOS SDK v13.3.0.
 * Add optional `isAdaptive` flag to `AppLovinMAX.createBanner()` and `AppLovinMAX.preloadWidgetAdView()` to enable adaptive banners (default: true).
