@@ -38,6 +38,6 @@ android {
     }
 
     dependencies {
-        api 'com.applovin:applovin-sdk:13.3.0'
+        api 'com.applovin:applovin-sdk:13.3.1'
     }
 }
