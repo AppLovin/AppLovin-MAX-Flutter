@@ -1,6 +1,6 @@
 ## Versions
 
-## x.x.x
+## 4.5.2
 * Depends on Android SDK v13.4.0 and iOS SDK v13.4.0.
 ## 4.5.1
 * Depends on Android SDK v13.3.1 and iOS SDK v13.3.1.

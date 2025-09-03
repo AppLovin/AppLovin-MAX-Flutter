@@ -1,5 +1,5 @@
 PODS:
-  - applovin_max (4.5.1):
+  - applovin_max (4.5.2):
     - AppLovinSDK (= 13.4.0)
     - Flutter
   - AppLovinSDK (13.4.0)
@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  applovin_max: 6189e91a7a199921fc48136e837ff28b0d53a0fc
+  applovin_max: 83a9a6aa424f8ce69b52b3440fe5a6399879f3d9
   AppLovinSDK: 33fcc783889e2d522ae26886b31e5551246a5b2f
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
 
