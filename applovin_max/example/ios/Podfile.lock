@@ -1,8 +1,8 @@
 PODS:
   - applovin_max (4.5.1):
-    - AppLovinSDK (= 13.3.1)
+    - AppLovinSDK (= 13.4.0)
     - Flutter
-  - AppLovinSDK (13.3.1)
+  - AppLovinSDK (13.4.0)
   - Flutter (1.0.0)
 
 DEPENDENCIES:
@@ -20,8 +20,8 @@ EXTERNAL SOURCES:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  applovin_max: 6fc471df0a61050df634e51865356620d2b5050b
-  AppLovinSDK: 5075837afdee4fb429121799b8cbcc5918ef3a23
+  applovin_max: 6189e91a7a199921fc48136e837ff28b0d53a0fc
+  AppLovinSDK: 33fcc783889e2d522ae26886b31e5551246a5b2f
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
 
 PODFILE CHECKSUM: 663715e941f9adb426e33bf9376914006f9ea95b
