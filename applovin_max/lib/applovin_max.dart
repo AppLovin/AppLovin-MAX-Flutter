@@ -37,7 +37,7 @@ class AppLovinMAX {
 
   /// Initializes the AppLovin MAX SDK with the provided [sdkKey].
   ///
-  /// For details, see: [Initialize the SDK](https://developers.applovin.com/en/flutter/overview/integration)
+  /// For details, see: [Initialize the SDK](https://support.axon.ai/en/max/flutter/overview/integration)
   static Future<MaxConfiguration?> initialize(String sdkKey) async {
     if (_hasInitializeInvoked) {
       // Return a future object even when the actual value is not ready.
@@ -176,7 +176,7 @@ class AppLovinMAX {
   /// Mediation Debugger is a suite of testing tools that help verify your integration,
   /// confirm network setups, and debug ad loading/display issues.
   ///
-  /// [Mediation Debugger](https://developers.applovin.com/en/flutter/testing-networks/mediation-debugger)
+  /// [Mediation Debugger](https://support.axon.ai/en/max/flutter/testing-networks/mediation-debugger)
   static void showMediationDebugger() {
     _methodChannel.invokeMethod('showMediationDebugger');
   }
@@ -187,7 +187,7 @@ class AppLovinMAX {
 
   /// Sets whether or not the user has provided consent for interest-based advertising.
   ///
-  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
+  /// [Consent Flags in GDPR and Other Regions](https://support.axon.ai/en/max/flutter/overview/privacy#consent-and-other-applicable-flags-in-gdpr-and-other-regions)
   static void setHasUserConsent(bool hasUserConsent) {
     _methodChannel.invokeMethod('setHasUserConsent', {
       'value': hasUserConsent,
@@ -196,14 +196,14 @@ class AppLovinMAX {
 
   /// Checks if the user has set a consent flag.
   ///
-  /// [Consent Flags in GDPR and Other Regions](https://developers.applovin.com/en/flutter/overview/privacy#consent-and-age-related-flags-in-gdpr-and-other-regions)
+  /// [Consent Flags in GDPR and Other Regions](https://support.axon.ai/en/max/flutter/overview/privacy#consent-and-other-applicable-flags-in-gdpr-and-other-regions)
   static Future<bool?> hasUserConsent() {
     return _methodChannel.invokeMethod('hasUserConsent');
   }
 
   /// Sets whether the user has opted out of interest-based advertising.
   ///
-  /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
+  /// [California Consumer Privacy Act (“CCPA”)](https://support.axon.ai/en/max/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static void setDoNotSell(bool isDoNotSell) {
     _methodChannel.invokeMethod('setDoNotSell', {
       'value': isDoNotSell,
@@ -212,7 +212,7 @@ class AppLovinMAX {
 
   /// Returns whether the user has opted out of interest-based advertising.
   ///
-  /// [California Consumer Privacy Act (“CCPA”)](https://developers.applovin.com/en/flutter/overview/privacy#multi-state-consumer-privacy-laws)
+  /// [California Consumer Privacy Act (“CCPA”)](https://support.axon.ai/en/max/flutter/overview/privacy#multi-state-consumer-privacy-laws)
   static Future<bool?> isDoNotSell() {
     return _methodChannel.invokeMethod('isDoNotSell');
   }
@@ -225,7 +225,7 @@ class AppLovinMAX {
   ///
   /// MAX passes this internal user ID back to you via the {USER_ID} macro in its MAX S2S Rewarded Callback requests.
   ///
-  /// [Setting an Internal User ID](https://developers.applovin.com/en/advanced-features/s2s-rewarded-callback-api#setting-an-internal-user-id)
+  /// [Setting an Internal User ID](https://support.axon.ai/en/max/advanced-features/s2s-rewarded-callback-api#setting-an-internal-user-id)
   static void setUserId(String userId) {
     _methodChannel.invokeMethod('setUserId', {
       'value': userId,
@@ -236,7 +236,7 @@ class AppLovinMAX {
   ///
   /// **Note:** Not all networks support this setting.
   ///
-  /// [Mute Audio](https://developers.applovin.com/en/flutter/overview/advanced-settings#mute-audio)
+  /// [Mute Audio](https://support.axon.ai/en/max/flutter/overview/advanced-settings#mute-audio)
   static void setMuted(bool muted) {
     _methodChannel.invokeMethod('setMuted', {
       'value': muted,
@@ -245,7 +245,7 @@ class AppLovinMAX {
 
   /// Enables verbose logging for the SDK.
   ///
-  /// [Enable Verbose Logging](https://developers.applovin.com/en/flutter/overview/advanced-settings#enable-verbose-logging)
+  /// [Enable Verbose Logging](https://support.axon.ai/en/max/flutter/overview/advanced-settings#enable-verbose-logging)
   static void setVerboseLogging(bool enabled) {
     _methodChannel.invokeMethod('setVerboseLogging', {
       'value': enabled,
@@ -254,7 +254,7 @@ class AppLovinMAX {
 
   /// Whether the creative debugger will be displayed on fullscreen ads after flipping the device screen down twice. Defaults to true.
   ///
-  /// [Enable Creative Debugger](https://developers.applovin.com/en/flutter/testing-networks/creative-debugger)
+  /// [Enable Creative Debugger](https://support.axon.ai/en/max/flutter/testing-networks/creative-debugger)
   static void setCreativeDebuggerEnabled(bool enabled) {
     _methodChannel.invokeMethod('setCreativeDebuggerEnabled', {
       'value': enabled,
@@ -345,7 +345,7 @@ class AppLovinMAX {
 
   /// Creates a banner using your [adUnitId] at the specified [AdViewPosition] position.
   ///
-  /// [Creating a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads)
+  /// [Creating a Banner](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads)
   static void createBanner(String adUnitId, AdViewPosition position, [bool isAdaptive = true]) {
     _methodChannel.invokeMethod('createBanner', {
       'ad_unit_id': adUnitId,
@@ -366,7 +366,7 @@ class AppLovinMAX {
 
   /// Sets an ad placement name for the banner with the specified [adUnitId].
   ///
-  /// [Setting an Ad Placement Name](https://developers.applovin.com/en/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
+  /// [Setting an Ad Placement Name](https://support.axon.ai/en/max/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
   static void setBannerPlacement(String adUnitId, String placement) {
     _methodChannel.invokeMethod('setBannerPlacement', {
       'ad_unit_id': adUnitId,
@@ -394,7 +394,7 @@ class AppLovinMAX {
   /// For example, pass "adaptive_banner" and "false" to this method as the key/value pair
   /// to disable Adaptive Banners for the specified [adUnitId.
   ///
-  /// [Adaptive Banners](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#adaptive-banners)
+  /// [Adaptive Banners](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners)
   static void setBannerExtraParameter(String adUnitId, String key, String value) {
     _methodChannel.invokeMethod('setBannerExtraParameter', {
       'ad_unit_id': adUnitId,
@@ -405,7 +405,7 @@ class AppLovinMAX {
 
   /// Shows the banner with the specified [adUnitId].
   ///
-  /// [Displaying a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#displaying-a-banner)
+  /// [Displaying a Banner](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#displaying-a-banner)
   static void showBanner(String adUnitId) {
     _methodChannel.invokeMethod('showBanner', {
       'ad_unit_id': adUnitId,
@@ -414,7 +414,7 @@ class AppLovinMAX {
 
   /// Hides the banner with the specified [adUnitId].
   ///
-  /// [Displaying a Banner](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#displaying-a-banner)
+  /// [Displaying a Banner](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#displaying-a-banner)
   static void hideBanner(String adUnitId) {
     _methodChannel.invokeMethod('hideBanner', {
       'ad_unit_id': adUnitId,
@@ -470,7 +470,7 @@ class AppLovinMAX {
 
   /// Creates an MREC using your [adUnitId] at the specified [AdViewPosition] position.
   ///
-  /// [Programmatic Method](https://developers.applovin.com/en/flutter/ad-formats/banner-mrec-ads#loading-a-banner-or-mrec)
+  /// [Programmatic Method](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#loading-a-banner-or-mrec)
   static void createMRec(String adUnitId, AdViewPosition position) {
     _methodChannel.invokeMethod('createMRec', {
       'ad_unit_id': adUnitId,
@@ -480,7 +480,7 @@ class AppLovinMAX {
 
   /// Sets an ad placement name for the MREC with the specified [adUnitId].
   ///
-  /// [Setting an Ad Placement Name](https://developers.applovin.com/en/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
+  /// [Setting an Ad Placement Name](https://support.axon.ai/en/max/advanced-features/s2s-impression-level-api#setting-an-ad-placement-name)
   static void setMRecPlacement(String adUnitId, String placement) {
     _methodChannel.invokeMethod('setMRecPlacement', {
       'ad_unit_id': adUnitId,
@@ -561,7 +561,7 @@ class AppLovinMAX {
 
   /// Loads an interstitial ad using your [adUnitId].
   ///
-  /// [Loading an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#loading-an-interstitial-ad)
+  /// [Loading an Interstitial Ad](https://support.axon.ai/en/max/flutter/ad-formats/interstitial-ads#loading-an-interstitial-ad)
   static void loadInterstitial(String adUnitId) {
     _methodChannel.invokeMethod('loadInterstitial', {
       'ad_unit_id': adUnitId,
@@ -577,7 +577,7 @@ class AppLovinMAX {
 
   /// Shows the interstitial ad with the specified [adUnitId].
   ///
-  /// [Showing an Interstitial Ad](https://developers.applovin.com/en/flutter/ad-formats/interstitial-ads#showing-an-interstitial-ad)
+  /// [Showing an Interstitial Ad](https://support.axon.ai/en/max/flutter/ad-formats/interstitial-ads#showing-an-interstitial-ad)
   static void showInterstitial(String adUnitId, {String? placement, String? customData}) {
     _methodChannel.invokeMethod('showInterstitial', {
       'ad_unit_id': adUnitId,
@@ -606,7 +606,7 @@ class AppLovinMAX {
 
   /// Loads a rewarded ad using your [adUnitId].
   ///
-  /// [Loading a Rewarded Ad](https://developers.applovin.com/en/flutter/ad-formats/rewarded-ads/#loading-a-rewarded-ad)
+  /// [Loading a Rewarded Ad](https://support.axon.ai/en/max/flutter/ad-formats/rewarded-ads#loading-a-rewarded-ad)
   static void loadRewardedAd(String adUnitId) {
     _methodChannel.invokeMethod('loadRewardedAd', {
       'ad_unit_id': adUnitId,
@@ -622,7 +622,7 @@ class AppLovinMAX {
 
   /// Shows the rewarded ad with the specified [adUnitId].
   ///
-  /// [Showing a Rewarded Ad](https://developers.applovin.com/en/flutter/ad-formats/rewarded-ads#showing-a-rewarded-ad)
+  /// [Showing a Rewarded Ad](https://support.axon.ai/en/max/flutter/ad-formats/rewarded-ads#showing-a-rewarded-ad)
   static void showRewardedAd(String adUnitId, {String? placement, String? customData}) {
     _methodChannel.invokeMethod('showRewardedAd', {
       'ad_unit_id': adUnitId,

@@ -7,7 +7,7 @@
 ## 4.5.0
 * Depends on Android SDK v13.3.0 and iOS SDK v13.3.0.
 * Add optional `isAdaptive` flag to `AppLovinMAX.createBanner()` and `AppLovinMAX.preloadWidgetAdView()` to enable adaptive banners (default: true).
-* Fix support for adaptive banners. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
+* Fix support for adaptive banners. For more info, check out our [docs](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
 ## 4.4.0
 * Depends on Android SDK v13.2.0 and iOS SDK v13.2.0.
 ## 4.3.1
@@ -19,7 +19,7 @@
 ## 4.2.1
 * Update the example.
 ## 4.2.0
-* Add support for adaptive banners. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
+* Add support for adaptive banners. For more info, check out our [docs](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#adaptive-banners).
 ## 4.1.2
 * Fix preloaded banners and MRECs not resuming auto-refresh on iOS.
 ## 4.1.1
@@ -38,12 +38,12 @@
 ## 4.0.0
 * Depends on Android SDK v13.0.0 and iOS SDK v13.0.0.
 * Removed COPPA support.
-* Add constants for MAX Error Codes. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/overview/error-handling#max-error-codes).
+* Add constants for MAX Error Codes. For more info, check out our [docs](https://support.axon.ai/en/max/flutter/overview/error-handling#max-error-codes).
 ## 3.11.1
 * Depends on Android SDK v12.6.1 and iOS SDK v12.6.1.
-* Add APIs to preload widgets for banners and MRECs. For more info, check out our [docs](https://developers.applovin.com/en/max/flutter/ad-formats/banner-mrec-ads#ad-preloading).
+* Add APIs to preload widgets for banners and MRECs. For more info, check out our [docs](https://support.axon.ai/en/max/flutter/ad-formats/banner-and-mrec-ads#ad-preloading).
 ## 3.11.0
-* Replace targeting data APIs with new numeric segments targeting APIs. For migration instructions, please see [here](https://developers.applovin.com/en/flutter/overview/data-and-keyword-passing/#segment-targeting).
+* Replace targeting data APIs with new numeric segments targeting APIs. For migration instructions, please see [here](https://support.axon.ai/en/max/flutter/overview/data-and-keyword-passing).
 * Depends on Android SDK v12.6.0 and iOS SDK v12.6.0.
 * Fix ad callbacks not firing after hot restart. https://github.com/AppLovin/AppLovin-MAX-Flutter/issues/229
 * Fix `Null check operator used on a null value` warning in `MaxNativeAdView.dispose()`.
