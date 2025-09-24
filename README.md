@@ -2,7 +2,7 @@
 AppLovin MAX Flutter Plugin for Android and iOS.
 
 ## Documentation
-Check out our integration docs [here](https://developers.applovin.com/en/flutter/overview/integration).
+Check out our integration docs [here](https://support.axon.ai/en/max/flutter/overview/integration).
 
 ## Downloads
 See [pub.dev](https://pub.dev/packages/applovin_max) for the latest releases of the plugin.
@@ -10,7 +10,7 @@ See [pub.dev](https://pub.dev/packages/applovin_max) for the latest releases of 
 ## Demo App Instructions
 To get started with the demo app, please ensure Flutter is installed on your system. Once everything is properly installed, follow the instructions below to get the demo application up and running. 
 
-1. Obtain your AppLovin SDK Key from the dashboard [here](https://developers.applovin.com/en/flutter/overview/integration#initialize-the-sdk).
+1. Obtain your AppLovin SDK Key from the dashboard [here](https://support.axon.ai/en/max/flutter/overview/integration#initialize-the-sdk).
 2. Obtain your Ad Unit IDs from the dashboard [here](https://dash.applovin.com/o/mediation/ad_units).
 3. Update the `SDK_KEY` and Ad Unit IDs in the `main.dart` file. 
 4. Update the package name from `com.applovin.enterprise.apps.demoapp` to one that matches your ad units. Be sure to do this for every package name reference in the demo app. 
@@ -31,7 +31,7 @@ android {
 ````
 
 #### 2. Adding adapters to `app/build.gradle`:
-- Add the necessary adapters for the mediated ad networks you plan to integrate, as specified in the [documentation](https://developers.applovin.com/en/max/flutter/preparing-mediated-networks#android). It will look something like this:
+- Add the necessary adapters for the mediated ad networks you plan to integrate, as specified in the [documentation](https://support.axon.ai/en/max/flutter/preparing-mediated-networks#android). It will look something like this:
 ```
 dependencies {
     // Other dependencies...
@@ -53,7 +53,7 @@ dependencies {
 #### 1. Adding adapters to your podfile:
 - Locate your `Podfile` in the `/ios` folder.
 - Open the `Podfile` with a text editor or IDE.
-- Add the necessary adapter pods for the mediated networks you're integrating, as specified in the [documentation](https://developers.applovin.com/en/max/flutter/preparing-mediated-networks#ios). It will look something like this:
+- Add the necessary adapter pods for the mediated networks you're integrating, as specified in the [documentation](https://support.axon.ai/en/max/flutter/preparing-mediated-networks#ios). It will look something like this:
 ```
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
