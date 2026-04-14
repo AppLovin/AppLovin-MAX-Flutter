@@ -13,8 +13,8 @@ DESC
   s.homepage         = 'https://www.applovin.com/'
   s.license          = { :file => '../LICENSE' }
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files     = 'applovin_max/Sources/applovin_max/**/*'
+  s.public_header_files = 'applovin_max/Sources/applovin_max/**/*.h'
   s.platform = :ios, '12.0'
   s.static_framework = true
   s.dependency 'Flutter'
