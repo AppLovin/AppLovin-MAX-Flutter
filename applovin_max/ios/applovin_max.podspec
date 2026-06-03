@@ -5,7 +5,7 @@
 Pod::Spec.new do |s|
   s.authors          = 'AppLovin Corporation'
   s.name             = 'applovin_max'
-  s.version          = '4.6.3'
+  s.version          = '4.6.4'
   s.summary          = 'AppLovin MAX Flutter Plugin'
   s.description      = <<-DESC
 AppLovin MAX Flutter Plugin
