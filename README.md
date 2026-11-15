@@ -50,33 +50,24 @@ dependencies {
 - If the mediated ad network adapter you add requires `meta-data`, insert the necessary `meta-data` elements within the `<application>` tag. 
 
 ### iOS 
-#### 1. Adding adapters to your podfile:
-- Locate your `Podfile` in the `/ios` folder.
-- Open the `Podfile` with a text editor or IDE.
-- Add the necessary adapter pods for the mediated networks you're integrating, as specified in the [documentation](https://support.axon.ai/en/max/flutter/preparing-mediated-networks#ios). It will look something like this:
-```
-target 'Runner' do
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  pod 'AppLovinMediationExampleAdapter'
-end
-```
+The plugin gets the AppLovin SDK through Swift Package Manager. It requires Flutter 3.41 or later with Swift Package Manager turned on (the default from Flutter 3.44; before that, run `flutter config --enable-swift-package-manager`). Every plugin in your app must support Swift Package Manager: otherwise Flutter falls back to CocoaPods, which can't install this plugin.
+
+#### 1. Adding adapters as Swift packages:
+- In your Flutter project's `ios` folder, open `Runner.xcworkspace` in Xcode.
+- Select **File > Add Package Dependencies…** and add the Swift package of each mediated network you're integrating (`https://github.com/AppLovin/AppLovin-MAX-Swift-Package-<Network>`), as specified in the [documentation](https://support.axon.ai/en/max/flutter/preparing-mediated-networks#ios). Add its `AppLovinMediation<Network>Adapter` product to the **Runner** target.
 
 > [!CAUTION]
 > Do not add the underlying AppLovin SDK to your dependencies. The AppLovin MAX Flutter plugin
 > already specifies the certified SDK version corresponding to the plugin. If you also manually add
 > the dependency, this may break your build and cause unpredictable results.
 >
-> ~~pod 'AppLovinSDK'~~
+> ~~https://github.com/AppLovin/AppLovin-MAX-Swift-Package~~
 
-#### 2. Installing the Pods:
-- After you save the `Podfile`, open a terminal and run the following commands to install the pods:
-```
-pod install --repo-update
-```
+#### 2. Building the app:
+- Run `flutter build ios` or `flutter run`. Xcode resolves the Swift packages; there are no pods to install.
 
 #### 3. Updating the Bundle Identifier with your package name:
-- In your Flutter project's `ios` folder, find and open the `Runner.xcworkspace` file to launch Xcode.
-- Select the **Signing and Capabilities** tab and update the Bundle Identifier with your package name, ensuring it matches the package name configured in your AppLovin dashboard.
+- In Xcode, select the **Signing and Capabilities** tab and update the Bundle Identifier with your package name, ensuring it matches the package name configured in your AppLovin dashboard.
 
 #### 4. Adding the `NSUserTrackingUsageDescription` key to the Information Property List (Info.plist):
 - Add `NSUserTrackingUsageDescription` to your Information Property List via Xcode or directly edit
