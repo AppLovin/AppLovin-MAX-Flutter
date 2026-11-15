@@ -13,12 +13,18 @@ DESC
   s.homepage         = 'https://www.applovin.com/'
   s.license          = { :file => '../LICENSE' }
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files     = 'applovin_max/Sources/applovin_max/**/*.{h,m}'
+  s.public_header_files = 'applovin_max/Sources/applovin_max/include/**/*.h'
   s.platform = :ios, '12.0'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'AppLovinSDK', '13.6.3'
+
+  # AppLovinSDK is published as a Swift package only; new versions are not on CocoaPods trunk. This plugin version
+  # gets it through Swift Package Manager (ios/applovin_max/Package.swift), so it can't be installed with CocoaPods.
+  raise "applovin_max #{s.version} requires Swift Package Manager (on by default from Flutter 3.44; otherwise run " \
+        "`flutter config --enable-swift-package-manager`), and every other plugin in the app must support it too. " \
+        "Flutter falls back to CocoaPods when any plugin doesn't. To keep using CocoaPods, stay on an earlier " \
+        "applovin_max release."
   
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
