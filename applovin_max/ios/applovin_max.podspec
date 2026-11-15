@@ -21,10 +21,11 @@ DESC
 
   # AppLovinSDK is published as a Swift package only; new versions are not on CocoaPods trunk. This plugin version
   # gets it through Swift Package Manager (ios/applovin_max/Package.swift), so it can't be installed with CocoaPods.
+  # With Swift Package Manager on, Flutter uses Package.swift and never reads this podspec (plugins without a
+  # Package.swift still come from CocoaPods), so this only runs when Swift Package Manager is off.
   raise "applovin_max #{s.version} requires Swift Package Manager (on by default from Flutter 3.44; otherwise run " \
-        "`flutter config --enable-swift-package-manager`), and every other plugin in the app must support it too. " \
-        "Flutter falls back to CocoaPods when any plugin doesn't. To keep using CocoaPods, stay on an earlier " \
-        "applovin_max release."
+        "`flutter config --enable-swift-package-manager`). Plugins that only support CocoaPods keep working " \
+        "alongside it. To keep Swift Package Manager off, stay on an earlier applovin_max release."
   
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

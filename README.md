@@ -50,7 +50,7 @@ dependencies {
 - If the mediated ad network adapter you add requires `meta-data`, insert the necessary `meta-data` elements within the `<application>` tag. 
 
 ### iOS 
-The plugin gets the AppLovin SDK through Swift Package Manager. It requires Flutter 3.41 or later with Swift Package Manager turned on (the default from Flutter 3.44; before that, run `flutter config --enable-swift-package-manager`). Every plugin in your app must support Swift Package Manager: otherwise Flutter falls back to CocoaPods, which can't install this plugin.
+The plugin gets the AppLovin SDK through Swift Package Manager. It requires Flutter 3.41 or later with Swift Package Manager turned on (the default from Flutter 3.44; before that, run `flutter config --enable-swift-package-manager`). Other plugins don't need to support Swift Package Manager: Flutter keeps installing those through CocoaPods alongside it.
 
 #### 1. Adding adapters as Swift packages:
 - In your Flutter project's `ios` folder, open `Runner.xcworkspace` in Xcode.
@@ -64,7 +64,7 @@ The plugin gets the AppLovin SDK through Swift Package Manager. It requires Flut
 > ~~https://github.com/AppLovin/AppLovin-MAX-Swift-Package~~
 
 #### 2. Building the app:
-- Run `flutter build ios` or `flutter run`. Xcode resolves the Swift packages; there are no pods to install.
+- Run `flutter build ios` or `flutter run`. Xcode resolves the Swift packages; Flutter runs `pod install` only for other plugins that still use CocoaPods.
 
 #### 3. Updating the Bundle Identifier with your package name:
 - In Xcode, select the **Signing and Capabilities** tab and update the Bundle Identifier with your package name, ensuring it matches the package name configured in your AppLovin dashboard.

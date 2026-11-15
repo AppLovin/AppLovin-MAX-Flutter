@@ -2,7 +2,7 @@
 
 ## x.x.x
 * iOS: get the AppLovin SDK through Swift Package Manager. New iOS SDK versions are no longer published to CocoaPods.
-* Requires Flutter 3.41+ (Dart 3.11+) with Swift Package Manager turned on (the default from Flutter 3.44). Apps that use CocoaPods for their plugins stop at `pod install` with a message; they can stay on 4.6.4.
+* Requires Flutter 3.41+ (Dart 3.11+) with Swift Package Manager turned on (the default from Flutter 3.44). With Swift Package Manager turned off, `pod install` stops with a message; those apps can stay on 4.6.4. Other plugins that only support CocoaPods keep working.
 * Add iOS mediation adapters as Swift packages to the Runner target instead of adapter pods.
 ## 4.6.4
 * Depends on Android SDK v13.6.3 and iOS SDK v13.6.3.
